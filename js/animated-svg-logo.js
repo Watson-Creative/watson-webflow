@@ -349,11 +349,14 @@
     loader = createLoader();
     document.body.insertBefore(loader, document.body.firstChild);
 
+    // Reset start time
+    loadStartTime = Date.now();
+
     // Start tracking resources
     trackResources();
 
-    // Start progress animation
-    animateProgress();
+    // Start progress animation immediately
+    requestAnimationFrame(animateProgress);
 
     // Listen for window load as backup
     window.addEventListener('load', () => {

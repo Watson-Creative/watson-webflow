@@ -162,18 +162,32 @@ popIn
     delay: (el, i) => 45 * (i+1)
   });
 
-// Play your animation with these
-fadeUp.play();
-slideUp.play();
-rotateIn.play();
-popIn.play();
+// Function to play all animations
+function playAllAnimations() {
+  // Play your animation with these
+  fadeUp.play();
+  slideUp.play();
+  rotateIn.play();
+  popIn.play();
 
-// Wait before playing animation
-setTimeout(() => {  
-  // Put the play below this line
-  fadeUpCard.play();
-  slideIn.play();
-}, 800);
+  // Wait before playing animation
+  setTimeout(() => {  
+    // Put the play below this line
+    fadeUpCard.play();
+    slideIn.play();
+  }, 800);
+}
+
+// Check if SVG preloader exists and wait for it to complete
+if (typeof window.AnimatedSVGPreloader !== 'undefined' && !window.AnimatedSVGPreloader.isComplete()) {
+  // Wait for preloader to complete
+  document.addEventListener('preloadComplete', function() {
+    playAllAnimations();
+  });
+} else {
+  // Preloader doesn't exist or is already complete, play immediately
+  playAllAnimations();
+}
 
 // Play animation when something is clicked
 $( ".your-button-class" ).click(function() {

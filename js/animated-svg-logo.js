@@ -163,6 +163,7 @@
 
     // If no resources to track, simulate loading progress
     if (resources.total === 0) {
+      console.log('AnimatedSVGPreloader: No resources to track, starting simulation');
       resources.total = 10; // Simulate 10 steps
       let simulatedLoaded = 0;
       
@@ -171,6 +172,7 @@
         if (simulatedLoaded < resources.total) {
           simulatedLoaded++;
           resources.loaded = simulatedLoaded;
+          console.log(`AnimatedSVGPreloader: Simulated progress ${simulatedLoaded}/${resources.total}`);
           updateProgress();
           
           // Variable delay for more natural feel
@@ -182,6 +184,7 @@
       // Start simulation after a small delay
       setTimeout(simulateProgress, 50);
     } else {
+      console.log(`AnimatedSVGPreloader: Tracking ${resources.total} resources`);
       // Start checking stylesheets
       checkStylesheets();
     }
@@ -235,6 +238,7 @@
   function updateProgress() {
     if (resources.total > 0) {
       targetProgress = (resources.loaded / resources.total) * 100;
+      console.log(`AnimatedSVGPreloader: updateProgress - loaded: ${resources.loaded}, total: ${resources.total}, targetProgress: ${targetProgress}`);
     }
 
     // Check if we've reached minimum duration
@@ -378,6 +382,7 @@
     getProgress: () => currentProgress,
     isComplete: () => isComplete,
     forceComplete: () => {
+      console.log('AnimatedSVGPreloader: forceComplete called');
       targetProgress = 100;
       updateProgress();
     }

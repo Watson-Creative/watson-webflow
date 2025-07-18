@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SVG Logo Loader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Minimal CSS for loader -->
+  <link rel="stylesheet" href="css/animated-svg-logo.css" />
+
+  <!-- Inline core animation rules -->
+  <style>
+    /* Mask slide animation */
+    @keyframes slideMask {
+      0% { y: 100%; }
+      100% { y: 0%; }
+    }
+    
+    /* Loader move animation */
+    @keyframes moveLoader {
+      0% { transform: translateY(0%); }
+      100% { transform: translateY(-100%); }
+    }
+    
+    /* Apply mask animation */
+    #mask-rect {
+      animation: slideMask 1s ease forwards;
+    }
+    
+    /* Loader container animation */
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #292929;
+      z-index: 9999;
+      animation: moveLoader 0.4s ease-in-out 1s 1 forwards;
+    }
+    
+    /* Logo positioning */
+    .logo-back, .logo-front {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Front logo on top */
+    .logo-front {
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fallback if CSS fails -->
+  <noscript>
+    <div style="text-align:center; padding:2rem;">
+      <p>Loading...</p>
+    </div>
+  </noscript>
+
+  <div class="loader">
+    <!-- BACK SVG (dark) -->
+    <div class="logo-back">
+      <svg width="40%" viewBox="0 0 387.33 270.66" fill="none"
+           xmlns="http://www.w3.org/2000/svg">
+        <path d="m383.23,23.79l-242.77,242.77c-8.77,8.77-23.79,2.55-23.79-9.86V54.85L23.8,147.71c-8.79,8.77-23.8,2.57-23.8-9.85V13.94C0,6.24,6.24,0,13.94,0h359.43c12.41,0,18.63,15.01,9.86,23.79Z"
+              fill="#292929"/>
+      </svg>
+    </div>
+
+    <!-- FRONT SVG (green) with mask -->
+    <div class="logo-front">
+      <svg width="40%" viewBox="0 0 387.33 270.66" fill="none"
+           xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <mask id="mask">
+            <rect id="mask-rect"
+                  x="0" y="0" width="100%" height="100%" fill="#fff"/>
+          </mask>
+        </defs>
+        <path d="m383.23,23.79l-242.77,242.77c-8.77,8.77-23.79,2.55-23.79-9.86V54.85L23.8,147.71c-8.79,8.77-23.8,2.57-23.8-9.85V13.94C0,6.24,6.24,0,13.94,0h359.43c12.41,0,18.63,15.01,9.86,23.79Z"
+              fill="#00b795" mask="url(#mask)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Optional: Add any other content that should appear after loader -->
+  <main style="padding: 2rem;">
+    <h1>Content loaded!</h1>
+    <p>The SVG loader animation has completed.</p>
+  </main>
+
+</body>
+</html> 

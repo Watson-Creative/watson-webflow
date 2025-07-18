@@ -61,7 +61,7 @@ This will:
 
 You have two options for integrating the minified files into your Webflow project:
 
-### Option 1: Use CDN Links (Recommended)
+### How to Use CDN Links
 
 Link directly to the files from GitHub using raw.githack.com:
 

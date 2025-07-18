@@ -55,7 +55,7 @@
   function createLoader() {
     // Create main loader container
     const loader = document.createElement('div');
-    loader.className = 'loader';
+    loader.className = 'svgloader';
 
     // Create back logo container
     const logoBack = document.createElement('div');
@@ -102,7 +102,7 @@
     config: config,
     create: createLoader,
     remove: function() {
-      const loader = document.querySelector('.loader');
+      const loader = document.querySelector('.svgloader');
       if (loader) loader.remove();
     }
   };

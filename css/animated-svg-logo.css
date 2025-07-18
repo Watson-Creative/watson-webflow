@@ -5,7 +5,7 @@ body {
 }
 
 /* Loader specific styles */
-.loader {
+.svgloader {
   position: fixed;
   top: 0;
   left: 0;
@@ -36,7 +36,7 @@ body {
 }
 
 /* SVG responsive sizing */
-.loader svg {
+.svgloader svg {
   width: 40%;
   max-width: 400px;
   height: auto;
@@ -60,13 +60,13 @@ body {
 
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
-  .loader svg {
+  .svgloader svg {
     width: 60%;
   }
 }
 
 @media (max-width: 480px) {
-  .loader svg {
+  .svgloader svg {
     width: 80%;
   }
 } 

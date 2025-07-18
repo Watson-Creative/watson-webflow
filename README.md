@@ -63,7 +63,7 @@ You have two options for integrating the minified files into your Webflow projec
 
 ### How to Use CDN Links
 
-Link directly to the files from GitHub using raw.githack.com:
+Link directly to the minified [stylesheet](https://raw.githack.com/Watson-Creative/watson-webflow/refs/heads/master/custom-styles.min.css) and [script](https://raw.githack.com/Watson-Creative/watson-webflow/refs/heads/master/custom-scripts.min.js) files from GitHub using raw.githack.com:
 
 ```html
 <!-- In <head> -->

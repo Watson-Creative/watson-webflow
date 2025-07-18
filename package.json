@@ -1,0 +1,18 @@
+{
+  "name": "watson-webflow-js",
+  "version": "1.0.0",
+  "description": "Build script for combining and minifying CSS and JS files",
+  "main": "build.js",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "uglify-js": "^3.17.4",
+    "chokidar": "^3.5.3"
+  }
+} 

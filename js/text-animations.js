@@ -1,3 +1,4 @@
+var startdelay = 500;
 var animationClasses = ['fadeup', 'fadeup3', 'slideup', 'slidein', 'rotatein', 'popin'];
 var elementsToAnimate = [];
 
@@ -182,11 +183,16 @@ function playAllAnimations() {
 if (typeof window.AnimatedSVGPreloader !== 'undefined' && !window.AnimatedSVGPreloader.isComplete()) {
   // Wait for preloader to complete
   document.addEventListener('preloadComplete', function() {
-    playAllAnimations();
+    // Add startdelay after preloader completes
+    setTimeout(function() {
+      playAllAnimations();
+    }, startdelay);
   });
 } else {
-  // Preloader doesn't exist or is already complete, play immediately
-  playAllAnimations();
+  // Preloader doesn't exist or is already complete, play after startdelay
+  setTimeout(function() {
+    playAllAnimations();
+  }, startdelay);
 }
 
 // Play animation when something is clicked

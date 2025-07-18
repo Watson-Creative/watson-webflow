@@ -27,8 +27,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #292929;
+  background-color: #f0edec;
   z-index: 9999;
+  animation: moveLoader 0.4s ease-in-out 1s 1 forwards;
 }
 
 /* Logo containers */
@@ -52,6 +53,22 @@ body {
   width: 40%;
   max-width: 400px;
   height: auto;
+}
+
+/* Animation keyframes */
+@keyframes slideMask {
+  0% { y: 100%; }
+  100% { y: 0%; }
+}
+
+@keyframes moveLoader {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-100%); }
+}
+
+/* Apply animations */
+#mask-rect {
+  animation: slideMask 1s ease forwards;
 }
 
 /* Main content (shown after loader) */

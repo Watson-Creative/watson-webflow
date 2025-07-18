@@ -8,28 +8,17 @@
     backColor: '#f0edec',
     frontColor: '#00b795',
     svgPath: 'm383.23,23.79l-242.77,242.77c-8.77,8.77-23.79,2.55-23.79-9.86V54.85L23.8,147.71c-8.79,8.77-23.8,2.57-23.8-9.85V13.94C0,6.24,6.24,0,13.94,0h359.43c12.41,0,18.63,15.01,9.86,23.79Z',
-    minDuration: 800, // Minimum duration in ms
+    duration: 2000, // Total animation duration in ms
     removeDelay: 300, // Delay before removing loader after completion
-    smoothingFactor: 0.1 // Smoothing for progress updates
+    easingCurve: 'cubic-bezier(0.4, 0.0, 0.2, 1)' // Smooth easing
   };
 
   let loader = null;
   let maskRect = null;
   let progressDisplay = null;
-  let currentProgress = 0;
-  let targetProgress = 0;
-  let isComplete = false;
+  let startTime = null;
   let animationFrame = null;
-  let loadStartTime = Date.now();
-
-  // Resources to track
-  const resources = {
-    images: [],
-    scripts: [],
-    stylesheets: [],
-    loaded: 0,
-    total: 0
-  };
+  let isComplete = false;
 
   // Create SVG element helper
   function createSVG(color, useMask = false) {
@@ -100,184 +89,42 @@
     return loaderEl;
   }
 
-  // Track resource loading
-  function trackResources() {
-    // Track images
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-      if (!img.complete || img.naturalWidth === 0) {
-        resources.images.push(img);
-        resources.total++;
-        img.addEventListener('load', handleResourceLoad);
-        img.addEventListener('error', handleResourceLoad);
-      }
-    });
-
-    // Track background images in CSS
-    const elementsWithBg = document.querySelectorAll('[style*="background-image"]');
-    elementsWithBg.forEach(el => {
-      const bgImage = new Image();
-      const urlMatch = el.style.backgroundImage.match(/url\(['"]?([^'")]+)['"]?\)/);
-      if (urlMatch && urlMatch[1]) {
-        bgImage.src = urlMatch[1];
-        if (!bgImage.complete) {
-          resources.images.push(bgImage);
-          resources.total++;
-          bgImage.addEventListener('load', handleResourceLoad);
-          bgImage.addEventListener('error', handleResourceLoad);
-        }
-      }
-    });
-
-    // Track videos
-    const videos = document.querySelectorAll('video');
-    videos.forEach(video => {
-      if (video.readyState < 3) { // HAVE_FUTURE_DATA
-        resources.total++;
-        video.addEventListener('canplaythrough', handleResourceLoad);
-        video.addEventListener('error', handleResourceLoad);
-      }
-    });
-
-    // Track stylesheets
-    const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
-    stylesheets.forEach(link => {
-      // Only track external stylesheets
-      if (link.href && !link.href.startsWith('data:')) {
-        resources.stylesheets.push(link);
-        resources.total++;
-      }
-    });
-
-    // Track scripts that haven't loaded yet
-    const scripts = document.querySelectorAll('script[src]');
-    scripts.forEach(script => {
-      // Check if script is still loading
-      if (!script.loaded && script.async !== false) {
-        resources.scripts.push(script);
-        resources.total++;
-        script.addEventListener('load', handleResourceLoad);
-        script.addEventListener('error', handleResourceLoad);
-      }
-    });
-
-    // If no resources to track, simulate loading progress
-    if (resources.total === 0) {
-      console.log('AnimatedSVGPreloader: No resources to track, starting simulation');
-      resources.total = 10; // Simulate 10 steps
-      let simulatedLoaded = 0;
-      
-      // Simulate gradual loading
-      const simulateProgress = () => {
-        if (simulatedLoaded < resources.total) {
-          simulatedLoaded++;
-          resources.loaded = simulatedLoaded;
-          console.log(`AnimatedSVGPreloader: Simulated progress ${simulatedLoaded}/${resources.total}`);
-          updateProgress();
-          
-          // Variable delay for more natural feel
-          const delay = Math.random() * 50 + 30;
-          setTimeout(simulateProgress, delay);
-        }
-      };
-      
-      // Start simulation after a small delay
-      setTimeout(simulateProgress, 50);
-    } else {
-      console.log(`AnimatedSVGPreloader: Tracking ${resources.total} resources`);
-      // Start checking stylesheets
-      checkStylesheets();
-    }
-
-    // Also listen for window load as a fallback
-    if (document.readyState !== 'complete') {
-      window.addEventListener('load', () => {
-        // Force completion if we're still waiting
-        if (!isComplete && targetProgress < 100) {
-          targetProgress = 100;
-          updateProgress();
-        }
-      });
-    }
+  // Easing function for smooth animation
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 
-  // Handle resource load
-  function handleResourceLoad() {
-    resources.loaded++;
-    updateProgress();
-  }
-
-  // Check if stylesheets are loaded
-  function checkStylesheets() {
-    let allLoaded = true;
-    resources.stylesheets.forEach(link => {
-      try {
-        // Try to access the stylesheet
-        if (link.sheet && link.sheet.cssRules) {
-          // Stylesheet is loaded
-        } else {
-          allLoaded = false;
-        }
-      } catch (e) {
-        // External stylesheet not loaded yet
-        allLoaded = false;
-      }
-    });
-
-    if (allLoaded && resources.stylesheets.length > 0) {
-      resources.loaded += resources.stylesheets.length;
-      resources.stylesheets = [];
-      updateProgress();
-    } else if (resources.stylesheets.length > 0) {
-      // Check again in a bit
-      setTimeout(checkStylesheets, 50);
-    }
-  }
-
-  // Update progress
-  function updateProgress() {
-    if (resources.total > 0) {
-      targetProgress = (resources.loaded / resources.total) * 100;
-      console.log(`AnimatedSVGPreloader: updateProgress - loaded: ${resources.loaded}, total: ${resources.total}, targetProgress: ${targetProgress}`);
-    }
-
-    // Check if we've reached minimum duration
-    const elapsed = Date.now() - loadStartTime;
-    if (targetProgress >= 100 && elapsed < config.minDuration) {
-      // Delay completion until minimum duration
-      setTimeout(updateProgress, 50);
-      return;
-    }
-
-    if (targetProgress >= 100 && !isComplete) {
-      completeLoading();
-    }
-  }
-
-  // Smooth progress animation
-  function animateProgress() {
-    if (isComplete) return;
-
-    // Smooth interpolation
-    currentProgress += (targetProgress - currentProgress) * config.smoothingFactor;
+  // Animate progress
+  function animateProgress(timestamp) {
+    if (!startTime) startTime = timestamp;
+    
+    const elapsed = timestamp - startTime;
+    const rawProgress = Math.min(elapsed / config.duration, 1);
+    const easedProgress = easeInOutCubic(rawProgress);
+    const progress = easedProgress * 100;
 
     // Update mask position (100% - progress because we're revealing from bottom)
     if (maskRect) {
-      const yPosition = 100 - currentProgress;
+      const yPosition = 100 - progress;
       maskRect.setAttribute('y', yPosition + '%');
     }
 
     // Update progress display
     if (progressDisplay) {
-      progressDisplay.textContent = Math.round(currentProgress) + '%';
+      progressDisplay.textContent = Math.round(progress) + '%';
     }
 
-    // Continue animation
-    animationFrame = requestAnimationFrame(animateProgress);
+    // Continue animation or complete
+    if (rawProgress < 1) {
+      animationFrame = requestAnimationFrame(animateProgress);
+    } else {
+      completeLoading();
+    }
   }
 
   // Complete loading
   function completeLoading() {
+    if (isComplete) return;
     isComplete = true;
     
     // Ensure mask is fully revealed
@@ -304,6 +151,9 @@
           loader.remove();
           // Enable animations on body
           document.body.classList.add('preload-complete');
+          // Remove animation block
+          const blockStyle = document.getElementById('preloader-animation-block');
+          if (blockStyle) blockStyle.remove();
         }, { once: true });
       }
     }, config.removeDelay);
@@ -331,13 +181,6 @@
     document.head.appendChild(style);
   }
 
-  // Remove animation block
-  function unblockAnimations() {
-    document.body.classList.remove('preloading');
-    const blockStyle = document.getElementById('preloader-animation-block');
-    if (blockStyle) blockStyle.remove();
-  }
-
   // Initialize loader
   function init() {
     // Check if DOM is ready
@@ -353,38 +196,30 @@
     loader = createLoader();
     document.body.insertBefore(loader, document.body.firstChild);
 
-    // Reset start time
-    loadStartTime = Date.now();
-
-    // Start tracking resources
-    trackResources();
-
-    // Start progress animation immediately
+    // Start animation
     requestAnimationFrame(animateProgress);
 
-    // Listen for window load as backup
-    window.addEventListener('load', () => {
-      // Ensure we complete after window load
-      if (!isComplete) {
-        targetProgress = 100;
-        updateProgress();
-      }
-    });
-
     // Listen for preload complete to unblock animations
-    document.addEventListener('preloadComplete', unblockAnimations);
+    document.addEventListener('preloadComplete', () => {
+      document.body.classList.remove('preloading');
+    });
   }
 
   // Public API
   window.AnimatedSVGPreloader = {
     init: init,
     config: config,
-    getProgress: () => currentProgress,
+    getProgress: () => {
+      if (!startTime) return 0;
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min((elapsed / config.duration) * 100, 100);
+      return progress;
+    },
     isComplete: () => isComplete,
     forceComplete: () => {
-      console.log('AnimatedSVGPreloader: forceComplete called');
-      targetProgress = 100;
-      updateProgress();
+      if (!isComplete) {
+        completeLoading();
+      }
     }
   };
 

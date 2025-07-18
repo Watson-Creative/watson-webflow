@@ -105,7 +105,7 @@
     // Track images
     const images = document.querySelectorAll('img');
     images.forEach(img => {
-      if (!img.complete) {
+      if (!img.complete || img.naturalWidth === 0) {
         resources.images.push(img);
         resources.total++;
         img.addEventListener('load', handleResourceLoad);
@@ -113,18 +113,47 @@
       }
     });
 
+    // Track background images in CSS
+    const elementsWithBg = document.querySelectorAll('[style*="background-image"]');
+    elementsWithBg.forEach(el => {
+      const bgImage = new Image();
+      const urlMatch = el.style.backgroundImage.match(/url\(['"]?([^'")]+)['"]?\)/);
+      if (urlMatch && urlMatch[1]) {
+        bgImage.src = urlMatch[1];
+        if (!bgImage.complete) {
+          resources.images.push(bgImage);
+          resources.total++;
+          bgImage.addEventListener('load', handleResourceLoad);
+          bgImage.addEventListener('error', handleResourceLoad);
+        }
+      }
+    });
+
+    // Track videos
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      if (video.readyState < 3) { // HAVE_FUTURE_DATA
+        resources.total++;
+        video.addEventListener('canplaythrough', handleResourceLoad);
+        video.addEventListener('error', handleResourceLoad);
+      }
+    });
+
     // Track stylesheets
     const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
     stylesheets.forEach(link => {
-      resources.stylesheets.push(link);
-      resources.total++;
-      // Stylesheets don't have reliable load events, so we'll check them periodically
+      // Only track external stylesheets
+      if (link.href && !link.href.startsWith('data:')) {
+        resources.stylesheets.push(link);
+        resources.total++;
+      }
     });
 
-    // Track scripts
+    // Track scripts that haven't loaded yet
     const scripts = document.querySelectorAll('script[src]');
     scripts.forEach(script => {
-      if (!script.loaded) {
+      // Check if script is still loading
+      if (!script.loaded && script.async !== false) {
         resources.scripts.push(script);
         resources.total++;
         script.addEventListener('load', handleResourceLoad);
@@ -132,18 +161,41 @@
       }
     });
 
-    // If no resources to track, set some default
+    // If no resources to track, simulate loading progress
     if (resources.total === 0) {
-      resources.total = 1;
-      // Simulate loading
-      setTimeout(() => {
-        resources.loaded = 1;
-        updateProgress();
-      }, config.minDuration / 2);
+      resources.total = 10; // Simulate 10 steps
+      let simulatedLoaded = 0;
+      
+      // Simulate gradual loading
+      const simulateProgress = () => {
+        if (simulatedLoaded < resources.total) {
+          simulatedLoaded++;
+          resources.loaded = simulatedLoaded;
+          updateProgress();
+          
+          // Variable delay for more natural feel
+          const delay = Math.random() * 50 + 30;
+          setTimeout(simulateProgress, delay);
+        }
+      };
+      
+      // Start simulation after a small delay
+      setTimeout(simulateProgress, 50);
+    } else {
+      // Start checking stylesheets
+      checkStylesheets();
     }
 
-    // Start checking stylesheets
-    checkStylesheets();
+    // Also listen for window load as a fallback
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', () => {
+        // Force completion if we're still waiting
+        if (!isComplete && targetProgress < 100) {
+          targetProgress = 100;
+          updateProgress();
+        }
+      });
+    }
   }
 
   // Handle resource load

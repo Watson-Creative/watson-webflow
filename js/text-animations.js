@@ -39,7 +39,19 @@ document.querySelectorAll('.fadeup .letter, .fadeup3 .letter').forEach(function(
   el.style.opacity = '0';
 });
 
+document.querySelectorAll('.slideup .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
 document.querySelectorAll('.slidein .tricksword').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.rotatein .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.popin .letter').forEach(function(el) {
   el.style.opacity = '0';
 });
 

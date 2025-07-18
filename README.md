@@ -156,6 +156,138 @@ The script also animates elements with the `image-card` class:
 - **Multiple animations**: You can apply different animation classes to different text elements on the same page
 - **Timing**: Stagger your animations by using different classes to create a sequential reveal effect
 
+## Animated SVG Preloader
+
+The `animated-svg-logo.js` provides a sophisticated preloader that displays your Watson Creative logo while tracking actual page loading progress. The preloader prevents other animations from running until all resources are loaded, ensuring a smooth user experience.
+
+### Features
+
+- **Real Loading Progress**: Tracks images, scripts, and stylesheets to show actual loading progress
+- **Smooth Animation**: The green logo fills from bottom to top as resources load
+- **Animation Blocking**: Pauses all page animations until loading completes
+- **Minimum Duration**: Ensures the animation is visible even on fast connections
+- **Responsive**: Adapts to different screen sizes
+- **Progress Display**: Optional percentage counter (can be hidden via CSS)
+
+### How It Works
+
+1. **Initialization**: The preloader starts immediately when the script loads
+2. **Resource Tracking**: Monitors all images, external scripts, and stylesheets
+3. **Progress Animation**: The green portion of the logo reveals from bottom to top based on actual loading progress
+4. **Completion**: Once all resources are loaded (with a minimum duration), the loader slides up and page animations begin
+
+### Basic Usage
+
+Simply include the CSS and JS files in your HTML:
+
+```html
+<!-- In <head> -->
+<link rel="stylesheet" href="css/animated-svg-logo.css">
+
+<!-- As early as possible in <body> -->
+<script src="js/animated-svg-logo.js"></script>
+```
+
+The preloader will automatically initialize and track page resources.
+
+### Configuration
+
+You can customize the preloader by modifying the config object in `animated-svg-logo.js`:
+
+```javascript
+const config = {
+    svgWidth: '40%',           // Logo size
+    viewBox: '0 0 387.33 270.66',
+    backColor: '#f0edec',      // Background logo color
+    frontColor: '#00b795',     // Animated fill color
+    minDuration: 800,          // Minimum duration in ms
+    removeDelay: 300,          // Delay before removing loader
+    smoothingFactor: 0.1       // Progress animation smoothing
+};
+```
+
+### API Methods
+
+The preloader exposes several methods via the global `AnimatedSVGPreloader` object:
+
+```javascript
+// Get current loading progress (0-100)
+const progress = AnimatedSVGPreloader.getProgress();
+
+// Check if loading is complete
+if (AnimatedSVGPreloader.isComplete()) {
+    // Do something
+}
+
+// Force complete the loading (useful for edge cases)
+AnimatedSVGPreloader.forceComplete();
+```
+
+### Events
+
+Listen for the `preloadComplete` event to trigger actions after loading:
+
+```javascript
+document.addEventListener('preloadComplete', function() {
+    console.log('Loading complete!');
+    // Initialize your components
+    // Start animations
+    // etc.
+});
+```
+
+### CSS Classes
+
+The preloader adds these classes to the body:
+
+- `preloading` - Added during loading (blocks animations)
+- `preload-complete` - Added after completion (enables animations)
+
+The loader element has these states:
+
+- `svgloader-active` - Initial state
+- `svgloader-complete` - Added when sliding up after completion
+
+### Customization Options
+
+#### Hide Progress Percentage
+```css
+.svgloader-progress {
+    display: none;
+}
+```
+
+#### Change Animation Timing
+```css
+.svgloader-complete {
+    transition: transform 0.6s ease-out; /* Default is 0.4s */
+}
+```
+
+#### Add Loading Text
+```javascript
+// After loader creation
+const loadingText = document.createElement('div');
+loadingText.className = 'loading-text';
+loadingText.textContent = 'Loading Experience...';
+loader.appendChild(loadingText);
+```
+
+### Webflow Integration
+
+1. **Upload Files**: Add `animated-svg-logo.js` and `animated-svg-logo.css` to your Webflow project
+2. **Add Script**: Place the script tag early in the body (in Project Settings → Custom Code)
+3. **Include CSS**: Add the stylesheet in the head section
+4. **Test**: The preloader will automatically work on publish
+
+### Best Practices
+
+- Include the preloader script as early as possible in the `<body>`
+- Ensure the CSS is loaded in the `<head>` to prevent flash of unstyled content
+- Use the `preloadComplete` event to initialize heavy JavaScript components
+- Consider hiding the progress percentage on production sites for a cleaner look
+- Test on slower connections to ensure the timing feels right
+
 ## Webflow Integration
 
 You have two options for integrating the minified files into your Webflow project:

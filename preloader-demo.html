@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated SVG Preloader Demo</title>
+    
+    <!-- Preloader CSS should be loaded first -->
+    <link rel="stylesheet" href="css/animated-svg-logo.css">
+    
+    <!-- Demo styles -->
+    <style>
+        /* Demo page styles */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+            animation-delay: 0.2s;
+        }
+        
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+            animation-delay: 0.4s;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .demo-card {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 8px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .demo-card:nth-child(1) { animation-delay: 0.6s; }
+        .demo-card:nth-child(2) { animation-delay: 0.8s; }
+        .demo-card:nth-child(3) { animation-delay: 1s; }
+        
+        .demo-image {
+            width: 100%;
+            height: 200px;
+            background: #ddd;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .demo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Animation that will be paused during preload */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f0edec;
+            border-top-color: #00b795;
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: rotate 1s linear infinite;
+        }
+        
+        /* Hide progress display if desired */
+        /* .svgloader-progress { display: none; } */
+    </style>
+    
+    <!-- Additional stylesheets to track -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+</head>
+<body>
+    <!-- Preloader Script - Must be loaded early -->
+    <script src="js/animated-svg-logo.js"></script>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Preloader Demo Page</h1>
+        <p>This page demonstrates the animated SVG preloader. The preloader tracks all resources (images, scripts, stylesheets) and displays the loading progress as the green logo fills from bottom to top.</p>
+        
+        <p>All animations on this page are paused until the preloader completes, ensuring a smooth experience.</p>
+        
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h2>Feature 1</h2>
+                <p>The preloader automatically tracks all page resources including images, external stylesheets, and scripts.</p>
+                <div class="spinner"></div>
+            </div>
+            
+            <div class="demo-card">
+                <h2>Feature 2</h2>
+                <p>The green logo fills from bottom to top, representing the actual loading progress of your page.</p>
+                <div class="demo-image">
+                    <!-- Large image to demonstrate loading -->
+                    <img src="https://picsum.photos/400/200?random=1" alt="Demo Image 1">
+                </div>
+            </div>
+            
+            <div class="demo-card">
+                <h2>Feature 3</h2>
+                <p>All page animations are paused during loading and resume smoothly once everything is ready.</p>
+                <div class="demo-image">
+                    <!-- Another image to track -->
+                    <img src="https://picsum.photos/400/200?random=2" alt="Demo Image 2">
+                </div>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 60px;">How It Works</h2>
+        <ul>
+            <li>The preloader initializes immediately when the script loads</li>
+            <li>It tracks all images, stylesheets, and scripts on the page</li>
+            <li>The mask on the green logo moves based on actual loading progress</li>
+            <li>A minimum duration ensures the animation isn't too quick to see</li>
+            <li>Once complete, the loader slides up and page animations begin</li>
+        </ul>
+        
+        <h2>Events</h2>
+        <p>Listen for the <code>preloadComplete</code> event to trigger custom actions:</p>
+        <pre style="background: #f5f5f5; padding: 20px; border-radius: 4px; overflow-x: auto;">
+document.addEventListener('preloadComplete', function() {
+    console.log('Preloading complete!');
+    // Start your animations or initialize components
+});</pre>
+        
+        <h2>API Methods</h2>
+        <ul>
+            <li><code>AnimatedSVGPreloader.getProgress()</code> - Get current progress (0-100)</li>
+            <li><code>AnimatedSVGPreloader.isComplete()</code> - Check if loading is complete</li>
+            <li><code>AnimatedSVGPreloader.forceComplete()</code> - Force completion</li>
+        </ul>
+    </div>
+    
+    <!-- Additional scripts to track -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    
+    <script>
+        // Example: Listen for preload completion
+        document.addEventListener('preloadComplete', function() {
+            console.log('✅ Preload complete! All animations are now active.');
+            console.log('Final progress:', AnimatedSVGPreloader.getProgress());
+        });
+        
+        // Example: Log progress updates
+        let progressInterval = setInterval(() => {
+            const progress = AnimatedSVGPreloader.getProgress();
+            console.log(`Loading progress: ${Math.round(progress)}%`);
+            
+            if (AnimatedSVGPreloader.isComplete()) {
+                clearInterval(progressInterval);
+            }
+        }, 100);
+    </script>
+</body>
+</html> 

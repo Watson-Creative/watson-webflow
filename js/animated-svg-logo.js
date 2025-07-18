@@ -8,8 +8,27 @@
     backColor: '#f0edec',
     frontColor: '#00b795',
     svgPath: 'm383.23,23.79l-242.77,242.77c-8.77,8.77-23.79,2.55-23.79-9.86V54.85L23.8,147.71c-8.79,8.77-23.8,2.57-23.8-9.85V13.94C0,6.24,6.24,0,13.94,0h359.43c12.41,0,18.63,15.01,9.86,23.79Z',
-    animationDuration: 1400, // Total animation duration in ms
-    removeOnComplete: true // Whether to remove loader after animation
+    minDuration: 800, // Minimum duration in ms
+    removeDelay: 300, // Delay before removing loader after completion
+    smoothingFactor: 0.1 // Smoothing for progress updates
+  };
+
+  let loader = null;
+  let maskRect = null;
+  let progressDisplay = null;
+  let currentProgress = 0;
+  let targetProgress = 0;
+  let isComplete = false;
+  let animationFrame = null;
+  let loadStartTime = Date.now();
+
+  // Resources to track
+  const resources = {
+    images: [],
+    scripts: [],
+    stylesheets: [],
+    loaded: 0,
+    total: 0
   };
 
   // Create SVG element helper
@@ -23,16 +42,17 @@
       // Create defs and mask for front SVG
       const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
       const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
-      mask.setAttribute('id', 'mask');
+      mask.setAttribute('id', 'preloader-mask');
       
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('id', 'mask-rect');
+      rect.setAttribute('id', 'preloader-mask-rect');
       rect.setAttribute('x', '0');
-      rect.setAttribute('y', '0');
+      rect.setAttribute('y', '100%'); // Start at bottom
       rect.setAttribute('width', '100%');
       rect.setAttribute('height', '100%');
       rect.setAttribute('fill', '#fff');
       
+      maskRect = rect; // Store reference
       mask.appendChild(rect);
       defs.appendChild(mask);
       svg.appendChild(defs);
@@ -44,7 +64,7 @@
     path.setAttribute('fill', color);
     
     if (useMask) {
-      path.setAttribute('mask', 'url(#mask)');
+      path.setAttribute('mask', 'url(#preloader-mask)');
     }
     
     svg.appendChild(path);
@@ -54,8 +74,8 @@
   // Create loader element
   function createLoader() {
     // Create main loader container
-    const loader = document.createElement('div');
-    loader.className = 'svgloader';
+    const loaderEl = document.createElement('div');
+    loaderEl.className = 'svgloader svgloader-active';
 
     // Create back logo container
     const logoBack = document.createElement('div');
@@ -67,11 +87,199 @@
     logoFront.className = 'logo-front';
     logoFront.appendChild(createSVG(config.frontColor, true));
 
-    // Append logo containers to loader
-    loader.appendChild(logoBack);
-    loader.appendChild(logoFront);
+    // Create progress display (optional, can be hidden via CSS)
+    progressDisplay = document.createElement('div');
+    progressDisplay.className = 'svgloader-progress';
+    progressDisplay.textContent = '0%';
 
-    return loader;
+    // Append elements
+    loaderEl.appendChild(logoBack);
+    loaderEl.appendChild(logoFront);
+    loaderEl.appendChild(progressDisplay);
+
+    return loaderEl;
+  }
+
+  // Track resource loading
+  function trackResources() {
+    // Track images
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+      if (!img.complete) {
+        resources.images.push(img);
+        resources.total++;
+        img.addEventListener('load', handleResourceLoad);
+        img.addEventListener('error', handleResourceLoad);
+      }
+    });
+
+    // Track stylesheets
+    const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+    stylesheets.forEach(link => {
+      resources.stylesheets.push(link);
+      resources.total++;
+      // Stylesheets don't have reliable load events, so we'll check them periodically
+    });
+
+    // Track scripts
+    const scripts = document.querySelectorAll('script[src]');
+    scripts.forEach(script => {
+      if (!script.loaded) {
+        resources.scripts.push(script);
+        resources.total++;
+        script.addEventListener('load', handleResourceLoad);
+        script.addEventListener('error', handleResourceLoad);
+      }
+    });
+
+    // If no resources to track, set some default
+    if (resources.total === 0) {
+      resources.total = 1;
+      // Simulate loading
+      setTimeout(() => {
+        resources.loaded = 1;
+        updateProgress();
+      }, config.minDuration / 2);
+    }
+
+    // Start checking stylesheets
+    checkStylesheets();
+  }
+
+  // Handle resource load
+  function handleResourceLoad() {
+    resources.loaded++;
+    updateProgress();
+  }
+
+  // Check if stylesheets are loaded
+  function checkStylesheets() {
+    let allLoaded = true;
+    resources.stylesheets.forEach(link => {
+      try {
+        // Try to access the stylesheet
+        if (link.sheet && link.sheet.cssRules) {
+          // Stylesheet is loaded
+        } else {
+          allLoaded = false;
+        }
+      } catch (e) {
+        // External stylesheet not loaded yet
+        allLoaded = false;
+      }
+    });
+
+    if (allLoaded && resources.stylesheets.length > 0) {
+      resources.loaded += resources.stylesheets.length;
+      resources.stylesheets = [];
+      updateProgress();
+    } else if (resources.stylesheets.length > 0) {
+      // Check again in a bit
+      setTimeout(checkStylesheets, 50);
+    }
+  }
+
+  // Update progress
+  function updateProgress() {
+    if (resources.total > 0) {
+      targetProgress = (resources.loaded / resources.total) * 100;
+    }
+
+    // Check if we've reached minimum duration
+    const elapsed = Date.now() - loadStartTime;
+    if (targetProgress >= 100 && elapsed < config.minDuration) {
+      // Delay completion until minimum duration
+      setTimeout(updateProgress, 50);
+      return;
+    }
+
+    if (targetProgress >= 100 && !isComplete) {
+      completeLoading();
+    }
+  }
+
+  // Smooth progress animation
+  function animateProgress() {
+    if (isComplete) return;
+
+    // Smooth interpolation
+    currentProgress += (targetProgress - currentProgress) * config.smoothingFactor;
+
+    // Update mask position (100% - progress because we're revealing from bottom)
+    if (maskRect) {
+      const yPosition = 100 - currentProgress;
+      maskRect.setAttribute('y', yPosition + '%');
+    }
+
+    // Update progress display
+    if (progressDisplay) {
+      progressDisplay.textContent = Math.round(currentProgress) + '%';
+    }
+
+    // Continue animation
+    animationFrame = requestAnimationFrame(animateProgress);
+  }
+
+  // Complete loading
+  function completeLoading() {
+    isComplete = true;
+    
+    // Ensure mask is fully revealed
+    if (maskRect) {
+      maskRect.setAttribute('y', '0%');
+    }
+    if (progressDisplay) {
+      progressDisplay.textContent = '100%';
+    }
+
+    // Cancel animation frame
+    if (animationFrame) {
+      cancelAnimationFrame(animationFrame);
+    }
+
+    // Trigger completion event
+    document.dispatchEvent(new Event('preloadComplete'));
+
+    // Remove loader after delay
+    setTimeout(() => {
+      if (loader) {
+        loader.classList.add('svgloader-complete');
+        loader.addEventListener('transitionend', () => {
+          loader.remove();
+          // Enable animations on body
+          document.body.classList.add('preload-complete');
+        }, { once: true });
+      }
+    }, config.removeDelay);
+  }
+
+  // Prevent animations until preload is complete
+  function blockAnimations() {
+    // Add class to body to disable animations
+    document.body.classList.add('preloading');
+    
+    // Create style to disable all animations/transitions
+    const style = document.createElement('style');
+    style.id = 'preloader-animation-block';
+    style.textContent = `
+      .preloading * {
+        animation-play-state: paused !important;
+        transition: none !important;
+      }
+      .preloading .svgloader,
+      .preloading .svgloader * {
+        animation-play-state: running !important;
+        transition: all 0.3s ease !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Remove animation block
+  function unblockAnimations() {
+    document.body.classList.remove('preloading');
+    const blockStyle = document.getElementById('preloader-animation-block');
+    if (blockStyle) blockStyle.remove();
   }
 
   // Initialize loader
@@ -82,28 +290,41 @@
       return;
     }
 
+    // Block animations immediately
+    blockAnimations();
+
     // Create and append loader
-    const loader = createLoader();
+    loader = createLoader();
     document.body.insertBefore(loader, document.body.firstChild);
 
-    // Optional: Remove loader after animation completes
-    if (config.removeOnComplete) {
-      setTimeout(() => {
-        loader.addEventListener('transitionend', () => {
-          loader.remove();
-        });
-      }, config.animationDuration);
-    }
+    // Start tracking resources
+    trackResources();
+
+    // Start progress animation
+    animateProgress();
+
+    // Listen for window load as backup
+    window.addEventListener('load', () => {
+      // Ensure we complete after window load
+      if (!isComplete) {
+        targetProgress = 100;
+        updateProgress();
+      }
+    });
+
+    // Listen for preload complete to unblock animations
+    document.addEventListener('preloadComplete', unblockAnimations);
   }
 
   // Public API
-  window.AnimatedSVGLogo = {
+  window.AnimatedSVGPreloader = {
     init: init,
     config: config,
-    create: createLoader,
-    remove: function() {
-      const loader = document.querySelector('.svgloader');
-      if (loader) loader.remove();
+    getProgress: () => currentProgress,
+    isComplete: () => isComplete,
+    forceComplete: () => {
+      targetProgress = 100;
+      updateProgress();
     }
   };
 

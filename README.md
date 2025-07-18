@@ -59,6 +59,27 @@ This will:
 
 ## Webflow Integration
 
+You have two options for integrating the minified files into your Webflow project:
+
+### Option 1: Use CDN Links (Recommended)
+
+Link directly to the files from GitHub using raw.githack.com:
+
+```html
+<!-- In <head> -->
+<link rel="stylesheet" href="https://raw.githack.com/Watson-Creative/watson-webflow/refs/heads/master/custom-styles.min.css">
+
+<!-- Before </body> -->
+<script src="https://raw.githack.com/Watson-Creative/watson-webflow/refs/heads/master/custom-scripts.min.js"></script>
+```
+
+**Benefits:**
+- No need to upload files to Webflow
+- Automatically uses the latest version from your GitHub repository
+- Faster deployment of updates
+
+### Option 2: Upload to Webflow
+
 1. Upload the generated files to your Webflow project:
    - `custom-styles.min.css`
    - `custom-scripts.min.js`

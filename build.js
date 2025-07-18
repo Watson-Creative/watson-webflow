@@ -18,6 +18,14 @@ const config = {
   }
 };
 
+// Function to generate a unique build ID
+function generateBuildId() {
+  const now = new Date();
+  const timestamp = now.toISOString().replace(/[:.]/g, '-');
+  const randomStr = Math.random().toString(36).substring(2, 8);
+  return `${timestamp}-${randomStr}`;
+}
+
 // Helper function to read all files from a directory
 function getFilesFromDirectory(dir, extension) {
   try {
@@ -41,6 +49,9 @@ function buildCSS() {
     console.log('No CSS files found to process.');
     return;
   }
+  
+  // Generate unique build ID
+  const buildId = generateBuildId();
   
   // Read and combine all CSS files
   let combinedCSS = '';
@@ -66,15 +77,19 @@ function buildCSS() {
     console.warn('CSS minification warnings:', minified.warnings);
   }
   
+  // Add build ID comment at the top
+  const finalCSS = `/* Build ID: ${buildId} */\n/* Built: ${new Date().toISOString()} */\n${minified.styles}`;
+  
   // Write the minified CSS to output file
-  fs.writeFileSync(config.css.outputFile, minified.styles);
+  fs.writeFileSync(config.css.outputFile, finalCSS);
   
   // Calculate and display file sizes
   const originalSize = Buffer.byteLength(combinedCSS, 'utf8');
-  const minifiedSize = Buffer.byteLength(minified.styles, 'utf8');
+  const minifiedSize = Buffer.byteLength(finalCSS, 'utf8');
   const savings = ((originalSize - minifiedSize) / originalSize * 100).toFixed(2);
   
   console.log(`✓ CSS build complete!`);
+  console.log(`  Build ID: ${buildId}`);
   console.log(`  Original size: ${(originalSize / 1024).toFixed(2)} KB`);
   console.log(`  Minified size: ${(minifiedSize / 1024).toFixed(2)} KB`);
   console.log(`  Size reduction: ${savings}%`);
@@ -91,6 +106,9 @@ function buildJS() {
     console.log('No JavaScript files found to process.');
     return;
   }
+  
+  // Generate unique build ID
+  const buildId = generateBuildId();
   
   // Read all JS files
   const jsContents = {};
@@ -124,15 +142,19 @@ function buildJS() {
       return;
     }
     
+    // Add build ID comment at the top
+    const finalJS = `/* Build ID: ${buildId} */\n/* Built: ${new Date().toISOString()} */\n${minified.code}`;
+    
     // Write the minified JS to output file
-    fs.writeFileSync(config.js.outputFile, minified.code);
+    fs.writeFileSync(config.js.outputFile, finalJS);
     
     // Calculate and display file sizes
     const originalSize = Buffer.byteLength(combinedJS, 'utf8');
-    const minifiedSize = Buffer.byteLength(minified.code, 'utf8');
+    const minifiedSize = Buffer.byteLength(finalJS, 'utf8');
     const savings = ((originalSize - minifiedSize) / originalSize * 100).toFixed(2);
     
     console.log(`✓ JavaScript build complete!`);
+    console.log(`  Build ID: ${buildId}`);
     console.log(`  Original size: ${(originalSize / 1024).toFixed(2)} KB`);
     console.log(`  Minified size: ${(minifiedSize / 1024).toFixed(2)} KB`);
     console.log(`  Size reduction: ${savings}%`);

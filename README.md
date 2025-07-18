@@ -48,11 +48,12 @@ This will:
 │   ├── text-animations.css
 │   └── virtual-scroll.css
 ├── js/                   # Source JS files
+│   ├── anime.min.js      # Animation library (bundled)
 │   ├── slider.js
 │   ├── smooth-scroll.js
 │   └── text-animations.js
 ├── custom-styles.min.css # Minified CSS output
-├── custom-scripts.min.js # Minified JS output
+├── custom-scripts.min.js # Minified JS output (includes all JS)
 ├── build.js             # Build script
 └── package.json         # Node.js dependencies
 ```
@@ -129,10 +130,9 @@ The script also animates elements with the `image-card` class:
 
 ### Implementation in Webflow
 
-1. **Add the anime.js dependency** in your project settings:
-   ```html
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-   ```
+1. **Include the compiled scripts** (anime.js is already bundled):
+   - The minified script includes anime.js, so no additional dependencies needed
+   - Just add the compiled `custom-scripts.min.js` to your Webflow project
 
 2. **Apply animation classes** to text elements in the Webflow Designer:
    - Select your text element

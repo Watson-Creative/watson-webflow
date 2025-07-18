@@ -5,5 +5,7 @@
                     "name": "🏠 Root"
                 }
             ],
-            "settings": {}
+            "settings": {
+                "git.ignoreLimitWarning": true
+            }
         }

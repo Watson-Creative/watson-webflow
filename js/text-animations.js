@@ -1,9 +1,4 @@
-// Copyright start
-// © Code by T.RICKS, https://www.tricksdesign.com/
-// You have the license to use this code in your projects but not redistribute it to others
-
-// Find all text with animation classes and break each letter into a span
-var animationClasses = ['fade-up', 'fade-up3', 'slide-up', 'slide-in', 'rotate-in', 'pop-in'];
+var animationClasses = ['fadeup', 'fadeup3', 'slideup', 'slidein', 'rotatein', 'popin'];
 var elementsToAnimate = [];
 
 // Collect all elements with animation classes
@@ -19,12 +14,37 @@ elementsToAnimate.forEach(function(element) {
   element.innerHTML = element.innerHTML.replace(/(^|<\/?[^>]+>|\s+)([^\s<]+)/g, '$1<span class="tricksword">$2</span>');
 });
 
-// Now wrap individual letters
+// Apply styles to tricksword elements
+var tricksWords = document.getElementsByClassName("tricksword");
+for (var i = 0; i < tricksWords.length; i++) {
+  tricksWords[i].style.whiteSpace = 'nowrap';
+}
+
+// Now wrap individual letters and apply styles
 var tricksLetter = document.getElementsByClassName("tricksword");
 for (var i = 0; i < tricksLetter.length; i++) {
   var letterWrap = tricksLetter.item(i);
   letterWrap.innerHTML = letterWrap.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
 }
+
+// Apply styles to all letter elements
+var letters = document.getElementsByClassName("letter");
+for (var i = 0; i < letters.length; i++) {
+  letters[i].style.display = 'inline-block';
+}
+
+// Set initial opacity for animated elements
+document.querySelectorAll('.fadeup .letter, .fadeup3 .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.slidein .tricksword').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.image-card').forEach(function(el) {
+  el.style.opacity = '0';
+});
 // Copyright end
 
 // Slide In Animation
@@ -35,7 +55,7 @@ var slideIn = anime.timeline({
 
 slideIn
   .add({
-    targets: '.slide-in .tricksword',
+    targets: '.slidein .tricksword',
     opacity: [0,1],
     easing: "easeInOutQuad",
     duration: 1000,
@@ -50,18 +70,12 @@ var slideUp = anime.timeline({
 
 slideUp
   .add({
-    targets: '.slide-up .letter',
+    targets: '.slideup .letter',
     translateY: ["1.1em", 0],
     opacity: [0,1],
     translateZ: 0,
     duration: 750,
     delay: (el, i) => 50 * i
-  }).add({
-    targets: '.slide-up',
-    opacity: 0,
-    duration: 1000,
-    easing: "easeOutExpo",
-    delay: 1000
   });
 
 // Fade Up Animation
@@ -72,7 +86,7 @@ var fadeUp = anime.timeline({
 
 fadeUp 
   .add({
-    targets: '.fade-up .letter',
+    targets: '.fadeup .letter',
     translateY: [100,0],
     translateZ: 0,
     opacity: [0,1],
@@ -89,7 +103,7 @@ var fadeUp3 = anime.timeline({
 
 fadeUp3 
   .add({
-    targets: '.fade-up3 .letter',
+    targets: '.fadeup3 .letter',
     translateY: [100,0],
     translateZ: 0,
     opacity: [0,1],
@@ -123,7 +137,7 @@ var rotateIn = anime.timeline({
 
 rotateIn 
   .add({
-    targets: '.rotate-in .letter',
+    targets: '.rotatein .letter',
     translateY: ["1.1em", 0],
     translateX: ["0.55em", 0],
     translateZ: 0,
@@ -131,12 +145,6 @@ rotateIn
     duration: 750,
     easing: "easeOutExpo",
     delay: (el, i) => 50 * i
-  }).add({
-    targets: '.rotate-in',
-    opacity: 0,
-    duration: 1000,
-    easing: "easeOutExpo",
-    delay: 1000
   });
 
 // Pop In Animation
@@ -147,17 +155,11 @@ var popIn = anime.timeline({
 
 popIn
   .add({
-    targets: '.pop-in .letter',
+    targets: '.popin .letter',
     scale: [0, 1],
     duration: 1500,
     elasticity: 600,
     delay: (el, i) => 45 * (i+1)
-  }).add({
-    targets: '.pop-in',
-    opacity: 0,
-    duration: 1000,
-    easing: "easeOutExpo",
-    delay: 1000
   });
 
 // Play your animation with these

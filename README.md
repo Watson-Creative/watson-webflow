@@ -78,21 +78,6 @@ Link directly to the files from GitHub using raw.githack.com:
 - Automatically uses the latest version from your GitHub repository
 - Faster deployment of updates
 
-### Option 2: Upload to Webflow
-
-1. Upload the generated files to your Webflow project:
-   - `custom-styles.min.css`
-   - `custom-scripts.min.js`
-
-2. Link them in your Webflow project's custom code section:
-   ```html
-   <!-- In <head> -->
-   <link rel="stylesheet" href="/custom-styles.min.css">
-   
-   <!-- Before </body> -->
-   <script src="/custom-scripts.min.js"></script>
-   ```
-
 ## Notes
 
 - The build script preserves important global variables like `$`, `jQuery`, `Webflow`, `anime`, `Splide`, and `Smooth`

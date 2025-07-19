@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Special Button Hover</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Inconsolata font from Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* Body with dark purple background to match Webflow */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: rgb(12, 2, 22); /* Exact color from Webflow */
+    }
+
+    /* Base button styles matching Webflow exactly */
+    .button {
+      position: relative;
+      display: inline-block;
+      padding: 24px 32px;
+      background-color: transparent;
+      color: #fff;
+      font-family: 'Inconsolata', monospace;
+      font-size: 16px;
+      text-decoration: none;
+      border: 1px solid #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .button---text {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Blurred background wrapper */
+    .button---bg {
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      transform: translate(-50%, -50%) scale(1.4);
+      transform-style: preserve-3d;
+      filter: blur(10rem);
+      opacity: 0;
+      will-change: transform, filter, opacity;
+      transition:
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        filter   0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity  0.4s ease-out;
+    }
+
+    /* Hover state for blurred bg */
+    .button:hover .button---bg {
+      transform: translate(-50%, -50%) scale(1);
+      filter: blur(10rem);
+      opacity: 1;
+    }
+
+    /* Colored circles inside the blurred bg */
+    .button-bg---circle-1,
+    .button-bg---circle-2 {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(0.3);
+      will-change: transform, opacity;
+      transition:
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity   0.4s ease-out;
+    }
+
+    /* Circle 1 - Yellow/Gold */
+    .button-bg---circle-1 {
+      background: rgb(224, 180, 47);
+      width: 128px;
+      height: 128px;
+      top: -64px;
+      left: 0px;
+      transition-delay: 0s;
+    }
+
+    /* Circle 2 - Pink/Magenta */
+    .button-bg---circle-2 {
+      background: rgb(224, 47, 183);
+      width: 256px;
+      height: 256px;
+      bottom: -192px;
+      right: 0px;
+      transition-delay: 0.05s;
+    }
+
+    /* Animate circles into view on hover */
+    .button:hover .button-bg---circle-1 {
+      transform: translate(-10%, 40%) scale(1);
+      opacity: 1;
+    }
+
+    .button:hover .button-bg---circle-2 {
+      transform: translate(10%, -50%) scale(1);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <a href="#" class="button">
+    <div class="button---bg">
+      <div class="button-bg---circle-1"></div>
+      <div class="button-bg---circle-2"></div>
+    </div>
+    <div class="button---text">Hover Me For a Special Treat</div>
+  </a>
+</body>
+</html>

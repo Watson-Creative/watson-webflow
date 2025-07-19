@@ -201,7 +201,8 @@ if (typeof window.AnimatedSVGPreloader !== 'undefined' && !window.AnimatedSVGPre
     }, startdelay);
   });
 } else {
-  // Preloader doesn't exist or is already complete, play after startdelay
+  // Preloader doesn't exist, is already complete, or wasn't initialized (no loaderholder)
+  // Play animations after startdelay
   setTimeout(function() {
     playAllAnimations();
   }, startdelay);

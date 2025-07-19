@@ -158,37 +158,48 @@ The script also animates elements with the `image-card` class:
 
 ## Animated SVG Preloader
 
-The `animated-svg-logo.js` provides a sophisticated preloader that displays your Watson Creative logo while tracking actual page loading progress. The preloader prevents other animations from running until all resources are loaded, ensuring a smooth user experience.
+The `animated-svg-logo.js` provides a sophisticated preloader that displays your Watson Creative logo while the page loads. The preloader uses a mask animation to reveal the green portion of the logo from bottom to top.
 
 ### Features
 
-- **Real Loading Progress**: Tracks images, scripts, and stylesheets to show actual loading progress
-- **Smooth Animation**: The green logo fills from bottom to top as resources load
+- **Controlled Activation**: Only appears on pages with a designated placeholder element
+- **Smooth Fill Animation**: The green logo fills from bottom to top over a configurable duration
 - **Animation Blocking**: Pauses all page animations until loading completes
-- **Minimum Duration**: Ensures the animation is visible even on fast connections
+- **Customizable Duration**: Set your preferred animation timing
 - **Responsive**: Adapts to different screen sizes
 - **Progress Display**: Optional percentage counter (can be hidden via CSS)
 
 ### How It Works
 
-1. **Initialization**: The preloader starts immediately when the script loads
-2. **Resource Tracking**: Monitors all images, external scripts, and stylesheets
-3. **Progress Animation**: The green portion of the logo reveals from bottom to top based on actual loading progress
-4. **Completion**: Once all resources are loaded (with a minimum duration), the loader slides up and page animations begin
+1. **Placeholder Detection**: The preloader looks for a `<div class="loaderholder"></div>` element
+2. **Initialization**: If found, replaces the placeholder with the animated logo
+3. **Animation**: The green portion of the logo reveals from bottom to top
+4. **Completion**: After the animation duration, the loader slides up and page animations begin
 
 ### Basic Usage
 
-Simply include the CSS and JS files in your HTML:
-
+1. **Include the CSS and JS files**:
 ```html
 <!-- In <head> -->
 <link rel="stylesheet" href="css/animated-svg-logo.css">
 
-<!-- As early as possible in <body> -->
+<!-- Before </body> -->
 <script src="js/animated-svg-logo.js"></script>
 ```
 
-The preloader will automatically initialize and track page resources.
+2. **Add the placeholder on pages where you want the preloader**:
+```html
+<!-- Place this where you want the preloader to appear -->
+<div class="loaderholder"></div>
+```
+
+**Important**: The preloader will ONLY appear on pages that have the `loaderholder` div. Pages without this element will skip the preloader entirely and animations will start after the standard delay.
+
+### Enabling/Disabling Per Page
+
+- **To enable**: Add `<div class="loaderholder"></div>` to the page
+- **To disable**: Simply don't include the loaderholder div
+- **Placement**: The preloader will appear exactly where you place the loaderholder div
 
 ### Configuration
 
@@ -196,13 +207,13 @@ You can customize the preloader by modifying the config object in `animated-svg-
 
 ```javascript
 const config = {
-    svgWidth: '40%',           // Logo size
-    viewBox: '0 0 387.33 270.66',
-    backColor: '#f0edec',      // Background logo color
-    frontColor: '#00b795',     // Animated fill color
-    minDuration: 800,          // Minimum duration in ms
-    removeDelay: 300,          // Delay before removing loader
-    smoothingFactor: 0.1       // Progress animation smoothing
+    svgWidth: '40%',              // Logo size
+    viewBox: '0 0 387.33 270.66', // SVG viewbox
+    backColor: '#f0edec',         // Background logo color
+    frontColor: '#00b795',        // Animated fill color
+    duration: 2000,               // Animation duration in ms
+    removeDelay: 300,             // Delay before removing loader
+    easingCurve: 'cubic-bezier(0.4, 0.0, 0.2, 1)' // Animation easing
 };
 ```
 
@@ -219,7 +230,12 @@ if (AnimatedSVGPreloader.isComplete()) {
     // Do something
 }
 
-// Force complete the loading (useful for edge cases)
+// Check if preloader was actually initialized (found loaderholder)
+if (AnimatedSVGPreloader.isInitialized()) {
+    // Preloader is active on this page
+}
+
+// Force complete the loading (only works if initialized)
 AnimatedSVGPreloader.forceComplete();
 ```
 
@@ -229,10 +245,9 @@ Listen for the `preloadComplete` event to trigger actions after loading:
 
 ```javascript
 document.addEventListener('preloadComplete', function() {
-    console.log('Loading complete!');
-    // Initialize your components
-    // Start animations
-    // etc.
+    console.log('Preloader animation finished!');
+    // This fires whether the preloader was shown or not
+    // Check isInitialized() if you need to know
 });
 ```
 
@@ -264,29 +279,42 @@ The loader element has these states:
 }
 ```
 
-#### Add Loading Text
-```javascript
-// After loader creation
-const loadingText = document.createElement('div');
-loadingText.className = 'loading-text';
-loadingText.textContent = 'Loading Experience...';
-loader.appendChild(loadingText);
+#### Position the Preloader
+```css
+.loaderholder {
+    /* Position where you want the preloader to appear */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
 ```
 
 ### Webflow Integration
 
 1. **Upload Files**: Add `animated-svg-logo.js` and `animated-svg-logo.css` to your Webflow project
-2. **Add Script**: Place the script tag early in the body (in Project Settings → Custom Code)
+2. **Add Script**: Place the script tag in Project Settings → Custom Code → Footer Code
 3. **Include CSS**: Add the stylesheet in the head section
-4. **Test**: The preloader will automatically work on publish
+4. **Add Placeholder**: In the Webflow Designer, add a div with class `loaderholder` to pages where you want the preloader
+5. **Test**: The preloader will appear on pages with the loaderholder div
+
+### Integration with Text Animations
+
+The text animations in `text-animations.js` automatically detect whether the preloader is active:
+
+- **With preloader**: Text animations wait for the preloader to complete
+- **Without preloader**: Text animations start after the standard delay (500ms)
+
+This ensures smooth animation sequencing regardless of whether the preloader is shown.
 
 ### Best Practices
 
-- Include the preloader script as early as possible in the `<body>`
-- Ensure the CSS is loaded in the `<head>` to prevent flash of unstyled content
-- Use the `preloadComplete` event to initialize heavy JavaScript components
-- Consider hiding the progress percentage on production sites for a cleaner look
-- Test on slower connections to ensure the timing feels right
+- Place the `loaderholder` div early in your page structure for consistent positioning
+- Consider showing the preloader only on key pages (homepage, major sections)
+- Hide the progress percentage for a cleaner, more professional look
+- Test both with and without the preloader to ensure animations work correctly
+- Use consistent placement of the loaderholder div across pages for a cohesive experience
 
 ## Webflow Integration
 

@@ -189,12 +189,24 @@
       return;
     }
 
+    // Check for loaderholder element
+    const loaderHolder = document.querySelector('.loaderholder');
+    if (!loaderHolder) {
+      // No loaderholder found, don't create preloader
+      console.log('AnimatedSVGPreloader: No loaderholder element found, skipping initialization');
+      isComplete = true; // Mark as complete so other scripts don't wait
+      document.dispatchEvent(new Event('preloadComplete'));
+      return;
+    }
+
     // Block animations immediately
     blockAnimations();
 
-    // Create and append loader
+    // Create loader
     loader = createLoader();
-    document.body.insertBefore(loader, document.body.firstChild);
+    
+    // Replace loaderholder with loader
+    loaderHolder.parentNode.replaceChild(loader, loaderHolder);
 
     // Start animation
     requestAnimationFrame(animateProgress);
@@ -210,17 +222,18 @@
     init: init,
     config: config,
     getProgress: () => {
-      if (!startTime) return 0;
+      if (!loader || !startTime) return 100; // Return 100% if not initialized
       const elapsed = Date.now() - startTime;
       const progress = Math.min((elapsed / config.duration) * 100, 100);
       return progress;
     },
     isComplete: () => isComplete,
     forceComplete: () => {
-      if (!isComplete) {
+      if (!isComplete && loader) { // Only complete if loader exists
         completeLoading();
       }
-    }
+    },
+    isInitialized: () => loader !== null // New method to check if actually initialized
   };
 
   // Auto-initialize

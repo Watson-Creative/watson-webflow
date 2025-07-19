@@ -23,11 +23,15 @@
 /* Button Wrap Container */
 .button-wrap {
   position: relative;
+  display: inline-block;
   z-index: 2;
   border-radius: 999vw;
   background: transparent;
   pointer-events: none;
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  /* Remove any flex dependencies - make it work in any container */
+  margin: 0;
+  padding: 0;
 }
 
 /* Button Shadow Container */
@@ -75,6 +79,7 @@ button {
   all: unset;
   cursor: pointer;
   position: relative;
+  display: inline-block;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   pointer-events: auto;
   z-index: 3;
@@ -95,6 +100,16 @@ button {
   -moz-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
   -ms-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  /* Ensure button flows naturally in any container */
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  vertical-align: baseline;
 }
 
 button:hover {

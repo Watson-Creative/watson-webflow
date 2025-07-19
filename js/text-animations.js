@@ -1,11 +1,27 @@
 var startdelay = 500;
 var animationClasses = ['fadeup', 'fadeup3', 'slideup', 'slidein', 'rotatein', 'popin'];
+var extraClasses = { 
+  'intro-heading': 'slideup'
+};
 var elementsToAnimate = [];
 
 // Collect all elements with animation classes
 animationClasses.forEach(function(className) {
   var elements = document.getElementsByClassName(className);
   for (var i = 0; i < elements.length; i++) {
+    elementsToAnimate.push(elements[i]);
+  }
+});
+
+// Collect all elements with extra classes and add the corresponding animation class
+Object.keys(extraClasses).forEach(function(customClass) {
+  var elements = document.getElementsByClassName(customClass);
+  var animationClass = extraClasses[customClass];
+  
+  for (var i = 0; i < elements.length; i++) {
+    // Add the animation class to the element
+    elements[i].classList.add(animationClass);
+    // Add to the elements to animate array
     elementsToAnimate.push(elements[i]);
   }
 });

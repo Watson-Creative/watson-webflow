@@ -117,6 +117,52 @@ Apply these classes to any text element (heading, paragraph, text block, etc.) i
 <h3 class="popin">Pop in animation</h3>
 ```
 
+### Custom Class Mappings (extraClasses)
+
+The animation system now supports custom class mappings through the `extraClasses` object. This allows you to define your own semantic class names that automatically apply specific animations.
+
+#### How It Works
+
+In `text-animations.js`, you can define custom mappings:
+```javascript
+var extraClasses = { 
+  'intro-heading': 'slideup',
+  'hero-title': 'fadeup',
+  'section-header': 'rotatein'
+  // Add more mappings as needed
+};
+```
+
+Any element with a custom class will automatically receive the mapped animation:
+```html
+<!-- This will animate with slideup animation -->
+<h1 class="intro-heading">Welcome to Our Site</h1>
+
+<!-- This will animate with fadeup animation -->
+<h2 class="hero-title">Main Hero Text</h2>
+```
+
+#### Benefits
+
+- **Semantic naming**: Use meaningful class names that describe the content's purpose
+- **Consistency**: Ensure similar elements always use the same animation
+- **Easy updates**: Change animations site-wide by updating the mapping
+- **Clean HTML**: Your Webflow classes remain descriptive rather than technical
+
+#### Adding More Mappings
+
+To add custom mappings, edit the `extraClasses` object in `text-animations.js`:
+```javascript
+var extraClasses = { 
+  'intro-heading': 'slideup',
+  'hero-title': 'fadeup',
+  'section-header': 'rotatein',
+  'banner-text': 'popin',
+  'subtitle': 'fadeup3',
+  'side-content': 'slidein'
+};
+```
+
 ### Additional Features
 
 #### Image Card Animation
@@ -137,6 +183,7 @@ The script also animates elements with the `image-card` class:
 2. **Apply animation classes** to text elements in the Webflow Designer:
    - Select your text element
    - Add the desired animation class (e.g., `fadeup`, `slidein`, etc.)
+   - OR use your custom semantic classes defined in `extraClasses` (e.g., `intro-heading`, `hero-title`)
    - The animations will trigger automatically on page load
 
 3. **Timing control**:

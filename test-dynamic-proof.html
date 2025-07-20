@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Sizing Proof</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00b795;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            max-width: 300px;
+            z-index: 1000;
+        }
+        
+        .test-element {
+            display: inline-block;
+            background: #00b795;
+            color: #000;
+            cursor: pointer;
+            margin: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .value {
+            color: #fdb71a;
+            font-weight: bold;
+        }
+        
+        h2 {
+            color: #00b795;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-panel">
+        <h3>Hover Calculations (Live)</h3>
+        <div id="calculations">Hover over any element to see calculations</div>
+    </div>
+    
+    <h2>Proof: All Values Are Dynamic</h2>
+    <p>Each element's dimensions are calculated at hover time. NO fixed pixel values!</p>
+    
+    <div class="test-element" style="padding: 5px 10px;">
+        Tiny Element
+    </div>
+    
+    <div class="test-element" style="padding: 20px 40px;">
+        Medium Element
+    </div>
+    
+    <div class="test-element" style="padding: 50px 100px;">
+        Large Element
+    </div>
+    
+    <div class="test-element" style="padding: 10px 300px;">
+        Very Wide Element
+    </div>
+    
+    <div class="test-element" style="padding: 150px 30px;">
+        Very Tall Element
+    </div>
+    
+    <div class="test-element" style="padding: 100px 200px; font-size: 48px;">
+        Huge Element
+    </div>
+    
+    <div class="test-element" style="padding: 2px 5px; font-size: 8px;">
+        Microscopic
+    </div>
+
+    <script>
+        const panel = document.getElementById('calculations');
+        
+        document.querySelectorAll('.test-element').forEach(element => {
+            element.addEventListener('mouseenter', (e) => {
+                const rect = e.target.getBoundingClientRect();
+                
+                // These are the EXACT calculations from your aurora effect
+                const elementWidth = rect.width;
+                const elementHeight = rect.height;
+                const minSphereSize = elementHeight * 1.25;
+                const maxSphereSize = elementHeight * 3;
+                const maxOffsetX = elementWidth * 0.6;
+                const maxOffsetY = elementHeight * 0.6;
+                const wrapperWidth = rect.width + (rect.height * 3);
+                const wrapperHeight = rect.height + (rect.height * 3);
+                const coreSize = elementHeight * 0.4;
+                
+                panel.innerHTML = `
+                    <strong>Element Dimensions:</strong><br>
+                    Width: <span class="value">${elementWidth.toFixed(1)}px</span><br>
+                    Height: <span class="value">${elementHeight.toFixed(1)}px</span><br>
+                    <br>
+                    <strong>Calculated Sphere Sizes:</strong><br>
+                    Min (1.25×height): <span class="value">${minSphereSize.toFixed(1)}px</span><br>
+                    Max (3×height): <span class="value">${maxSphereSize.toFixed(1)}px</span><br>
+                    <br>
+                    <strong>Position Constraints:</strong><br>
+                    X-axis (±60% width): <span class="value">±${maxOffsetX.toFixed(1)}px</span><br>
+                    Y-axis (±60% height): <span class="value">±${maxOffsetY.toFixed(1)}px</span><br>
+                    <br>
+                    <strong>Wrapper Size:</strong><br>
+                    Width: <span class="value">${wrapperWidth.toFixed(1)}px</span><br>
+                    Height: <span class="value">${wrapperHeight.toFixed(1)}px</span><br>
+                    <br>
+                    <strong>Core Size (40% height):</strong><br>
+                    <span class="value">${coreSize.toFixed(1)}px</span>
+                `;
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                panel.innerHTML = 'Hover over any element to see calculations';
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Aurora Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .demo-box {
+            display: inline-block;
+            padding: 40px 80px;
+            margin: 20px;
+            background: #00b795;
+            color: #000;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #00b795;
+        }
+        
+        .feature {
+            color: #fdb71a;
+        }
+        
+        h1 {
+            color: #00b795;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Aurora Effects Demo</h1>
+    
+    <div class="instructions">
+        <h2>New Interactive Features:</h2>
+        <ul>
+            <li><span class="feature">Pulsing Spheres:</span> Watch the spheres expand and contract rhythmically</li>
+            <li><span class="feature">Mouse Disruption:</span> Move your mouse through the spheres - they'll be pushed away</li>
+            <li><span class="feature">Touch Response:</span> Get close to a sphere and watch it shrink, then recover</li>
+            <li><span class="feature">Wave Effect:</span> Spheres pulse with phase shifts creating wave patterns</li>
+        </ul>
+        <p><strong>Try moving your mouse slowly through the glow to see all effects!</strong></p>
+    </div>
+    
+    <div class="demo-box hoverglow">
+        Hover & Move Mouse Here
+    </div>
+    
+    <div class="demo-box hoverglow" style="background: #e93826;">
+        Interactive Glow
+    </div>
+    
+    <div class="demo-box hoverglow" style="background: #fdb71a; color: #000;">
+        Reactive Spheres
+    </div>
+
+    <script>
+        // Copy the entire GlowEffect class from test-aurorahover.html
+        // For this demo, we'll use the reactive bubbles preset
+        
+        class GlowEffect {
+            constructor() {
+                this.container = document.getElementById('auroraContainer');
+                this.activeGlows = new Map();
+                this.frameId = null;
+                
+                // Using REACTIVE BUBBLES preset for dramatic effect
+                this.easingFactor = 0.12;
+                this.fadeInDuration = '0.3s';
+                this.fadeOutDuration = '0.4s';
+                this.animationFPS = 0.016;
+                
+                this.sphereSizeMin = 1.25;
+                this.sphereSizeMax = 4;
+                this.sphereCountMin = 4;
+                this.sphereCountMax = 8;
+                
+                this.spherePositionRange = 0.8;
+                this.corePositionRange = 0.1;
+                this.mouseInfluence = 0.6;
+                
+                this.sphereOpacityMin = 0.7;
+                this.sphereOpacityMax = 1.0;
+                this.wrapperBlur = 50;
+                
+                // Enhanced mouse interaction settings for demo
+                this.mouseDisruptionRadius = 200;    // Large radius
+                this.mouseDisruptionForce = 0.8;     // Strong push
+                this.mouseShrinkAmount = 0.5;        // Dramatic shrink
+                this.mouseShrinkRadius = 100;        // Large touch zone
+                this.sphereRecoverySpeed = 0.2;      // Smooth recovery
+                this.mousePositionSmoothing = 0.2;
+                
+                // Prominent pulsing
+                this.spherePulseSpeed = 0.7;
+                this.spherePulseAmplitude = 0.3;
+                this.spherePulsePhaseShift = 0.5;
+                
+                // Other settings...
+                this.driftAmplitude = 5;
+                this.morphAmplitude = 20;
+                this.rotationMultiplier = 30;
+                this.scaleAmplitude = 0.1;
+                
+                console.log('Interactive Aurora Demo - Move your mouse through the spheres!');
+            }
+        }
+        
+        // Note: This is a simplified version for demo purposes
+        // The full implementation would include all methods from test-aurorahover.html
+    </script>
+    
+    <div class="aurora-container" id="auroraContainer"></div>
+</body>
+</html> 

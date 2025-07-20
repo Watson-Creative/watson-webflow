@@ -174,6 +174,18 @@
                 // - Subtle glow: sphereOpacityMin: 0.3, sphereOpacityMax: 0.5
                 // - Strong glow: sphereOpacityMin: 0.8, sphereOpacityMax: 1.0
                 // - Variable glow: sphereOpacityMin: 0.2, sphereOpacityMax: 1.0
+                //
+                // NEW MOUSE INTERACTIONS:
+                // - Spheres pulse rhythmically with configurable speed and amplitude
+                // - Mouse pushes spheres away like magnetic repulsion
+                // - Spheres shrink when mouse gets close, then expand back
+                // - All effects smoothly interpolate for organic motion
+                //
+                // INTERACTION TUNING:
+                // - Increase mouseDisruptionRadius for wider influence area
+                // - Increase mouseDisruptionForce for stronger push effect
+                // - Increase mouseShrinkAmount for more dramatic shrinking
+                // - Decrease sphereRecoverySpeed for slower, floatier response
                 
                 // Animation & Timing
                 this.easingFactor = 0.12;                    // Mouse follow smoothness (0.01 = very smooth, 1 = instant)
@@ -231,6 +243,19 @@
                 this.scaleAmplitude = 0.1;                  // Scale breathing amplitude (10%)
                 this.coreScaleAmplitude = 0.15;             // Core scale amplitude (15%)
                 
+                // Sphere Pulsing Animation
+                this.spherePulseSpeed = 0.5;                // Speed of sphere pulsing
+                this.spherePulseAmplitude = 0.2;            // How much spheres expand/contract (20%)
+                this.spherePulsePhaseShift = 0.3;           // Phase difference between spheres for wave effect
+                
+                // Mouse Interaction
+                this.mouseDisruptionRadius = 150;           // Radius around mouse that affects spheres (px)
+                this.mouseDisruptionForce = 0.6;            // How strongly mouse pushes spheres (0-1)
+                this.mouseShrinkAmount = 0.3;               // How much spheres shrink when mouse touches (30%)
+                this.mouseShrinkRadius = 80;                // Distance from mouse to trigger shrink (px)
+                this.sphereRecoverySpeed = 0.15;            // How fast spheres recover from mouse interaction
+                this.mousePositionSmoothing = 0.2;          // Smoothing for mouse position tracking
+                
                 // Color Animation
                 this.hueRotateSpeed = 0.3;                  // Hue rotation speed
                 this.hueRotateAmount = 20;                  // Maximum hue rotation (degrees)
@@ -257,6 +282,16 @@
                 // this.sphereCountMax = 12; this.driftAmplitude = 15;
                 // this.rotationSpeedMax = 0.5; this.scaleAmplitude = 0.2;
                 // this.positionChangeIntervalMin = 1; this.positionChangeIntervalMax = 2;
+                
+                // REACTIVE BUBBLES:
+                // this.mouseDisruptionRadius = 200; this.mouseDisruptionForce = 0.8;
+                // this.mouseShrinkAmount = 0.5; this.sphereRecoverySpeed = 0.2;
+                // this.spherePulseAmplitude = 0.3; this.spherePulseSpeed = 0.7;
+                
+                // GENTLE FLOW:
+                // this.spherePulseSpeed = 0.3; this.spherePulseAmplitude = 0.15;
+                // this.mouseDisruptionForce = 0.3; this.mouseShrinkAmount = 0.1;
+                // this.spherePulsePhaseShift = 0.5; this.mousePositionSmoothing = 0.1;
                 
                 // Dynamic color palettes
                 this.colorPalettes = {
@@ -410,6 +445,10 @@
                         currentY: initialY,
                         centerX: centerX,
                         centerY: centerY,
+                        mouseX: event.clientX,               // Track actual mouse position
+                        mouseY: event.clientY,               // Track actual mouse position
+                        smoothMouseX: event.clientX,         // Smoothed mouse position
+                        smoothMouseY: event.clientY,         // Smoothed mouse position
                         time: 0,
                         palette: palette,
                         active: true,
@@ -495,6 +534,13 @@
                     circle.dataset.lastPositionChange = '0';
                     circle.dataset.positionChangeInterval = (this.positionChangeIntervalMin + Math.random() * (this.positionChangeIntervalMax - this.positionChangeIntervalMin)).toString();
                     
+                    // Mouse disruption properties
+                    circle.dataset.disruptionX = '0';
+                    circle.dataset.disruptionY = '0';
+                    circle.dataset.currentScale = '1';
+                    circle.dataset.targetScale = '1';
+                    circle.dataset.pulseOffset = (Math.random() * Math.PI * 2).toString(); // Random start for pulse wave
+                    
                     glowData.orbs.push(circle);
                 }
                 
@@ -566,13 +612,23 @@
                 const glowData = this.activeGlows.get(element);
                 if (!glowData || !glowData.active) return;
 
+                // Update element rect in case it moved
                 glowData.rect = element.getBoundingClientRect();
+                
+                // Update center position
                 glowData.centerX = glowData.rect.left + glowData.rect.width / 2;
                 glowData.centerY = glowData.rect.top + glowData.rect.height / 2;
                 
+                // Track actual mouse position
+                glowData.mouseX = event.clientX;
+                glowData.mouseY = event.clientY;
+                
+                // Calculate mouse offset from element center
                 const mouseOffsetX = event.clientX - glowData.centerX;
                 const mouseOffsetY = event.clientY - glowData.centerY;
                 
+                // Constrain the glow movement to a percentage of the offset
+                // This keeps the glow mostly centered while allowing subtle movement
                 glowData.targetX = glowData.centerX + (mouseOffsetX * glowData.mouseInfluence);
                 glowData.targetY = glowData.centerY + (mouseOffsetY * glowData.mouseInfluence);
             }
@@ -592,6 +648,10 @@
 
                     glowData.time += this.animationFPS;
                     
+                    // Smooth mouse position tracking
+                    glowData.smoothMouseX += (glowData.mouseX - glowData.smoothMouseX) * this.mousePositionSmoothing;
+                    glowData.smoothMouseY += (glowData.mouseY - glowData.smoothMouseY) * this.mousePositionSmoothing;
+                    
                     // Smooth position interpolation
                     const deltaX = glowData.targetX - glowData.currentX;
                     const deltaY = glowData.targetY - glowData.currentY;
@@ -610,7 +670,7 @@
                     glowData.wrapper.style.filter = `blur(${this.wrapperBlur}px) hue-rotate(${hueRotate}deg)`;
 
                     // Animate each circle with gentle drift and morphing
-                    glowData.orbs.forEach((orb) => {
+                    glowData.orbs.forEach((orb, index) => {
                         const currentX = parseFloat(orb.dataset.currentX) || 0;
                         const currentY = parseFloat(orb.dataset.currentY) || 0;
                         const targetX = parseFloat(orb.dataset.targetX) || 0;
@@ -622,6 +682,49 @@
                         const rotationSpeed = parseFloat(orb.dataset.rotationSpeed) || 0;
                         const lastPositionChange = parseFloat(orb.dataset.lastPositionChange) || 0;
                         const positionChangeInterval = parseFloat(orb.dataset.positionChangeInterval) || this.positionChangeIntervalMin;
+                        const pulseOffset = parseFloat(orb.dataset.pulseOffset) || 0;
+                        
+                        // Mouse disruption calculations
+                        const orbWorldX = wrapperX + glowData.glowSize/2 + currentX;
+                        const orbWorldY = wrapperY + glowData.glowSize/2 + currentY;
+                        const distToMouse = Math.sqrt(
+                            Math.pow(orbWorldX - glowData.smoothMouseX, 2) + 
+                            Math.pow(orbWorldY - glowData.smoothMouseY, 2)
+                        );
+                        
+                        // Calculate disruption force
+                        let disruptionX = parseFloat(orb.dataset.disruptionX) || 0;
+                        let disruptionY = parseFloat(orb.dataset.disruptionY) || 0;
+                        
+                        if (distToMouse < this.mouseDisruptionRadius) {
+                            const force = 1 - (distToMouse / this.mouseDisruptionRadius);
+                            const angle = Math.atan2(orbWorldY - glowData.smoothMouseY, orbWorldX - glowData.smoothMouseX);
+                            const pushX = Math.cos(angle) * force * this.mouseDisruptionForce * 50;
+                            const pushY = Math.sin(angle) * force * this.mouseDisruptionForce * 50;
+                            
+                            disruptionX += (pushX - disruptionX) * this.sphereRecoverySpeed;
+                            disruptionY += (pushY - disruptionY) * this.sphereRecoverySpeed;
+                        } else {
+                            disruptionX *= (1 - this.sphereRecoverySpeed);
+                            disruptionY *= (1 - this.sphereRecoverySpeed);
+                        }
+                        
+                        orb.dataset.disruptionX = disruptionX.toString();
+                        orb.dataset.disruptionY = disruptionY.toString();
+                        
+                        // Calculate shrink effect
+                        let currentScale = parseFloat(orb.dataset.currentScale) || 1;
+                        let targetScale = parseFloat(orb.dataset.targetScale) || 1;
+                        
+                        if (distToMouse < this.mouseShrinkRadius) {
+                            targetScale = 1 - this.mouseShrinkAmount * (1 - distToMouse / this.mouseShrinkRadius);
+                        } else {
+                            targetScale = 1;
+                        }
+                        
+                        currentScale += (targetScale - currentScale) * this.sphereRecoverySpeed;
+                        orb.dataset.currentScale = currentScale.toString();
+                        orb.dataset.targetScale = targetScale.toString();
                         
                         // Check if it's time to change position
                         if (glowData.time - lastPositionChange > positionChangeInterval) {
@@ -642,6 +745,10 @@
                         const time = glowData.time * driftSpeed;
                         const morphTime = glowData.time * morphSpeed;
                         
+                        // Pulsing animation with phase shift between spheres
+                        const pulseTime = glowData.time * this.spherePulseSpeed + pulseOffset + (index * this.spherePulsePhaseShift);
+                        const pulseScale = 1 + Math.sin(pulseTime) * this.spherePulseAmplitude;
+                        
                         // Shape morphing - change border radius
                         const radiusX = 50 + Math.sin(morphTime + phase) * this.morphAmplitude;
                         const radiusY = 50 + Math.cos(morphTime * 0.7 + phase) * this.morphAmplitude;
@@ -653,13 +760,14 @@
                         // Slight rotation
                         const rotation = time * rotationSpeed * this.rotationMultiplier;
                         
-                        // Gentle scale breathing
-                        const scaleX = 1 + Math.sin(time * 0.5 + phase) * this.scaleAmplitude;
-                        const scaleY = 1 + Math.cos(time * 0.5 + phase * 1.3) * this.scaleAmplitude;
+                        // Gentle scale breathing (now combined with pulse and mouse effects)
+                        const scaleX = currentScale * pulseScale * (1 + Math.sin(time * 0.5 + phase) * this.scaleAmplitude);
+                        const scaleY = currentScale * pulseScale * (1 + Math.cos(time * 0.5 + phase * 1.3) * this.scaleAmplitude);
                         
+                        // Apply all transformations including disruption
                         orb.style.transform = `
                             translate(-50%, -50%) 
-                            translate(${newX + driftX}px, ${newY + driftY}px) 
+                            translate(${newX + driftX + disruptionX}px, ${newY + driftY + disruptionY}px) 
                             scale(${scaleX}, ${scaleY})
                             rotate(${rotation}deg)
                         `;

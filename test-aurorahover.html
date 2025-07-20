@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smooth Spectral Glow Effect</title>
+    <title>Dynamic JS Aurora Effect</title>
     <style>
         :root {
             --redwood: #e93826;
@@ -14,13 +14,14 @@
             --glacial: #00b795;
             --light-green: #92d0c3;
             --text: #040504;
-            --greywc: #82736f;
             --text-light: #404040;
+            --greywc: #82736f;
             --light-gray-2: #707070;
             --off-white: #f0edec;
             --white: #f4f2f1;
             --cloud: #f4f2f1;
         }
+        
         body {
             margin: 0;
             padding: 40px;
@@ -44,7 +45,6 @@
             display: inline-block;
             margin: 20px;
             padding: 15px 25px;
-            transition: all 0.3s ease;
             cursor: pointer;
             z-index: 10;
         }
@@ -53,15 +53,10 @@
             color: var(--glacial);
             text-decoration: none;
             font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        .hoverglow a:hover {
-            color: var(--light-green);
         }
 
         .hoverglow button {
-            background: linear-gradient(135deg, var(--glacial), var(--light-green));
+            background: var(--glacial);
             border: none;
             color: var(--midnight);
             padding: 12px 24px;
@@ -69,22 +64,12 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 183, 149, 0.3);
-        }
-
-        .hoverglow button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 183, 149, 0.4);
         }
 
         .hoverglow h1 {
             font-size: 2.5rem;
             margin: 20px 0;
-            background: linear-gradient(45deg, var(--redwood), var(--sunset), var(--larch), var(--glacial), var(--light-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--cloud);
         }
 
         .hoverglow h2 {
@@ -110,49 +95,6 @@
             overflow: hidden;
         }
 
-        .glow-wrapper {
-            position: absolute;
-            opacity: 0;
-            transition: opacity 0.3s ease-in;
-            filter: blur(40px);
-            will-change: transform, opacity, filter;
-            pointer-events: none;
-        }
-
-        .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            animation: glow-pulse 3s ease-in-out infinite;
-            will-change: transform;
-            pointer-events: none;
-        }
-
-        .glow-core {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            filter: blur(10px);
-            will-change: transform;
-            pointer-events: none;
-        }
-
-        @keyframes glow-pulse {
-            0%, 100% { 
-                transform: scale(1) translateZ(0);
-                filter: blur(40px) brightness(1);
-            }
-            50% { 
-                transform: scale(1.05) translateZ(0);
-                filter: blur(45px) brightness(1.1);
-            }
-        }
-
-        @keyframes color-shift {
-            0% { filter: hue-rotate(0deg) blur(40px); }
-            100% { filter: hue-rotate(360deg) blur(40px); }
-        }
-
         .demo-section {
             margin: 40px 0;
             padding: 20px;
@@ -166,13 +108,13 @@
     <div class="aurora-container" id="auroraContainer"></div>
     
     <div class="container">
-        <h1 class="hoverglow">Watson Creative Glow</h1>
+        <h1 class="hoverglow">Dynamic JS Aurora</h1>
 
         <div class="demo-section">
-            <h2 class="hoverglow">Brand Color Aurora Effect</h2>
+            <h2 class="hoverglow">Pure JavaScript Effect</h2>
             
             <p class="hoverglow">
-                Experience the smooth spectral glow using Watson Creative's brand colors. The aurora effect blends redwood, sunset, larch, and glacial tones.
+                All aurora effects are now generated entirely through JavaScript, allowing for dynamic and customizable behavior.
             </p>
             
             <a href="#" class="hoverglow">Explore Our Work</a>
@@ -183,27 +125,15 @@
             
             <br><br>
             
-            <span class="hoverglow" style="padding: 10px 20px; background: linear-gradient(135deg, var(--forest), var(--glacial)); border-radius: 5px; color: var(--cloud);">
-                Hover for Nature-Inspired Glow
+            <span class="hoverglow" style="padding: 10px 20px; background: var(--forest); border-radius: 5px; color: var(--cloud);">
+                Hover for Dynamic Glow
             </span>
             
             <br><br>
             
-            <span class="hoverglow" style="padding: 10px 20px; background: linear-gradient(135deg, var(--redwood), var(--sunset)); border-radius: 5px; color: var(--cloud);">
-                Warm Sunset Glow
+            <span class="hoverglow" style="padding: 10px 20px; background: var(--redwood); border-radius: 5px; color: var(--cloud);">
+                Warm Dynamic Glow
             </span>
-        </div>
-        
-        <div class="demo-section">
-            <h2 class="hoverglow" style="color: var(--larch);">Additional Elements</h2>
-            
-            <p class="hoverglow" style="color: var(--light-green);">
-                Each element creates a unique glow that follows your cursor smoothly, using the brand's nature-inspired color palette.
-            </p>
-            
-            <button class="hoverglow" style="background: linear-gradient(135deg, var(--sunset), var(--larch)); color: var(--midnight);">
-                LEARN MORE
-            </button>
         </div>
     </div>
 
@@ -213,7 +143,30 @@
                 this.container = document.getElementById('auroraContainer');
                 this.activeGlows = new Map();
                 this.frameId = null;
-                this.easingFactor = 0.15; // Smooth interpolation factor
+                this.easingFactor = 0.12;
+                
+                // Dynamic color palettes
+                this.colorPalettes = {
+                    warm: [
+                        'rgba(233, 56, 38, 0.8)',   // redwood
+                        'rgba(245, 128, 32, 0.7)',  // sunset
+                        'rgba(253, 183, 26, 0.6)'   // larch
+                    ],
+                    cool: [
+                        'rgba(0, 183, 149, 0.8)',   // glacial
+                        'rgba(146, 208, 195, 0.7)', // light-green
+                        'rgba(12, 75, 65, 0.6)'     // forest
+                    ],
+                    mixed: [
+                        'rgba(233, 56, 38, 0.8)',   // redwood
+                        'rgba(245, 128, 32, 0.7)',  // sunset
+                        'rgba(253, 183, 26, 0.6)',   // larch
+                        'rgba(0, 183, 149, 0.8)',   // glacial
+                        'rgba(146, 208, 195, 0.7)', // light-green
+                        'rgba(12, 75, 65, 0.6)'     // forest
+                    ]
+                };
+                
                 this.init();
             }
 
@@ -228,30 +181,45 @@
             startGlow(event) {
                 const element = event.target;
                 
-                // Prevent duplicate glows for the same element
                 if (this.activeGlows.has(element)) {
                     return;
                 }
                 
                 const rect = element.getBoundingClientRect();
-                
-                // Proportional sizing based on element dimensions
                 const elementSize = Math.sqrt(rect.width * rect.width + rect.height * rect.height);
-                const glowSize = elementSize * 1.8; // Increased multiplier for better coverage
+                const glowSize = elementSize * 2.5;
                 
+                // Create main wrapper
                 const wrapper = document.createElement('div');
-                wrapper.className = 'glow-wrapper';
-                
-                // Start at mouse position
-                const mouseX = event.clientX;
-                const mouseY = event.clientY;
-                
                 wrapper.style.cssText = `
-                    left: ${mouseX - glowSize/2}px;
-                    top: ${mouseY - glowSize/2}px;
-                    width: ${glowSize}px;
-                    height: ${glowSize}px;
+                    position: absolute;
+                    opacity: 0;
+                    will-change: transform, opacity;
+                    pointer-events: none;
+                    transition: opacity 0.3s ease-in;
                 `;
+                
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const mouseOffsetX = event.clientX - centerX;
+                const mouseOffsetY = event.clientY - centerY;
+                const mouseInfluence = 0.3;
+                const initialX = centerX + (mouseOffsetX * mouseInfluence);
+                const initialY = centerY + (mouseOffsetY * mouseInfluence);
+                
+                wrapper.style.left = `${initialX - glowSize/2}px`;
+                wrapper.style.top = `${initialY - glowSize/2}px`;
+                wrapper.style.width = `${glowSize}px`;
+                wrapper.style.height = `${glowSize}px`;
+
+                // Choose color palette based on element
+                let palette = this.colorPalettes.mixed;
+                if (element.textContent.toLowerCase().includes('warm')) {
+                    palette = this.colorPalettes.warm;
+                } else if (element.textContent.toLowerCase().includes('nature')) {
+                    palette = this.colorPalettes.cool;
+                }
 
                 const glowData = {
                     element: element,
@@ -259,84 +227,88 @@
                     orbs: [],
                     rect: rect,
                     glowSize: glowSize,
-                    targetX: mouseX,
-                    targetY: mouseY,
-                    currentX: mouseX,
-                    currentY: mouseY,
+                    targetX: initialX,
+                    targetY: initialY,
+                    currentX: initialX,
+                    currentY: initialY,
+                    centerX: centerX,
+                    centerY: centerY,
                     time: 0,
-                    hue: Math.random() * 360,
+                    palette: palette,
                     active: true,
-                    fadeTimeout: null
+                    fadeTimeout: null,
+                    mouseInfluence: mouseInfluence
                 };
 
-                // Create layered glow orbs for depth
-                const orbSizes = [1, 0.7, 0.5, 0.3]; // Multiple layers for smooth gradient
-                orbSizes.forEach((sizeFactor, index) => {
-                    const orb = this.createGlowOrb(glowSize * sizeFactor, index);
-                    wrapper.appendChild(orb);
-                    glowData.orbs.push(orb);
-                });
-
-                // Create bright core that follows cursor exactly
-                const core = this.createGlowCore(glowSize * 0.15);
-                wrapper.appendChild(core);
-                glowData.core = core;
+                // Create dynamic glow layers
+                this.createGlowLayers(wrapper, glowData);
 
                 this.container.appendChild(wrapper);
                 this.activeGlows.set(element, glowData);
 
-                // Smooth fade in
                 requestAnimationFrame(() => {
                     wrapper.style.opacity = '1';
                 });
 
-                // Start animation loop if not already running
                 if (!this.frameId) {
                     this.animate();
                 }
             }
 
-            createGlowOrb(size, index) {
-                const orb = document.createElement('div');
-                orb.className = 'glow-orb';
+            createGlowLayers(wrapper, glowData) {
+                const layerCount = 5;
+                const baseSize = glowData.glowSize;
                 
-                // Layered colors using custom properties
-                const colors = [
-                    'radial-gradient(circle, rgba(233, 56, 38, 0.6) 0%, rgba(245, 128, 32, 0.4) 40%, rgba(0, 183, 149, 0.2) 70%, transparent 100%)', // redwood to sunset to glacial
-                    'radial-gradient(circle, rgba(0, 183, 149, 0.5) 0%, rgba(146, 208, 195, 0.3) 50%, transparent 100%)', // glacial to light-green
-                    'radial-gradient(circle, rgba(253, 183, 26, 0.5) 0%, rgba(245, 128, 32, 0.3) 60%, transparent 100%)', // larch to sunset
-                    'radial-gradient(circle, rgba(146, 208, 195, 0.7) 0%, rgba(0, 183, 149, 0.4) 40%, transparent 100%)' // light-green to glacial
-                ];
-                
-                orb.style.cssText = `
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: 50%;
-                    top: 50%;
-                    transform: translate(-50%, -50%);
-                    background: ${colors[index % colors.length]};
-                    animation-delay: ${index * 0.1}s;
-                    pointer-events: none;
-                `;
+                for (let i = 0; i < layerCount; i++) {
+                    const layerSize = baseSize * (1 - i * 0.15);
+                    const orb = document.createElement('div');
+                    
+                    // Dynamic gradient based on palette
+                    const color1 = glowData.palette[i % glowData.palette.length];
+                    const color2 = glowData.palette[(i + 1) % glowData.palette.length];
+                    
+                    orb.style.cssText = `
+                        position: absolute;
+                        width: ${layerSize}px;
+                        height: ${layerSize}px;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        border-radius: 50%;
+                        pointer-events: none;
+                        will-change: transform, filter;
+                        mix-blend-mode: screen;
+                        filter: blur(${30 + i * 10}px);
+                        background: radial-gradient(circle, ${color1} 0%, ${color2} 50%, transparent 100%);
+                    `;
+                    
+                    // Add animation properties
+                    orb.dataset.animSpeed = 0.5 + Math.random() * 1.5;
+                    orb.dataset.animPhase = Math.random() * Math.PI * 2;
+                    orb.dataset.animAmplitude = 5 + Math.random() * 10;
+                    
+                    wrapper.appendChild(orb);
+                    glowData.orbs.push(orb);
+                }
 
-                return orb;
-            }
-
-            createGlowCore(size) {
+                // Create bright core
                 const core = document.createElement('div');
-                core.className = 'glow-core';
-                
+                const coreSize = baseSize * 0.15;
                 core.style.cssText = `
-                    width: ${size}px;
-                    height: ${size}px;
+                    position: absolute;
+                    width: ${coreSize}px;
+                    height: ${coreSize}px;
                     left: 50%;
                     top: 50%;
                     transform: translate(-50%, -50%);
-                    background: radial-gradient(circle, rgba(253, 183, 26, 0.9) 0%, rgba(245, 128, 32, 0.7) 20%, rgba(0, 183, 149, 0.5) 40%, transparent 100%);
+                    border-radius: 50%;
                     pointer-events: none;
+                    mix-blend-mode: screen;
+                    filter: blur(5px);
+                    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, ${glowData.palette[0]} 40%, transparent 100%);
                 `;
-
-                return core;
+                wrapper.appendChild(core);
+                glowData.core = core;
             }
 
             updateMousePosition(event) {
@@ -344,12 +316,15 @@
                 const glowData = this.activeGlows.get(element);
                 if (!glowData || !glowData.active) return;
 
-                // Update target position to mouse cursor
-                glowData.targetX = event.clientX;
-                glowData.targetY = event.clientY;
-                
-                // Update element rect in case it moved
                 glowData.rect = element.getBoundingClientRect();
+                glowData.centerX = glowData.rect.left + glowData.rect.width / 2;
+                glowData.centerY = glowData.rect.top + glowData.rect.height / 2;
+                
+                const mouseOffsetX = event.clientX - glowData.centerX;
+                const mouseOffsetY = event.clientY - glowData.centerY;
+                
+                glowData.targetX = glowData.centerX + (mouseOffsetX * glowData.mouseInfluence);
+                glowData.targetY = glowData.centerY + (mouseOffsetY * glowData.mouseInfluence);
             }
 
             animate() {
@@ -357,7 +332,6 @@
                 
                 this.activeGlows.forEach((glowData, element) => {
                     if (!glowData.active && !glowData.wrapper.parentNode) {
-                        // Clean up orphaned entries
                         this.activeGlows.delete(element);
                         return;
                     }
@@ -366,44 +340,50 @@
                         hasActiveGlows = true;
                     }
 
-                    glowData.time += 0.016; // ~60fps
+                    glowData.time += 0.016;
                     
-                    // Smooth interpolation for mouse following
+                    // Smooth position interpolation
                     const deltaX = glowData.targetX - glowData.currentX;
                     const deltaY = glowData.targetY - glowData.currentY;
                     
                     glowData.currentX += deltaX * this.easingFactor;
                     glowData.currentY += deltaY * this.easingFactor;
                     
-                    // Update wrapper position to follow cursor smoothly
                     const wrapperX = glowData.currentX - glowData.glowSize/2;
                     const wrapperY = glowData.currentY - glowData.glowSize/2;
                     
                     glowData.wrapper.style.left = `${wrapperX}px`;
                     glowData.wrapper.style.top = `${wrapperY}px`;
 
-                    // Smooth color shifting
-                    glowData.hue += 0.3;
-                    glowData.wrapper.style.filter = `blur(40px) hue-rotate(${glowData.hue}deg)`;
+                    // Dynamic color shifting
+                    const hueRotate = Math.sin(glowData.time * 0.5) * 30;
+                    glowData.wrapper.style.filter = `hue-rotate(${hueRotate}deg)`;
 
-                    // Subtle orb animations for organic feel
+                    // Animate each orb independently
                     glowData.orbs.forEach((orb, index) => {
-                        const phase = glowData.time + index * Math.PI / 4;
-                        const wobbleX = Math.sin(phase * 0.5) * 3;
-                        const wobbleY = Math.cos(phase * 0.7) * 3;
-                        const scale = 1 + Math.sin(phase * 0.3) * 0.05;
+                        const speed = parseFloat(orb.dataset.animSpeed);
+                        const phase = parseFloat(orb.dataset.animPhase);
+                        const amplitude = parseFloat(orb.dataset.animAmplitude);
+                        
+                        const time = glowData.time * speed;
+                        const wobbleX = Math.sin(time + phase) * amplitude;
+                        const wobbleY = Math.cos(time * 0.7 + phase) * amplitude;
+                        const scale = 1 + Math.sin(time * 0.3 + phase) * 0.1;
+                        const brightness = 1 + Math.sin(time * 0.5) * 0.2;
                         
                         orb.style.transform = `translate(-50%, -50%) translate(${wobbleX}px, ${wobbleY}px) scale(${scale})`;
+                        orb.style.filter = `blur(${30 + index * 10}px) brightness(${brightness})`;
                     });
 
-                    // Core follows exactly with slight pulse
+                    // Animate core
                     if (glowData.core) {
-                        const coreScale = 1 + Math.sin(glowData.time * 3) * 0.1;
+                        const coreScale = 1 + Math.sin(glowData.time * 3) * 0.15;
+                        const coreBrightness = 1.2 + Math.sin(glowData.time * 4) * 0.3;
                         glowData.core.style.transform = `translate(-50%, -50%) scale(${coreScale})`;
+                        glowData.core.style.filter = `blur(5px) brightness(${coreBrightness})`;
                     }
                 });
 
-                // Continue animation if there are active glows
                 if (hasActiveGlows || this.activeGlows.size > 0) {
                     this.frameId = requestAnimationFrame(() => this.animate());
                 } else {
@@ -415,17 +395,13 @@
                 const glowData = this.activeGlows.get(element);
                 if (!glowData) return;
 
-                // Clear any existing fade timeout
                 if (glowData.fadeTimeout) {
                     clearTimeout(glowData.fadeTimeout);
                 }
 
                 glowData.active = false;
-
-                // Smooth fade out
                 glowData.wrapper.style.opacity = '0';
-                glowData.wrapper.style.transform = 'scale(0.8)';
-                glowData.wrapper.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
+                glowData.wrapper.style.transition = 'opacity 0.4s ease-out';
 
                 glowData.fadeTimeout = setTimeout(() => {
                     if (glowData.wrapper && glowData.wrapper.parentNode) {
@@ -433,7 +409,6 @@
                     }
                     this.activeGlows.delete(element);
                     
-                    // Stop animation if no more glows
                     if (this.activeGlows.size === 0 && this.frameId) {
                         cancelAnimationFrame(this.frameId);
                         this.frameId = null;
@@ -442,7 +417,6 @@
             }
         }
 
-        // Initialize the glow effect when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             new GlowEffect();
         });

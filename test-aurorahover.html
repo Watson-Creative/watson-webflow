@@ -93,7 +93,6 @@
             pointer-events: none;
             z-index: 5; /* Increased to ensure visibility */
             overflow: hidden;
-            mix-blend-mode: screen; /* Add screen blend mode to container */
         }
 
         .demo-section {
@@ -195,9 +194,10 @@
                 wrapper.style.cssText = `
                     position: absolute;
                     opacity: 0;
-                    will-change: transform, opacity;
+                    will-change: transform, opacity, filter;
                     pointer-events: none;
                     transition: opacity 0.3s ease-in;
+                    mix-blend-mode: screen;
                 `;
                 
                 const centerX = rect.left + rect.width / 2;
@@ -227,6 +227,7 @@
                     wrapper: wrapper,
                     orbs: [],
                     cores: [],
+                    coreWrapper: null,
                     rect: rect,
                     glowSize: glowSize,
                     targetX: initialX,
@@ -258,62 +259,74 @@
             }
 
             createGlowLayers(wrapper, glowData) {
-                const layerCount = 6; // More layers for richer effect
+                // Create 4-8 random circles for more variation
+                const circleCount = 4 + Math.floor(Math.random() * 5);
                 const baseSize = glowData.glowSize;
                 
-                // Create multiple distinct orb layers
-                for (let i = 0; i < layerCount; i++) {
-                    const layerSize = baseSize * (1 - i * 0.12); // Smaller size reduction for overlap
-                    const orb = document.createElement('div');
+                for (let i = 0; i < circleCount; i++) {
+                    const circle = document.createElement('div');
                     
-                    // Dynamic gradient based on palette
-                    const color1 = glowData.palette[i % glowData.palette.length];
-                    const color2 = glowData.palette[(i + 1) % glowData.palette.length];
-                    const color3 = glowData.palette[(i + 2) % glowData.palette.length];
+                    // Random size variation (0.2x to 0.8x of base size)
+                    const sizeMultiplier = 0.2 + Math.random() * 0.6;
+                    const circleSize = baseSize * sizeMultiplier;
                     
-                    // Vary blur amounts for visual separation
-                    const blurAmount = i === 0 ? 40 : 15 + i * 8; // First layer more blurred, others less
-                    const opacity = i === 0 ? 0.4 : 0.6 - i * 0.08; // Varying opacity
+                    // Random color from palette
+                    const color = glowData.palette[Math.floor(Math.random() * glowData.palette.length)];
                     
-                    orb.style.cssText = `
+                    // Random position offsets for uneven distribution
+                    const offsetRange = baseSize * 0.5;
+                    const randomX = (Math.random() - 0.5) * offsetRange;
+                    const randomY = (Math.random() - 0.5) * offsetRange;
+                    
+                    circle.style.cssText = `
                         position: absolute;
-                        width: ${layerSize}px;
-                        height: ${layerSize}px;
+                        width: ${circleSize}px;
+                        height: ${circleSize}px;
                         left: 50%;
                         top: 50%;
-                        transform: translate(-50%, -50%);
+                        transform: translate(-50%, -50%) translate(${randomX}px, ${randomY}px);
                         border-radius: 50%;
+                        background: ${color};
                         pointer-events: none;
-                        will-change: transform, filter;
-                        mix-blend-mode: screen;
-                        filter: blur(${blurAmount}px);
-                        opacity: ${opacity};
-                        background: radial-gradient(circle, 
-                            ${color1} 0%, 
-                            ${color2} 30%, 
-                            ${color3} 60%, 
-                            transparent 100%);
+                        will-change: transform;
+                        opacity: ${0.7 + Math.random() * 0.3};
                     `;
                     
-                    // Add more varied animation properties
-                    orb.dataset.animSpeed = 0.3 + Math.random() * 1.2;
-                    orb.dataset.animPhase = Math.random() * Math.PI * 2;
-                    orb.dataset.animAmplitude = 8 + Math.random() * 15;
-                    orb.dataset.rotationSpeed = (Math.random() - 0.5) * 2; // Rotation direction
-                    orb.dataset.baseBlur = blurAmount;
+                    // Store animation data
+                    circle.dataset.initialX = randomX;
+                    circle.dataset.initialY = randomY;
+                    circle.dataset.driftSpeed = 0.2 + Math.random() * 0.5;
+                    circle.dataset.driftAmplitude = 10 + Math.random() * 30;
+                    circle.dataset.phase = Math.random() * Math.PI * 2;
+                    circle.dataset.rotationSpeed = (Math.random() - 0.5) * 0.5;
                     
-                    wrapper.appendChild(orb);
-                    glowData.orbs.push(orb);
+                    glowData.orbs.push(circle);
                 }
-
-                // Create multiple core layers for depth
-                const coreCount = 3;
+                
+                // Apply blur to the entire wrapper for soft glow effect
+                wrapper.style.filter = 'blur(50px)';
+                
+                // Add all circles to wrapper
+                glowData.orbs.forEach(orb => wrapper.appendChild(orb));
+                
+                // Create a separate sharp core layer (optional, not blurred)
+                const coreWrapper = document.createElement('div');
+                coreWrapper.style.cssText = `
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    pointer-events: none;
+                `;
+                
+                // Add 1-2 bright cores
+                const coreCount = 1 + Math.floor(Math.random() * 2);
                 glowData.cores = [];
                 
                 for (let i = 0; i < coreCount; i++) {
                     const core = document.createElement('div');
-                    const coreSize = baseSize * (0.2 - i * 0.05);
-                    const coreBlur = 5 + i * 3;
+                    const coreSize = baseSize * (0.1 + Math.random() * 0.1);
+                    const coreX = (Math.random() - 0.5) * baseSize * 0.3;
+                    const coreY = (Math.random() - 0.5) * baseSize * 0.3;
                     
                     core.style.cssText = `
                         position: absolute;
@@ -321,24 +334,28 @@
                         height: ${coreSize}px;
                         left: 50%;
                         top: 50%;
-                        transform: translate(-50%, -50%);
+                        transform: translate(-50%, -50%) translate(${coreX}px, ${coreY}px);
                         border-radius: 50%;
-                        pointer-events: none;
-                        mix-blend-mode: screen;
-                        filter: blur(${coreBlur}px);
-                        opacity: ${0.9 - i * 0.2};
                         background: radial-gradient(circle, 
-                            rgba(255,255,255,${1 - i * 0.3}) 0%, 
-                            ${glowData.palette[i % glowData.palette.length]} 30%, 
+                            rgba(255,255,255,0.9) 0%, 
+                            ${glowData.palette[0]} 50%, 
                             transparent 100%);
+                        filter: blur(8px);
+                        pointer-events: none;
+                        opacity: 0.8;
                     `;
                     
+                    core.dataset.initialX = coreX;
+                    core.dataset.initialY = coreY;
                     core.dataset.animSpeed = 2 + Math.random();
-                    core.dataset.animPhase = Math.random() * Math.PI * 2;
+                    core.dataset.phase = Math.random() * Math.PI * 2;
                     
-                    wrapper.appendChild(core);
+                    coreWrapper.appendChild(core);
                     glowData.cores.push(core);
                 }
+                
+                wrapper.appendChild(coreWrapper);
+                glowData.coreWrapper = coreWrapper;
             }
 
             updateMousePosition(event) {
@@ -385,73 +402,62 @@
                     glowData.wrapper.style.left = `${wrapperX}px`;
                     glowData.wrapper.style.top = `${wrapperY}px`;
 
-                    // Dynamic color shifting
-                    const hueRotate = Math.sin(glowData.time * 0.5) * 30;
-                    glowData.wrapper.style.filter = `hue-rotate(${hueRotate}deg)`;
+                    // Dynamic color shifting - subtle
+                    const hueRotate = Math.sin(glowData.time * 0.3) * 20;
+                    glowData.wrapper.style.filter = `blur(50px) hue-rotate(${hueRotate}deg)`;
 
-                    // Animate each orb independently with more visible movement
-                    glowData.orbs.forEach((orb, index) => {
-                        const speed = parseFloat(orb.dataset.animSpeed);
-                        const phase = parseFloat(orb.dataset.animPhase);
-                        const amplitude = parseFloat(orb.dataset.animAmplitude);
+                    // Animate each circle with gentle drift
+                    glowData.orbs.forEach((orb) => {
+                        const initialX = parseFloat(orb.dataset.initialX);
+                        const initialY = parseFloat(orb.dataset.initialY);
+                        const driftSpeed = parseFloat(orb.dataset.driftSpeed);
+                        const driftAmplitude = parseFloat(orb.dataset.driftAmplitude);
+                        const phase = parseFloat(orb.dataset.phase);
                         const rotationSpeed = parseFloat(orb.dataset.rotationSpeed);
-                        const baseBlur = parseFloat(orb.dataset.baseBlur);
                         
-                        const time = glowData.time * speed;
+                        const time = glowData.time * driftSpeed;
                         
-                        // Create circular motion patterns
-                        const orbitRadius = amplitude * (1 + Math.sin(time * 0.3) * 0.3);
-                        const orbitAngle = time + phase;
-                        const wobbleX = Math.cos(orbitAngle) * orbitRadius;
-                        const wobbleY = Math.sin(orbitAngle * 0.8) * orbitRadius;
+                        // Gentle drift motion
+                        const driftX = Math.sin(time + phase) * driftAmplitude;
+                        const driftY = Math.cos(time * 0.8 + phase) * driftAmplitude * 0.7;
                         
-                        // Add secondary movement
-                        const secondaryX = Math.sin(time * 1.3 + phase) * amplitude * 0.5;
-                        const secondaryY = Math.cos(time * 1.7 + phase) * amplitude * 0.5;
+                        // Slight rotation
+                        const rotation = time * rotationSpeed * 30;
                         
-                        // Dynamic scale and rotation
-                        const scale = 1 + Math.sin(time * 0.3 + phase) * 0.15;
-                        const rotation = time * rotationSpeed * 20;
-                        
-                        // Dynamic blur for breathing effect
-                        const blurVariation = Math.sin(time * 0.5) * 5;
-                        const currentBlur = Math.max(5, baseBlur + blurVariation);
-                        
-                        // Brightness pulsing
-                        const brightness = 1 + Math.sin(time * 0.7 + phase) * 0.3;
+                        // Gentle scale breathing
+                        const scale = 1 + Math.sin(time * 0.5 + phase) * 0.1;
                         
                         orb.style.transform = `
                             translate(-50%, -50%) 
-                            translate(${wobbleX + secondaryX}px, ${wobbleY + secondaryY}px) 
-                            scale(${scale}) 
+                            translate(${initialX + driftX}px, ${initialY + driftY}px) 
+                            scale(${scale})
                             rotate(${rotation}deg)
                         `;
-                        orb.style.filter = `blur(${currentBlur}px) brightness(${brightness})`;
                     });
 
-                    // Animate cores with distinct patterns
-                    if (glowData.cores) {
-                        glowData.cores.forEach((core, index) => {
+                    // Animate cores with subtle pulsing
+                    if (glowData.cores && glowData.coreWrapper) {
+                        glowData.cores.forEach((core) => {
+                            const initialX = parseFloat(core.dataset.initialX);
+                            const initialY = parseFloat(core.dataset.initialY);
                             const speed = parseFloat(core.dataset.animSpeed);
-                            const phase = parseFloat(core.dataset.animPhase);
+                            const phase = parseFloat(core.dataset.phase);
                             
                             const time = glowData.time * speed;
                             
-                            // Cores move in tighter patterns
-                            const coreX = Math.sin(time + phase) * 3;
-                            const coreY = Math.cos(time * 1.3 + phase) * 3;
+                            // Very subtle movement
+                            const coreX = initialX + Math.sin(time + phase) * 5;
+                            const coreY = initialY + Math.cos(time * 0.7 + phase) * 5;
                             
-                            const coreScale = 1 + Math.sin(time + phase) * 0.2;
-                            const coreBrightness = 1.3 + Math.sin(time * 1.5 + phase) * 0.4;
-                            const coreRotation = time * 30;
+                            const coreScale = 1 + Math.sin(time + phase) * 0.15;
+                            const coreBrightness = 0.8 + Math.sin(time * 1.5 + phase) * 0.2;
                             
                             core.style.transform = `
                                 translate(-50%, -50%) 
                                 translate(${coreX}px, ${coreY}px) 
                                 scale(${coreScale})
-                                rotate(${coreRotation}deg)
                             `;
-                            core.style.filter = `blur(${5 + index * 3}px) brightness(${coreBrightness})`;
+                            core.style.opacity = coreBrightness;
                         });
                     }
                 });

@@ -47,6 +47,13 @@
             padding: 15px 25px;
             cursor: pointer;
             z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        /* Ensure interactive elements maintain proper z-index */
+        .hoverglow * {
+            position: relative;
+            z-index: 1;
         }
 
         .hoverglow a {
@@ -171,90 +178,144 @@
             }
 
             init() {
-                document.querySelectorAll('.hoverglow').forEach(element => {
-                    element.addEventListener('mouseenter', (e) => this.startGlow(e));
-                    element.addEventListener('mousemove', (e) => this.updateMousePosition(e));
-                    element.addEventListener('mouseleave', (e) => this.endGlow(e.target));
-                });
+                console.log('GlowEffect initialized');
+                
+                // Use event delegation for better handling of all hoverglow elements
+                document.addEventListener('mouseenter', (e) => {
+                    // Check if the target or any parent has hoverglow class
+                    const hoverElement = e.target.closest('.hoverglow');
+                    if (hoverElement && !this.activeGlows.has(hoverElement)) {
+                        console.log('Mouse enter on:', hoverElement);
+                        // Create a new event with the hoverglow element as target
+                        this.handleMouseEnter(e, hoverElement);
+                    }
+                }, true);
+                
+                document.addEventListener('mousemove', (e) => {
+                    const hoverElement = e.target.closest('.hoverglow');
+                    if (hoverElement && this.activeGlows.has(hoverElement)) {
+                        this.handleMouseMove(e, hoverElement);
+                    }
+                }, true);
+                
+                document.addEventListener('mouseleave', (e) => {
+                    const hoverElement = e.target.closest('.hoverglow');
+                    if (hoverElement) {
+                        // Check if we're actually leaving the hoverglow element
+                        const relatedTarget = e.relatedTarget;
+                        if (!relatedTarget || !hoverElement.contains(relatedTarget)) {
+                            this.endGlow(hoverElement);
+                        }
+                    }
+                }, true);
+            }
+            
+            handleMouseEnter(event, element) {
+                // Start glow with the original event but the correct element
+                const e = {
+                    target: element,
+                    clientX: event.clientX,
+                    clientY: event.clientY
+                };
+                this.startGlow(e);
+            }
+            
+            handleMouseMove(event, element) {
+                // Update position with the original event but the correct element
+                const e = {
+                    target: element,
+                    clientX: event.clientX,
+                    clientY: event.clientY
+                };
+                this.updateMousePosition(e);
             }
 
             startGlow(event) {
-                const element = event.target;
+                try {
+                    const element = event.target;
+                    
+                    // Prevent duplicate glows for the same element
+                    if (this.activeGlows.has(element)) {
+                        return;
+                    }
+                    
+                    console.log('Starting glow for:', element);
+                    
+                    const rect = element.getBoundingClientRect();
+                    const elementSize = Math.sqrt(rect.width * rect.width + rect.height * rect.height);
+                    const glowSize = elementSize * 3; // Increased for better circle visibility
                 
-                if (this.activeGlows.has(element)) {
-                    return;
-                }
-                
-                const rect = element.getBoundingClientRect();
-                const elementSize = Math.sqrt(rect.width * rect.width + rect.height * rect.height);
-                const glowSize = elementSize * 3; // Increased for better circle visibility
-                
-                // Create main wrapper
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = `
-                    position: absolute;
-                    opacity: 0;
-                    will-change: transform, opacity, filter;
-                    pointer-events: none;
-                    transition: opacity 0.3s ease-in;
-                    mix-blend-mode: screen;
-                `;
-                
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                const mouseOffsetX = event.clientX - centerX;
-                const mouseOffsetY = event.clientY - centerY;
-                const mouseInfluence = 0.3;
-                const initialX = centerX + (mouseOffsetX * mouseInfluence);
-                const initialY = centerY + (mouseOffsetY * mouseInfluence);
-                
-                wrapper.style.left = `${initialX - glowSize/2}px`;
-                wrapper.style.top = `${initialY - glowSize/2}px`;
-                wrapper.style.width = `${glowSize}px`;
-                wrapper.style.height = `${glowSize}px`;
+                    // Create main wrapper
+                    const wrapper = document.createElement('div');
+                    wrapper.style.cssText = `
+                        position: absolute;
+                        opacity: 0;
+                        will-change: transform, opacity, filter;
+                        pointer-events: none;
+                        transition: opacity 0.3s ease-in;
+                        mix-blend-mode: screen;
+                    `;
+                    
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    const mouseOffsetX = event.clientX - centerX;
+                    const mouseOffsetY = event.clientY - centerY;
+                    const mouseInfluence = 0.3;
+                    const initialX = centerX + (mouseOffsetX * mouseInfluence);
+                    const initialY = centerY + (mouseOffsetY * mouseInfluence);
+                    
+                    wrapper.style.left = `${initialX - glowSize/2}px`;
+                    wrapper.style.top = `${initialY - glowSize/2}px`;
+                    wrapper.style.width = `${glowSize}px`;
+                    wrapper.style.height = `${glowSize}px`;
 
-                // Choose color palette based on element
-                let palette = this.colorPalettes.mixed;
-                if (element.textContent.toLowerCase().includes('warm')) {
-                    palette = this.colorPalettes.warm;
-                } else if (element.textContent.toLowerCase().includes('nature')) {
-                    palette = this.colorPalettes.cool;
-                }
+                    // Choose color palette based on element
+                    let palette = this.colorPalettes.mixed;
+                    if (element.textContent.toLowerCase().includes('warm')) {
+                        palette = this.colorPalettes.warm;
+                    } else if (element.textContent.toLowerCase().includes('nature')) {
+                        palette = this.colorPalettes.cool;
+                    }
 
-                const glowData = {
-                    element: element,
-                    wrapper: wrapper,
-                    orbs: [],
-                    cores: [],
-                    coreWrapper: null,
-                    rect: rect,
-                    glowSize: glowSize,
-                    targetX: initialX,
-                    targetY: initialY,
-                    currentX: initialX,
-                    currentY: initialY,
-                    centerX: centerX,
-                    centerY: centerY,
-                    time: 0,
-                    palette: palette,
-                    active: true,
-                    fadeTimeout: null,
-                    mouseInfluence: mouseInfluence
-                };
+                    const glowData = {
+                        element: element,
+                        wrapper: wrapper,
+                        orbs: [],
+                        cores: [],
+                        coreWrapper: null,
+                        rect: rect,
+                        glowSize: glowSize,
+                        targetX: initialX,
+                        targetY: initialY,
+                        currentX: initialX,
+                        currentY: initialY,
+                        centerX: centerX,
+                        centerY: centerY,
+                        time: 0,
+                        palette: palette,
+                        active: true,
+                        fadeTimeout: null,
+                        mouseInfluence: mouseInfluence
+                    };
 
-                // Create dynamic glow layers
-                this.createGlowLayers(wrapper, glowData);
+                    // Create dynamic glow layers
+                    this.createGlowLayers(wrapper, glowData);
 
-                this.container.appendChild(wrapper);
-                this.activeGlows.set(element, glowData);
+                    this.container.appendChild(wrapper);
+                    this.activeGlows.set(element, glowData);
 
-                requestAnimationFrame(() => {
-                    wrapper.style.opacity = '1';
-                });
+                    // Smooth fade in
+                    requestAnimationFrame(() => {
+                        wrapper.style.opacity = '1';
+                    });
 
-                if (!this.frameId) {
-                    this.animate();
+                    // Start animation loop if not already running
+                    if (!this.frameId) {
+                        this.animate();
+                    }
+                } catch (error) {
+                    console.error('Error starting glow:', error);
                 }
             }
 
@@ -288,17 +349,25 @@
                         border-radius: 50%;
                         background: ${color};
                         pointer-events: none;
-                        will-change: transform;
+                        will-change: transform, border-radius;
                         opacity: ${0.7 + Math.random() * 0.3};
+                        transition: all 0.3s ease;
                     `;
                     
                     // Store animation data
-                    circle.dataset.initialX = randomX;
-                    circle.dataset.initialY = randomY;
-                    circle.dataset.driftSpeed = 0.2 + Math.random() * 0.5;
-                    circle.dataset.driftAmplitude = 10 + Math.random() * 30;
-                    circle.dataset.phase = Math.random() * Math.PI * 2;
-                    circle.dataset.rotationSpeed = (Math.random() - 0.5) * 0.5;
+                    circle.dataset.initialX = randomX.toString();
+                    circle.dataset.initialY = randomY.toString();
+                    circle.dataset.currentX = randomX.toString();
+                    circle.dataset.currentY = randomY.toString();
+                    circle.dataset.targetX = randomX.toString();
+                    circle.dataset.targetY = randomY.toString();
+                    circle.dataset.size = circleSize.toString();
+                    circle.dataset.driftSpeed = (0.1 + Math.random() * 0.3).toString();
+                    circle.dataset.morphSpeed = (0.5 + Math.random() * 1).toString();
+                    circle.dataset.phase = (Math.random() * Math.PI * 2).toString();
+                    circle.dataset.rotationSpeed = ((Math.random() - 0.5) * 0.3).toString();
+                    circle.dataset.lastPositionChange = '0';
+                    circle.dataset.positionChangeInterval = (2 + Math.random() * 3).toString(); // Change position every 2-5 seconds
                     
                     glowData.orbs.push(circle);
                 }
@@ -343,12 +412,18 @@
                         filter: blur(8px);
                         pointer-events: none;
                         opacity: 0.8;
+                        transition: all 0.5s ease;
                     `;
                     
-                    core.dataset.initialX = coreX;
-                    core.dataset.initialY = coreY;
-                    core.dataset.animSpeed = 2 + Math.random();
-                    core.dataset.phase = Math.random() * Math.PI * 2;
+                    core.dataset.initialX = coreX.toString();
+                    core.dataset.initialY = coreY.toString();
+                    core.dataset.currentX = coreX.toString();
+                    core.dataset.currentY = coreY.toString();
+                    core.dataset.targetX = coreX.toString();
+                    core.dataset.targetY = coreY.toString();
+                    core.dataset.animSpeed = (2 + Math.random()).toString();
+                    core.dataset.phase = (Math.random() * Math.PI * 2).toString();
+                    core.dataset.lastPositionChange = '0';
                     
                     coreWrapper.appendChild(core);
                     glowData.cores.push(core);
@@ -406,48 +481,92 @@
                     const hueRotate = Math.sin(glowData.time * 0.3) * 20;
                     glowData.wrapper.style.filter = `blur(50px) hue-rotate(${hueRotate}deg)`;
 
-                    // Animate each circle with gentle drift
+                    // Animate each circle with gentle drift and morphing
                     glowData.orbs.forEach((orb) => {
-                        const initialX = parseFloat(orb.dataset.initialX);
-                        const initialY = parseFloat(orb.dataset.initialY);
-                        const driftSpeed = parseFloat(orb.dataset.driftSpeed);
-                        const driftAmplitude = parseFloat(orb.dataset.driftAmplitude);
-                        const phase = parseFloat(orb.dataset.phase);
-                        const rotationSpeed = parseFloat(orb.dataset.rotationSpeed);
+                        const currentX = parseFloat(orb.dataset.currentX) || 0;
+                        const currentY = parseFloat(orb.dataset.currentY) || 0;
+                        const targetX = parseFloat(orb.dataset.targetX) || 0;
+                        const targetY = parseFloat(orb.dataset.targetY) || 0;
+                        const size = parseFloat(orb.dataset.size) || 100;
+                        const driftSpeed = parseFloat(orb.dataset.driftSpeed) || 0.2;
+                        const morphSpeed = parseFloat(orb.dataset.morphSpeed) || 0.7;
+                        const phase = parseFloat(orb.dataset.phase) || 0;
+                        const rotationSpeed = parseFloat(orb.dataset.rotationSpeed) || 0;
+                        const lastPositionChange = parseFloat(orb.dataset.lastPositionChange) || 0;
+                        const positionChangeInterval = parseFloat(orb.dataset.positionChangeInterval) || 3;
+                        
+                        // Check if it's time to change position
+                        if (glowData.time - lastPositionChange > positionChangeInterval) {
+                            // Generate new target position
+                            const offsetRange = glowData.glowSize * 0.4;
+                            orb.dataset.targetX = ((Math.random() - 0.5) * offsetRange).toString();
+                            orb.dataset.targetY = ((Math.random() - 0.5) * offsetRange).toString();
+                            orb.dataset.lastPositionChange = glowData.time.toString();
+                        }
+                        
+                        // Smooth interpolation towards target position
+                        const newX = currentX + (targetX - currentX) * 0.02;
+                        const newY = currentY + (targetY - currentY) * 0.02;
+                        orb.dataset.currentX = newX.toString();
+                        orb.dataset.currentY = newY.toString();
                         
                         const time = glowData.time * driftSpeed;
+                        const morphTime = glowData.time * morphSpeed;
                         
-                        // Gentle drift motion
-                        const driftX = Math.sin(time + phase) * driftAmplitude;
-                        const driftY = Math.cos(time * 0.8 + phase) * driftAmplitude * 0.7;
+                        // Shape morphing - change border radius
+                        const radiusX = 50 + Math.sin(morphTime + phase) * 20;
+                        const radiusY = 50 + Math.cos(morphTime * 0.7 + phase) * 20;
+                        
+                        // Gentle drift on top of position changes
+                        const driftX = Math.sin(time + phase) * 5;
+                        const driftY = Math.cos(time * 0.8 + phase) * 5;
                         
                         // Slight rotation
                         const rotation = time * rotationSpeed * 30;
                         
                         // Gentle scale breathing
-                        const scale = 1 + Math.sin(time * 0.5 + phase) * 0.1;
+                        const scaleX = 1 + Math.sin(time * 0.5 + phase) * 0.1;
+                        const scaleY = 1 + Math.cos(time * 0.5 + phase * 1.3) * 0.1;
                         
                         orb.style.transform = `
                             translate(-50%, -50%) 
-                            translate(${initialX + driftX}px, ${initialY + driftY}px) 
-                            scale(${scale})
+                            translate(${newX + driftX}px, ${newY + driftY}px) 
+                            scale(${scaleX}, ${scaleY})
                             rotate(${rotation}deg)
                         `;
+                        orb.style.borderRadius = `${radiusX}% ${radiusY}%`;
                     });
 
-                    // Animate cores with subtle pulsing
+                    // Animate cores with subtle pulsing and position changes
                     if (glowData.cores && glowData.coreWrapper) {
                         glowData.cores.forEach((core) => {
-                            const initialX = parseFloat(core.dataset.initialX);
-                            const initialY = parseFloat(core.dataset.initialY);
-                            const speed = parseFloat(core.dataset.animSpeed);
-                            const phase = parseFloat(core.dataset.phase);
+                            const currentX = parseFloat(core.dataset.currentX) || 0;
+                            const currentY = parseFloat(core.dataset.currentY) || 0;
+                            const targetX = parseFloat(core.dataset.targetX) || 0;
+                            const targetY = parseFloat(core.dataset.targetY) || 0;
+                            const speed = parseFloat(core.dataset.animSpeed) || 2;
+                            const phase = parseFloat(core.dataset.phase) || 0;
+                            const lastPositionChange = parseFloat(core.dataset.lastPositionChange) || 0;
+                            
+                            // Change position every 3-5 seconds
+                            if (glowData.time - lastPositionChange > 3 + Math.random() * 2) {
+                                const range = glowData.glowSize * 0.2;
+                                core.dataset.targetX = ((Math.random() - 0.5) * range).toString();
+                                core.dataset.targetY = ((Math.random() - 0.5) * range).toString();
+                                core.dataset.lastPositionChange = glowData.time.toString();
+                            }
+                            
+                            // Smooth interpolation
+                            const newX = currentX + (targetX - currentX) * 0.03;
+                            const newY = currentY + (targetY - currentY) * 0.03;
+                            core.dataset.currentX = newX.toString();
+                            core.dataset.currentY = newY.toString();
                             
                             const time = glowData.time * speed;
                             
-                            // Very subtle movement
-                            const coreX = initialX + Math.sin(time + phase) * 5;
-                            const coreY = initialY + Math.cos(time * 0.7 + phase) * 5;
+                            // Add slight drift
+                            const coreX = newX + Math.sin(time + phase) * 3;
+                            const coreY = newY + Math.cos(time * 0.7 + phase) * 3;
                             
                             const coreScale = 1 + Math.sin(time + phase) * 0.15;
                             const coreBrightness = 0.8 + Math.sin(time * 1.5 + phase) * 0.2;
@@ -496,7 +615,20 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            new GlowEffect();
+            const effect = new GlowEffect();
+            
+            // Debug: Check how many hoverglow elements exist
+            const hoverElements = document.querySelectorAll('.hoverglow');
+            console.log(`Found ${hoverElements.length} hoverglow elements`);
+            
+            // Ensure all hoverglow elements are properly styled
+            hoverElements.forEach(element => {
+                // Make sure the element is interactive
+                const computedStyle = window.getComputedStyle(element);
+                if (computedStyle.pointerEvents === 'none') {
+                    element.style.pointerEvents = 'auto';
+                }
+            });
         });
     </script>
 </body>

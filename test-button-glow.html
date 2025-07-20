@@ -48,25 +48,25 @@
     .button---bg {
       pointer-events: none;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 300%;
-      height: 300%;
-      transform: translate(-50%, -50%) scale(1.4);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: scale(1.4);
       transform-style: preserve-3d;
       filter: blur(10rem);
       opacity: 0;
       will-change: transform, filter, opacity;
       transition:
-        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-        filter   0.8s cubic-bezier(0.22, 1, 0.36, 1),
-        opacity  0.4s ease-out;
+        transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+        filter   1s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity  0.6s ease-out;
     }
 
-    /* Hover state for blurred bg */
+    /* Hover state for blurred bg - key change: reduce blur and adjust scale */
     .button:hover .button---bg {
-      transform: translate(-50%, -50%) scale(1);
-      filter: blur(10rem);
+      transform: scale(1.1);
+      filter: blur(5rem); /* Much less blur for visible glow */
       opacity: 1;
     }
 
@@ -75,43 +75,26 @@
     .button-bg---circle-2 {
       position: absolute;
       border-radius: 50%;
-      opacity: 0;
-      transform: scale(0.3);
-      will-change: transform, opacity;
-      transition:
-        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-        opacity   0.4s ease-out;
     }
 
-    /* Circle 1 - Yellow/Gold */
+    /* Circle 1 - Yellow/Gold - positioned to create left glow */
     .button-bg---circle-1 {
       background: rgb(224, 180, 47);
-      width: 128px;
-      height: 128px;
-      top: -64px;
-      left: 0px;
-      transition-delay: 0s;
+      width: 80px;
+      height: 80px;
+      top: 50%;
+      left: 20%;
+      transform: translate(-50%, -50%);
     }
 
-    /* Circle 2 - Pink/Magenta */
+    /* Circle 2 - Pink/Magenta - positioned to create right glow */
     .button-bg---circle-2 {
       background: rgb(224, 47, 183);
-      width: 256px;
-      height: 256px;
-      bottom: -192px;
-      right: 0px;
-      transition-delay: 0.05s;
-    }
-
-    /* Animate circles into view on hover */
-    .button:hover .button-bg---circle-1 {
-      transform: translate(-10%, 40%) scale(1);
-      opacity: 1;
-    }
-
-    .button:hover .button-bg---circle-2 {
-      transform: translate(10%, -50%) scale(1);
-      opacity: 1;
+      width: 120px;
+      height: 120px;
+      top: 50%;
+      right: 10%;
+      transform: translate(50%, -50%);
     }
   </style>
 </head>

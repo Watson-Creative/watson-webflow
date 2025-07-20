@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spectral Aurora Glow Effect</title>
+    <title>Smooth Spectral Glow Effect</title>
     <style>
         body {
             margin: 0;
@@ -83,40 +83,41 @@
             overflow: hidden;
         }
 
-        .aurora-wrapper {
+        .glow-wrapper {
             position: absolute;
             opacity: 0;
             transition: opacity 0.3s ease-in;
-            filter: url(#aurora-morph);
+            filter: blur(40px);
         }
 
-        .aurora-strand {
+        .glow-orb {
             position: absolute;
-            opacity: 0.8;
+            border-radius: 50%;
             mix-blend-mode: screen;
-            filter: blur(8px);
-            transform-origin: center;
-            will-change: transform;
+            animation: glow-pulse 3s ease-in-out infinite;
         }
 
-        @keyframes aurora-flow {
-            0% { transform: translateY(0) scaleY(1) rotate(0deg); }
-            33% { transform: translateY(-20px) scaleY(1.3) rotate(5deg); }
-            66% { transform: translateY(10px) scaleY(0.8) rotate(-3deg); }
-            100% { transform: translateY(0) scaleY(1) rotate(0deg); }
+        .glow-core {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            filter: blur(20px);
         }
 
-        @keyframes aurora-wave {
-            0% { transform: translateX(0) skewX(0deg); }
-            25% { transform: translateX(20px) skewX(5deg); }
-            75% { transform: translateX(-20px) skewX(-5deg); }
-            100% { transform: translateX(0) skewX(0deg); }
+        @keyframes glow-pulse {
+            0%, 100% { 
+                transform: scale(1) translateZ(0);
+                filter: blur(40px) brightness(1);
+            }
+            50% { 
+                transform: scale(1.1) translateZ(0);
+                filter: blur(50px) brightness(1.2);
+            }
         }
 
-        @keyframes aurora-twist {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
+        @keyframes color-shift {
+            0% { filter: hue-rotate(0deg) blur(40px); }
+            100% { filter: hue-rotate(360deg) blur(40px); }
         }
 
         .demo-section {
@@ -129,34 +130,23 @@
     </style>
 </head>
 <body>
-    <!-- SVG Filters for organic shapes -->
-    <svg style="position: absolute; width: 0; height: 0;">
-        <defs>
-            <filter id="aurora-morph">
-                <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="turbulence" seed="2"/>
-                <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="30" xChannelSelector="R" yChannelSelector="G"/>
-                <feGaussianBlur stdDeviation="3"/>
-            </filter>
-        </defs>
-    </svg>
-
     <div class="aurora-container" id="auroraContainer"></div>
     
     <div class="container">
-        <h1 class="hoverglow">Spectral Aurora Demo</h1>
+        <h1 class="hoverglow">Smooth Spectral Glow</h1>
 
         <div class="demo-section">
             <h2 class="hoverglow">Hover Over These Elements</h2>
             
             <p class="hoverglow">
-                This paragraph creates a magical aurora glow effect. Move your mouse over it to see the spectral lights dance and flow!
+                This paragraph creates a smooth, radial glow effect. Move your mouse over it to see the spectral lights!
             </p>
             
             <a href="#" class="hoverglow">This is a glowing link</a>
             
             <br><br>
             
-            <button class="hoverglow">Click me for aurora magic!</button>
+            <button class="hoverglow">HOVER ME FOR A SPECIAL TREAT</button>
             
             <br><br>
             
@@ -167,68 +157,72 @@
     </div>
 
     <script>
-        class AuroraEffect {
+        class GlowEffect {
             constructor() {
                 this.container = document.getElementById('auroraContainer');
-                this.activeAuroras = new Map();
+                this.activeGlows = new Map();
                 this.frameId = null;
                 this.init();
             }
 
             init() {
                 document.querySelectorAll('.hoverglow').forEach(element => {
-                    element.addEventListener('mouseenter', (e) => this.startAurora(e.target));
+                    element.addEventListener('mouseenter', (e) => this.startGlow(e.target));
                     element.addEventListener('mousemove', (e) => this.updateMousePosition(e.target, e));
-                    element.addEventListener('mouseleave', (e) => this.endAurora(e.target));
+                    element.addEventListener('mouseleave', (e) => this.endGlow(e.target));
                 });
             }
 
-            startAurora(element) {
+            startGlow(element) {
                 const rect = element.getBoundingClientRect();
-                const maxSize = Math.max(rect.width, rect.height) * 3;
+                const sizeMultiplier = 1.5;
+                const glowSize = Math.max(rect.width, rect.height) * sizeMultiplier;
                 
                 const wrapper = document.createElement('div');
-                wrapper.className = 'aurora-wrapper';
+                wrapper.className = 'glow-wrapper';
+                
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
                 wrapper.style.cssText = `
-                    left: ${rect.left - maxSize/2 + rect.width/2}px;
-                    top: ${rect.top - maxSize/2 + rect.height/2}px;
-                    width: ${maxSize}px;
-                    height: ${maxSize}px;
+                    left: ${centerX - glowSize/2}px;
+                    top: ${centerY - glowSize/2}px;
+                    width: ${glowSize}px;
+                    height: ${glowSize}px;
                 `;
 
-                const auroraData = {
+                const glowData = {
                     element: element,
                     wrapper: wrapper,
-                    strands: [],
+                    orbs: [],
                     rect: rect,
-                    maxSize: maxSize,
-                    mouseX: rect.left + rect.width/2,
-                    mouseY: rect.top + rect.height/2,
+                    glowSize: glowSize,
+                    mouseX: centerX,
+                    mouseY: centerY,
                     time: 0,
-                    boundaryRect: {
-                        left: rect.left - maxSize/2,
-                        right: rect.right + maxSize/2,
-                        top: rect.top - maxSize/2,
-                        bottom: rect.bottom + maxSize/2
-                    }
+                    hue: Math.random() * 360,
+                    boundaryPadding: glowSize * 0.3
                 };
 
-                // Create multiple aurora strands
-                const strandCount = 8 + Math.floor(Math.random() * 4);
-                for (let i = 0; i < strandCount; i++) {
-                    const strand = this.createAuroraStrand(maxSize, i, strandCount);
-                    wrapper.appendChild(strand);
-                    auroraData.strands.push({
-                        element: strand,
-                        baseRotation: (360 / strandCount) * i,
-                        phase: Math.random() * Math.PI * 2,
-                        speed: 0.5 + Math.random() * 1.5,
-                        amplitude: 10 + Math.random() * 20
-                    });
+                // Create main glow orb
+                const mainOrb = this.createGlowOrb(glowSize, 0);
+                wrapper.appendChild(mainOrb);
+                glowData.orbs.push(mainOrb);
+
+                // Create additional color layers
+                for (let i = 1; i < 3; i++) {
+                    const orb = this.createGlowOrb(glowSize * (0.8 - i * 0.1), i);
+                    wrapper.appendChild(orb);
+                    glowData.orbs.push(orb);
                 }
 
+                // Create bright core
+                const core = this.createGlowCore(glowSize * 0.3);
+                wrapper.appendChild(core);
+                glowData.core = core;
+
                 this.container.appendChild(wrapper);
-                this.activeAuroras.set(element, auroraData);
+                this.activeGlows.set(element, glowData);
 
                 // Fade in
                 requestAnimationFrame(() => {
@@ -241,126 +235,135 @@
                 }
             }
 
-            createAuroraStrand(maxSize, index, total) {
-                const strand = document.createElement('div');
-                strand.className = 'aurora-strand';
+            createGlowOrb(size, index) {
+                const orb = document.createElement('div');
+                orb.className = 'glow-orb';
                 
-                const width = maxSize * (0.2 + Math.random() * 0.3);
-                const height = maxSize * (0.6 + Math.random() * 0.4);
-                const hue = (index * 360 / total + Math.random() * 60) % 360;
-                const saturation = 70 + Math.random() * 30;
-                const lightness = 50 + Math.random() * 30;
+                const colors = [
+                    'radial-gradient(circle, rgba(255,0,255,0.8) 0%, rgba(255,0,150,0.4) 30%, rgba(150,0,255,0.2) 60%, transparent 100%)',
+                    'radial-gradient(circle, rgba(0,255,255,0.6) 0%, rgba(0,150,255,0.3) 40%, rgba(255,0,255,0.1) 70%, transparent 100%)',
+                    'radial-gradient(circle, rgba(255,100,255,0.5) 0%, rgba(100,100,255,0.2) 50%, transparent 100%)'
+                ];
                 
-                // Create elongated gradient for aurora-like appearance
-                const gradient = `linear-gradient(${90 + Math.random() * 180}deg, 
-                    transparent 0%, 
-                    hsla(${hue}, ${saturation}%, ${lightness}%, 0.1) 10%,
-                    hsla(${hue}, ${saturation}%, ${lightness}%, 0.8) 30%,
-                    hsla(${(hue + 60) % 360}, ${saturation}%, ${lightness}%, 0.6) 50%,
-                    hsla(${(hue + 120) % 360}, ${saturation}%, ${lightness}%, 0.4) 70%,
-                    transparent 100%)`;
-                
-                strand.style.cssText = `
-                    width: ${width}px;
-                    height: ${height}px;
-                    left: ${maxSize/2 - width/2}px;
-                    top: ${maxSize/2 - height/2}px;
-                    background: ${gradient};
-                    border-radius: ${50 + Math.random() * 50}% ${50 + Math.random() * 50}% ${50 + Math.random() * 50}% ${50 + Math.random() * 50}%;
-                    transform-origin: center;
+                orb.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    background: ${colors[index % colors.length]};
+                    animation-delay: ${index * 0.3}s;
                 `;
 
-                return strand;
+                return orb;
+            }
+
+            createGlowCore(size) {
+                const core = document.createElement('div');
+                core.className = 'glow-core';
+                
+                core.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,200,255,0.6) 30%, rgba(200,150,255,0.3) 60%, transparent 100%);
+                `;
+
+                return core;
             }
 
             updateMousePosition(element, event) {
-                const auroraData = this.activeAuroras.get(element);
-                if (!auroraData) return;
+                const glowData = this.activeGlows.get(element);
+                if (!glowData) return;
 
                 const mouseX = event.clientX;
                 const mouseY = event.clientY;
 
-                // Check if mouse is within boundary
-                if (mouseX < auroraData.boundaryRect.left || 
-                    mouseX > auroraData.boundaryRect.right ||
-                    mouseY < auroraData.boundaryRect.top || 
-                    mouseY > auroraData.boundaryRect.bottom) {
-                    this.endAurora(element);
+                // Check if mouse is within glow boundary
+                const centerX = glowData.rect.left + glowData.rect.width / 2;
+                const centerY = glowData.rect.top + glowData.rect.height / 2;
+                const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
+                
+                if (distance > glowData.glowSize / 2 + glowData.boundaryPadding) {
+                    this.endGlow(element);
                     return;
                 }
 
-                auroraData.mouseX = mouseX;
-                auroraData.mouseY = mouseY;
+                glowData.mouseX = mouseX;
+                glowData.mouseY = mouseY;
             }
 
             animate() {
-                this.activeAuroras.forEach((auroraData) => {
-                    auroraData.time += 0.016; // ~60fps
+                this.activeGlows.forEach((glowData) => {
+                    glowData.time += 0.016; // ~60fps
                     
-                    const centerX = auroraData.rect.left + auroraData.rect.width/2;
-                    const centerY = auroraData.rect.top + auroraData.rect.height/2;
-                    const mouseOffsetX = (auroraData.mouseX - centerX) * 0.5;
-                    const mouseOffsetY = (auroraData.mouseY - centerY) * 0.5;
+                    const centerX = glowData.rect.left + glowData.rect.width / 2;
+                    const centerY = glowData.rect.top + glowData.rect.height / 2;
+                    const mouseOffsetX = (glowData.mouseX - centerX) * 0.2;
+                    const mouseOffsetY = (glowData.mouseY - centerY) * 0.2;
 
-                    auroraData.strands.forEach((strand, index) => {
-                        const time = auroraData.time * strand.speed;
-                        const wave = Math.sin(time + strand.phase) * strand.amplitude;
-                        const wave2 = Math.cos(time * 0.7 + strand.phase) * strand.amplitude * 0.5;
+                    // Animate main wrapper position slightly toward mouse
+                    const wrapperX = centerX - glowData.glowSize/2 + mouseOffsetX * 0.3;
+                    const wrapperY = centerY - glowData.glowSize/2 + mouseOffsetY * 0.3;
+                    
+                    glowData.wrapper.style.transform = `translate(${mouseOffsetX * 0.1}px, ${mouseOffsetY * 0.1}px)`;
+
+                    // Animate color shifting
+                    glowData.hue += 0.5;
+                    glowData.wrapper.style.filter = `blur(40px) hue-rotate(${glowData.hue}deg)`;
+
+                    // Animate orbs with subtle movement
+                    glowData.orbs.forEach((orb, index) => {
+                        const phase = glowData.time + index * Math.PI / 3;
+                        const wobbleX = Math.sin(phase) * 5;
+                        const wobbleY = Math.cos(phase * 1.3) * 5;
                         
-                        const rotation = strand.baseRotation + wave * 0.5;
-                        const scaleX = 1 + Math.sin(time * 1.3) * 0.2;
-                        const scaleY = 1 + Math.cos(time * 0.9) * 0.3;
-                        const translateX = wave + mouseOffsetX * (0.5 + index * 0.1);
-                        const translateY = wave2 + mouseOffsetY * (0.5 + index * 0.1);
-                        const skewX = Math.sin(time * 0.8) * 10;
-                        
-                        strand.element.style.transform = `
-                            rotate(${rotation}deg) 
-                            translate(${translateX}px, ${translateY}px)
-                            scale(${scaleX}, ${scaleY})
-                            skewX(${skewX}deg)
-                        `;
-                        
-                        // Dynamic opacity based on movement
-                        const opacity = 0.4 + Math.sin(time * 2 + index) * 0.3;
-                        strand.element.style.opacity = opacity;
+                        orb.style.transform = `translate(-50%, -50%) translate(${wobbleX + mouseOffsetX * (0.1 + index * 0.05)}px, ${wobbleY + mouseOffsetY * (0.1 + index * 0.05)}px)`;
                     });
+
+                    // Animate core
+                    if (glowData.core) {
+                        const coreScale = 1 + Math.sin(glowData.time * 2) * 0.1;
+                        glowData.core.style.transform = `translate(-50%, -50%) translate(${mouseOffsetX * 0.4}px, ${mouseOffsetY * 0.4}px) scale(${coreScale})`;
+                    }
                 });
 
-                if (this.activeAuroras.size > 0) {
+                if (this.activeGlows.size > 0) {
                     this.frameId = requestAnimationFrame(() => this.animate());
                 } else {
                     this.frameId = null;
                 }
             }
 
-            endAurora(element) {
-                const auroraData = this.activeAuroras.get(element);
-                if (!auroraData) return;
+            endGlow(element) {
+                const glowData = this.activeGlows.get(element);
+                if (!glowData) return;
 
-                // Calculate exit direction
-                const centerX = auroraData.rect.left + auroraData.rect.width/2;
-                const centerY = auroraData.rect.top + auroraData.rect.height/2;
-                const exitAngle = Math.atan2(auroraData.mouseY - centerY, auroraData.mouseX - centerX);
-                const exitForce = 100;
+                // Calculate exit direction for smooth fade
+                const centerX = glowData.rect.left + glowData.rect.width / 2;
+                const centerY = glowData.rect.top + glowData.rect.height / 2;
+                const exitAngle = Math.atan2(glowData.mouseY - centerY, glowData.mouseX - centerX);
+                const exitForce = 30;
 
-                auroraData.wrapper.style.opacity = '0';
-                auroraData.wrapper.style.transform = `translate(${Math.cos(exitAngle) * exitForce}px, ${Math.sin(exitAngle) * exitForce}px) scale(0.5)`;
-                auroraData.wrapper.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+                glowData.wrapper.style.opacity = '0';
+                glowData.wrapper.style.transform = `translate(${Math.cos(exitAngle) * exitForce}px, ${Math.sin(exitAngle) * exitForce}px) scale(0.8)`;
+                glowData.wrapper.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
 
                 setTimeout(() => {
-                    if (auroraData.wrapper.parentNode) {
-                        auroraData.wrapper.parentNode.removeChild(auroraData.wrapper);
+                    if (glowData.wrapper.parentNode) {
+                        glowData.wrapper.parentNode.removeChild(glowData.wrapper);
                     }
-                }, 800);
+                }, 600);
 
-                this.activeAuroras.delete(element);
+                this.activeGlows.delete(element);
             }
         }
 
-        // Initialize the aurora effect when the page loads
+        // Initialize the glow effect when the page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new AuroraEffect();
+            new GlowEffect();
         });
     </script>
 </body>

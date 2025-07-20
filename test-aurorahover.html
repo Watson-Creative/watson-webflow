@@ -160,7 +160,103 @@
                 this.container = document.getElementById('auroraContainer');
                 this.activeGlows = new Map();
                 this.frameId = null;
-                this.easingFactor = 0.12;
+                
+                // ===== CONFIGURATION VARIABLES =====
+                // Easily adjust these values to customize the effect
+                // 
+                // QUICK TWEAKS:
+                // - For subtler effect: Reduce sphereOpacityMax, wrapperBlur, and scaleAmplitude
+                // - For more dramatic effect: Increase sphereSizeMax, morphAmplitude, and driftAmplitude
+                // - For smoother animation: Decrease easingFactor and position smoothing values
+                // - For more responsive: Increase easingFactor and mouseInfluence
+                // 
+                // OPACITY EXAMPLES:
+                // - Subtle glow: sphereOpacityMin: 0.3, sphereOpacityMax: 0.5
+                // - Strong glow: sphereOpacityMin: 0.8, sphereOpacityMax: 1.0
+                // - Variable glow: sphereOpacityMin: 0.2, sphereOpacityMax: 1.0
+                
+                // Animation & Timing
+                this.easingFactor = 0.12;                    // Mouse follow smoothness (0.01 = very smooth, 1 = instant)
+                this.fadeInDuration = '0.3s';                // Glow fade in time
+                this.fadeOutDuration = '0.4s';               // Glow fade out time
+                this.animationFPS = 0.016;                   // Animation frame time (60fps)
+                
+                // Sphere Sizing (based on element height)
+                this.sphereSizeMin = 1.25;                   // Minimum sphere size multiplier
+                this.sphereSizeMax = 4;                      // Maximum sphere size multiplier
+                this.sphereCountMin = 2;                     // Minimum number of spheres
+                this.sphereCountMax = 10;                     // Maximum number of spheres (actual max is min + max)
+                
+                // Position Constraints (based on element dimensions)
+                this.spherePositionRange = 0.8;              // Spheres stay within 60% of element size
+                this.corePositionRange = 0.1;                // Cores stay within 30% of element size
+                this.mouseInfluence = 0.6;                   // How much mouse position affects glow (0-1)
+                
+                // Core Settings
+                this.coreSizeMin = 0.4;                      // Minimum core size (40% of element height)
+                this.coreSizeMax = 0.6;                      // Maximum core size (60% of element height)
+                this.coreCountMin = 1;                       // Minimum number of cores
+                this.coreCountMax = 2;                       // Maximum number of cores
+                
+                // Opacity Settings
+                this.sphereOpacityMin = 0.7;                 // Minimum sphere opacity
+                this.sphereOpacityMax = 1.0;                 // Maximum sphere opacity
+                this.coreOpacity = 0.8;                      // Core base opacity
+                this.coreOpacityVariation = 0.2;             // Core opacity animation range
+                
+                // Blur Settings
+                this.wrapperBlur = 50;                       // Main wrapper blur (px)
+                this.coreBlur = 8;                           // Core blur (px)
+                
+                // Animation Parameters
+                this.positionChangeIntervalMin = 2;          // Min seconds between position changes
+                this.positionChangeIntervalMax = 5;          // Max seconds between position changes
+                this.spherePositionSmoothing = 0.02;        // Sphere position interpolation speed
+                this.corePositionSmoothing = 0.03;          // Core position interpolation speed
+                
+                // Drift & Movement
+                this.driftSpeedMin = 0.1;                   // Minimum drift animation speed
+                this.driftSpeedMax = 0.4;                   // Maximum drift animation speed
+                this.driftAmplitude = 5;                    // Drift movement amplitude (px)
+                this.coreDriftAmplitude = 3;                // Core drift amplitude (px)
+                
+                // Morphing & Rotation
+                this.morphSpeedMin = 0.5;                   // Minimum shape morph speed
+                this.morphSpeedMax = 1.5;                   // Maximum shape morph speed
+                this.morphAmplitude = 20;                   // Shape morph amplitude (%)
+                this.rotationSpeedMax = 0.3;                // Maximum rotation speed
+                this.rotationMultiplier = 30;               // Rotation speed multiplier
+                
+                // Scale Animation
+                this.scaleAmplitude = 0.1;                  // Scale breathing amplitude (10%)
+                this.coreScaleAmplitude = 0.15;             // Core scale amplitude (15%)
+                
+                // Color Animation
+                this.hueRotateSpeed = 0.3;                  // Hue rotation speed
+                this.hueRotateAmount = 20;                  // Maximum hue rotation (degrees)
+                
+                // ===== PRESET EXAMPLES =====
+                // Uncomment and modify values above to achieve different effects:
+                
+                // SUBTLE PROFESSIONAL:
+                // this.sphereOpacityMin = 0.3; this.sphereOpacityMax = 0.5;
+                // this.wrapperBlur = 80; this.scaleAmplitude = 0.05;
+                // this.morphAmplitude = 10; this.driftAmplitude = 2;
+                
+                // DRAMATIC NEON:
+                // this.sphereOpacityMin = 0.8; this.sphereOpacityMax = 1.0;
+                // this.wrapperBlur = 40; this.sphereSizeMax = 4;
+                // this.morphAmplitude = 30; this.coreOpacity = 1.0;
+                
+                // SMOOTH AMBIENT:
+                // this.easingFactor = 0.05; this.spherePositionSmoothing = 0.01;
+                // this.fadeInDuration = '0.8s'; this.fadeOutDuration = '1.2s';
+                // this.driftSpeedMax = 0.2; this.morphSpeedMax = 0.8;
+                
+                // ENERGETIC:
+                // this.sphereCountMax = 12; this.driftAmplitude = 15;
+                // this.rotationSpeedMax = 0.5; this.scaleAmplitude = 0.2;
+                // this.positionChangeIntervalMin = 1; this.positionChangeIntervalMax = 2;
                 
                 // Dynamic color palettes
                 this.colorPalettes = {
@@ -256,15 +352,15 @@
                     console.log('Element dimensions:', {
                         width: rect.width,
                         height: rect.height,
-                        minSphereSize: rect.height * 1.25,
-                        maxSphereSize: rect.height * 3
+                        minSphereSize: rect.height * this.sphereSizeMin,
+                        maxSphereSize: rect.height * this.sphereSizeMax
                     });
                     
                     // Calculate wrapper size based on element dimensions
                     // Wrapper needs to be large enough to contain the largest sphere (3x height)
                     // Plus some extra room for movement
-                    const wrapperWidth = rect.width + (rect.height * 3); // Element width + max sphere size
-                    const wrapperHeight = rect.height + (rect.height * 3); // Element height + max sphere size
+                    const wrapperWidth = rect.width + (rect.height * this.sphereSizeMax); // Element width + max sphere size
+                    const wrapperHeight = rect.height + (rect.height * this.sphereSizeMax); // Element height + max sphere size
                     const glowSize = Math.max(wrapperWidth, wrapperHeight); // Use the larger dimension
                     
                     // Create main wrapper
@@ -274,7 +370,7 @@
                         opacity: 0;
                         will-change: transform, opacity, filter;
                         pointer-events: none;
-                        transition: opacity 0.3s ease-in;
+                        transition: opacity ${this.fadeInDuration} ease-in;
                         mix-blend-mode: screen;
                     `;
                     
@@ -283,7 +379,7 @@
                     
                     const mouseOffsetX = event.clientX - centerX;
                     const mouseOffsetY = event.clientY - centerY;
-                    const mouseInfluence = 0.3;
+                    const mouseInfluence = this.mouseInfluence;
                     const initialX = centerX + (mouseOffsetX * mouseInfluence);
                     const initialY = centerY + (mouseOffsetY * mouseInfluence);
                     
@@ -342,14 +438,14 @@
             }
 
             createGlowLayers(wrapper, glowData) {
-                // Create 4-8 random circles for more variation
-                const circleCount = 4 + Math.floor(Math.random() * 5);
+                // Create random circles for more variation
+                const circleCount = this.sphereCountMin + Math.floor(Math.random() * this.sphereCountMax);
                 const elementWidth = glowData.rect.width;
                 const elementHeight = glowData.rect.height;
                 
-                // Use element height for sphere sizing (min 1.25x, max 3x)
-                const minSphereSize = elementHeight * 1.25;
-                const maxSphereSize = elementHeight * 3;
+                // Use element height for sphere sizing
+                const minSphereSize = elementHeight * this.sphereSizeMin;
+                const maxSphereSize = elementHeight * this.sphereSizeMax;
                 
                 for (let i = 0; i < circleCount; i++) {
                     const circle = document.createElement('div');
@@ -362,8 +458,8 @@
                     
                     // Constrain position within element bounds
                     // Spheres should be distributed within the element's width and height
-                    const maxOffsetX = elementWidth * 0.6; // Stay within 60% of width from center
-                    const maxOffsetY = elementHeight * 0.6; // Stay within 60% of height from center
+                    const maxOffsetX = elementWidth * this.spherePositionRange;
+                    const maxOffsetY = elementHeight * this.spherePositionRange;
                     const randomX = (Math.random() - 0.5) * maxOffsetX;
                     const randomY = (Math.random() - 0.5) * maxOffsetY;
                     
@@ -378,8 +474,8 @@
                         background: ${color};
                         pointer-events: none;
                         will-change: transform, border-radius;
-                        opacity: ${0.7 + Math.random() * 0.3};
-                        transition: all 0.3s ease;
+                        opacity: ${this.sphereOpacityMin + Math.random() * (this.sphereOpacityMax - this.sphereOpacityMin)};
+                        transition: all ${this.fadeInDuration} ease;
                     `;
                     
                     // Store animation data with element-specific constraints
@@ -392,18 +488,18 @@
                     circle.dataset.size = circleSize.toString();
                     circle.dataset.maxOffsetX = maxOffsetX.toString();
                     circle.dataset.maxOffsetY = maxOffsetY.toString();
-                    circle.dataset.driftSpeed = (0.1 + Math.random() * 0.3).toString();
-                    circle.dataset.morphSpeed = (0.5 + Math.random() * 1).toString();
+                    circle.dataset.driftSpeed = (this.driftSpeedMin + Math.random() * (this.driftSpeedMax - this.driftSpeedMin)).toString();
+                    circle.dataset.morphSpeed = (this.morphSpeedMin + Math.random() * (this.morphSpeedMax - this.morphSpeedMin)).toString();
                     circle.dataset.phase = (Math.random() * Math.PI * 2).toString();
-                    circle.dataset.rotationSpeed = ((Math.random() - 0.5) * 0.3).toString();
+                    circle.dataset.rotationSpeed = ((Math.random() - 0.5) * this.rotationSpeedMax).toString();
                     circle.dataset.lastPositionChange = '0';
-                    circle.dataset.positionChangeInterval = (2 + Math.random() * 3).toString(); // Change position every 2-5 seconds
+                    circle.dataset.positionChangeInterval = (this.positionChangeIntervalMin + Math.random() * (this.positionChangeIntervalMax - this.positionChangeIntervalMin)).toString();
                     
                     glowData.orbs.push(circle);
                 }
                 
                 // Apply blur to the entire wrapper for soft glow effect
-                wrapper.style.filter = 'blur(50px)';
+                wrapper.style.filter = `blur(${this.wrapperBlur}px)`;
                 
                 // Add all circles to wrapper
                 glowData.orbs.forEach(orb => wrapper.appendChild(orb));
@@ -417,15 +513,15 @@
                     pointer-events: none;
                 `;
                 
-                // Add 1-2 bright cores based on element size
-                const coreCount = 1 + Math.floor(Math.random() * 2);
+                // Add bright cores based on element size
+                const coreCount = this.coreCountMin + Math.floor(Math.random() * this.coreCountMax);
                 glowData.cores = [];
                 
                 for (let i = 0; i < coreCount; i++) {
                     const core = document.createElement('div');
-                    const coreSize = elementHeight * (0.4 + Math.random() * 0.2);
-                    const coreX = (Math.random() - 0.5) * elementWidth * 0.3;
-                    const coreY = (Math.random() - 0.5) * elementHeight * 0.3;
+                    const coreSize = elementHeight * (this.coreSizeMin + Math.random() * (this.coreSizeMax - this.coreSizeMin));
+                    const coreX = (Math.random() - 0.5) * elementWidth * this.corePositionRange;
+                    const coreY = (Math.random() - 0.5) * elementHeight * this.corePositionRange;
                     
                     core.style.cssText = `
                         position: absolute;
@@ -439,10 +535,10 @@
                             rgba(255,255,255,0.9) 0%, 
                             ${glowData.palette[0]} 50%, 
                             transparent 100%);
-                        filter: blur(8px);
+                        filter: blur(${this.coreBlur}px);
                         pointer-events: none;
-                        opacity: 0.8;
-                        transition: all 0.5s ease;
+                        opacity: ${this.coreOpacity};
+                        transition: all ${this.fadeInDuration} ease;
                     `;
                     
                     core.dataset.initialX = coreX.toString();
@@ -451,8 +547,8 @@
                     core.dataset.currentY = coreY.toString();
                     core.dataset.targetX = coreX.toString();
                     core.dataset.targetY = coreY.toString();
-                    core.dataset.maxOffsetX = (elementWidth * 0.3).toString();
-                    core.dataset.maxOffsetY = (elementHeight * 0.3).toString();
+                    core.dataset.maxOffsetX = (elementWidth * this.corePositionRange).toString();
+                    core.dataset.maxOffsetY = (elementHeight * this.corePositionRange).toString();
                     core.dataset.animSpeed = (2 + Math.random()).toString();
                     core.dataset.phase = (Math.random() * Math.PI * 2).toString();
                     core.dataset.lastPositionChange = '0';
@@ -494,7 +590,7 @@
                         hasActiveGlows = true;
                     }
 
-                    glowData.time += 0.016;
+                    glowData.time += this.animationFPS;
                     
                     // Smooth position interpolation
                     const deltaX = glowData.targetX - glowData.currentX;
@@ -510,8 +606,8 @@
                     glowData.wrapper.style.top = `${wrapperY}px`;
 
                     // Dynamic color shifting - subtle
-                    const hueRotate = Math.sin(glowData.time * 0.3) * 20;
-                    glowData.wrapper.style.filter = `blur(50px) hue-rotate(${hueRotate}deg)`;
+                    const hueRotate = Math.sin(glowData.time * this.hueRotateSpeed) * this.hueRotateAmount;
+                    glowData.wrapper.style.filter = `blur(${this.wrapperBlur}px) hue-rotate(${hueRotate}deg)`;
 
                     // Animate each circle with gentle drift and morphing
                     glowData.orbs.forEach((orb) => {
@@ -520,26 +616,26 @@
                         const targetX = parseFloat(orb.dataset.targetX) || 0;
                         const targetY = parseFloat(orb.dataset.targetY) || 0;
                         const size = parseFloat(orb.dataset.size) || 100;
-                        const driftSpeed = parseFloat(orb.dataset.driftSpeed) || 0.2;
-                        const morphSpeed = parseFloat(orb.dataset.morphSpeed) || 0.7;
+                        const driftSpeed = parseFloat(orb.dataset.driftSpeed) || this.driftSpeedMin;
+                        const morphSpeed = parseFloat(orb.dataset.morphSpeed) || this.morphSpeedMin;
                         const phase = parseFloat(orb.dataset.phase) || 0;
                         const rotationSpeed = parseFloat(orb.dataset.rotationSpeed) || 0;
                         const lastPositionChange = parseFloat(orb.dataset.lastPositionChange) || 0;
-                        const positionChangeInterval = parseFloat(orb.dataset.positionChangeInterval) || 3;
+                        const positionChangeInterval = parseFloat(orb.dataset.positionChangeInterval) || this.positionChangeIntervalMin;
                         
                         // Check if it's time to change position
                         if (glowData.time - lastPositionChange > positionChangeInterval) {
                             // Generate new target position within element constraints
-                            const maxOffsetX = parseFloat(orb.dataset.maxOffsetX) || glowData.rect.width * 0.6;
-                            const maxOffsetY = parseFloat(orb.dataset.maxOffsetY) || glowData.rect.height * 0.6;
+                            const maxOffsetX = parseFloat(orb.dataset.maxOffsetX) || glowData.rect.width * this.spherePositionRange;
+                            const maxOffsetY = parseFloat(orb.dataset.maxOffsetY) || glowData.rect.height * this.spherePositionRange;
                             orb.dataset.targetX = ((Math.random() - 0.5) * maxOffsetX).toString();
                             orb.dataset.targetY = ((Math.random() - 0.5) * maxOffsetY).toString();
                             orb.dataset.lastPositionChange = glowData.time.toString();
                         }
                         
                         // Smooth interpolation towards target position
-                        const newX = currentX + (targetX - currentX) * 0.02;
-                        const newY = currentY + (targetY - currentY) * 0.02;
+                        const newX = currentX + (targetX - currentX) * this.spherePositionSmoothing;
+                        const newY = currentY + (targetY - currentY) * this.spherePositionSmoothing;
                         orb.dataset.currentX = newX.toString();
                         orb.dataset.currentY = newY.toString();
                         
@@ -547,19 +643,19 @@
                         const morphTime = glowData.time * morphSpeed;
                         
                         // Shape morphing - change border radius
-                        const radiusX = 50 + Math.sin(morphTime + phase) * 20;
-                        const radiusY = 50 + Math.cos(morphTime * 0.7 + phase) * 20;
+                        const radiusX = 50 + Math.sin(morphTime + phase) * this.morphAmplitude;
+                        const radiusY = 50 + Math.cos(morphTime * 0.7 + phase) * this.morphAmplitude;
                         
                         // Gentle drift on top of position changes
-                        const driftX = Math.sin(time + phase) * 5;
-                        const driftY = Math.cos(time * 0.8 + phase) * 5;
+                        const driftX = Math.sin(time + phase) * this.driftAmplitude;
+                        const driftY = Math.cos(time * 0.8 + phase) * this.driftAmplitude;
                         
                         // Slight rotation
-                        const rotation = time * rotationSpeed * 30;
+                        const rotation = time * rotationSpeed * this.rotationMultiplier;
                         
                         // Gentle scale breathing
-                        const scaleX = 1 + Math.sin(time * 0.5 + phase) * 0.1;
-                        const scaleY = 1 + Math.cos(time * 0.5 + phase * 1.3) * 0.1;
+                        const scaleX = 1 + Math.sin(time * 0.5 + phase) * this.scaleAmplitude;
+                        const scaleY = 1 + Math.cos(time * 0.5 + phase * 1.3) * this.scaleAmplitude;
                         
                         orb.style.transform = `
                             translate(-50%, -50%) 
@@ -581,29 +677,29 @@
                             const phase = parseFloat(core.dataset.phase) || 0;
                             const lastPositionChange = parseFloat(core.dataset.lastPositionChange) || 0;
                             
-                            // Change position every 3-5 seconds
-                            if (glowData.time - lastPositionChange > 3 + Math.random() * 2) {
-                                const maxOffsetX = parseFloat(core.dataset.maxOffsetX) || glowData.rect.width * 0.3;
-                                const maxOffsetY = parseFloat(core.dataset.maxOffsetY) || glowData.rect.height * 0.3;
+                            // Change position every few seconds
+                            if (glowData.time - lastPositionChange > this.positionChangeIntervalMin + Math.random() * (this.positionChangeIntervalMax - this.positionChangeIntervalMin)) {
+                                const maxOffsetX = parseFloat(core.dataset.maxOffsetX) || glowData.rect.width * this.corePositionRange;
+                                const maxOffsetY = parseFloat(core.dataset.maxOffsetY) || glowData.rect.height * this.corePositionRange;
                                 core.dataset.targetX = ((Math.random() - 0.5) * maxOffsetX).toString();
                                 core.dataset.targetY = ((Math.random() - 0.5) * maxOffsetY).toString();
                                 core.dataset.lastPositionChange = glowData.time.toString();
                             }
                             
                             // Smooth interpolation
-                            const newX = currentX + (targetX - currentX) * 0.03;
-                            const newY = currentY + (targetY - currentY) * 0.03;
+                            const newX = currentX + (targetX - currentX) * this.corePositionSmoothing;
+                            const newY = currentY + (targetY - currentY) * this.corePositionSmoothing;
                             core.dataset.currentX = newX.toString();
                             core.dataset.currentY = newY.toString();
                             
                             const time = glowData.time * speed;
                             
                             // Add slight drift
-                            const coreX = newX + Math.sin(time + phase) * 3;
-                            const coreY = newY + Math.cos(time * 0.7 + phase) * 3;
+                            const coreX = newX + Math.sin(time + phase) * this.coreDriftAmplitude;
+                            const coreY = newY + Math.cos(time * 0.7 + phase) * this.coreDriftAmplitude;
                             
-                            const coreScale = 1 + Math.sin(time + phase) * 0.15;
-                            const coreBrightness = 0.8 + Math.sin(time * 1.5 + phase) * 0.2;
+                            const coreScale = 1 + Math.sin(time + phase) * this.coreScaleAmplitude;
+                            const coreBrightness = this.coreOpacity + Math.sin(time * 1.5 + phase) * this.coreOpacityVariation;
                             
                             core.style.transform = `
                                 translate(-50%, -50%) 
@@ -632,7 +728,7 @@
 
                 glowData.active = false;
                 glowData.wrapper.style.opacity = '0';
-                glowData.wrapper.style.transition = 'opacity 0.4s ease-out';
+                glowData.wrapper.style.transition = `opacity ${this.fadeOutDuration} ease-out`;
 
                 glowData.fadeTimeout = setTimeout(() => {
                     if (glowData.wrapper && glowData.wrapper.parentNode) {
@@ -644,7 +740,7 @@
                         cancelAnimationFrame(this.frameId);
                         this.frameId = null;
                     }
-                }, 400);
+                }, parseFloat(this.fadeOutDuration) * 1000); // Convert seconds to milliseconds
             }
         }
 

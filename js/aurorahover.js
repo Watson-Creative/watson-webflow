@@ -894,5 +894,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (computedStyle.pointerEvents === 'none') {
             element.style.pointerEvents = 'auto';
         }
+        
+        // Ensure hover elements appear above their glows
+        element.style.position = 'relative';
+        element.style.zIndex = effect.hoverElementsIndex;
     });
 });

@@ -29,7 +29,27 @@
 }
 
 .menu-bars-wrapper:hover .menu-bars-line.middle {
-	/* Middle line stays exactly the same - no changes */
+	animation: fadeAndDraw 0.6s ease-in-out forwards;
+}
+
+/* Keyframe animation for middle line */
+@keyframes fadeAndDraw {
+	0% {
+		opacity: 1;
+		clip-path: inset(0 0% 0 0);
+	}
+	40% {
+		opacity: 0;
+		clip-path: inset(0 0% 0 0);
+	}
+	41% {
+		opacity: 1;
+		clip-path: inset(0 100% 0 0);
+	}
+	100% {
+		opacity: 1;
+		clip-path: inset(0 0% 0 0);
+	}
 }
 
 .menu-bars-wrapper:hover .menu-bars-line.bottom {

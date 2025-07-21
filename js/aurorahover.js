@@ -382,7 +382,7 @@ class GlowEffect {
             let palette = this.colorPalettes.mixed;
             if (element.textContent.toLowerCase().includes('warm')) {
                 palette = this.colorPalettes.warm;
-            } else if (element.textContent.toLowerCase().includes('nature')) {
+            } else if (element.textContent.toLowerCase().includes('cool')) {
                 palette = this.colorPalettes.cool;
             }
 

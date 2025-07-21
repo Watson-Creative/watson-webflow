@@ -378,9 +378,11 @@ The `aurorahover.js` file provides a sophisticated hover effect that creates an 
   - **Disruption**: Mouse pushes spheres away like magnetic repulsion
   - **Shrinking**: Spheres shrink when the mouse gets close, then expand back
   - **Following**: The entire glow subtly follows mouse movement
+- **Cluster Lag**: The glow cluster can lag behind mouse movement for more natural interactions
 - **Pulsing Animation**: Spheres expand and contract rhythmically with configurable wave patterns
 - **Shape Morphing**: Spheres continuously morph between circular and elliptical shapes
 - **Color Palettes**: Built-in warm, cool, and mixed color schemes using Watson Creative brand colors
+- **Blend Modes**: Customizable blend mode for different visual effects
 - **Fully Configurable**: Every aspect can be customized through configuration variables
 
 ### Basic Usage
@@ -390,11 +392,15 @@ The `aurorahover.js` file provides a sophisticated hover effect that creates an 
 <div class="aurora-container" id="auroraContainer"></div>
 ```
 
-2. **Add the hoverglow class** to any element you want to have the effect:
+2. **Add a supported class** to any element you want to have the effect:
 ```html
+<!-- Primary hover class -->
 <button class="hoverglow">Hover Me</button>
 <h1 class="hoverglow">Glowing Heading</h1>
-<a href="#" class="hoverglow">Glowing Link</a>
+
+<!-- Additional supported classes -->
+<button class="cta-right-arrow">Next</button>
+<a href="#" class="cta-load-more">Load More</a>
 ```
 
 3. **Include the script**:
@@ -402,16 +408,23 @@ The `aurorahover.js` file provides a sophisticated hover effect that creates an 
 <script src="js/aurorahover.js"></script>
 ```
 
+### Supported Classes
+
+The aurora effect can be triggered by any of these classes:
+- `hoverglow` - Primary class for general hover effects
+- `cta-right-arrow` - For right arrow CTA buttons
+- `cta-load-more` - For load more buttons
+
 ### How It Works
 
 The aurora effect creates multiple layers of animated elements:
 
-1. **Spheres (4-12)**: Main glow elements with varying sizes and colors
+1. **Spheres (4-8)**: Main glow elements with varying sizes and colors
 2. **Cores (1-2)**: Bright center points for added depth
 3. **Wrapper**: Container with blur filter for soft glow effect
 
 Each sphere has its own:
-- Size (based on element height: 1.25x to 3x)
+- Size (based on element height: 0.75x to 2x)
 - Position (constrained within element bounds)
 - Color (randomly selected from palette)
 - Animation phase (for organic movement)
@@ -429,23 +442,31 @@ this.fadeOutDuration = '0.4s';         // Glow fade out time
 this.animationFPS = 0.016;             // Animation frame time (60fps)
 ```
 
+#### Cluster Movement Lag
+```javascript
+this.clusterLagFactor = 0.03;          // How slowly the cluster follows mouse (0.01 = very slow, 1 = instant)
+this.clusterMaxDistance = 150;         // Maximum distance cluster can lag behind mouse (px)
+this.clusterCatchUpDelay = 0.5;        // Seconds before cluster starts catching up after mouse stops
+this.clusterCatchUpSpeed = 0.05;       // Speed at which cluster catches up when mouse is still
+```
+
 #### Sphere Settings
 ```javascript
-this.sphereSizeMin = 1.25;             // Minimum sphere size (125% of element height)
-this.sphereSizeMax = 3;                // Maximum sphere size (300% of element height)
+this.sphereSizeMin = 0.75;             // Minimum sphere size (75% of element height)
+this.sphereSizeMax = 2;                // Maximum sphere size (200% of element height)
 this.sphereCountMin = 4;               // Minimum number of spheres
-this.sphereCountMax = 8;               // Maximum additional spheres
+this.sphereCountMax = 8;               // Maximum number of spheres
 this.spherePositionRange = 0.6;        // Spheres stay within 60% of element size
 ```
 
 #### Mouse Interaction
 ```javascript
-this.mouseDisruptionRadius = 150;      // Radius around mouse that affects spheres (px)
-this.mouseDisruptionForce = 0.6;       // How strongly mouse pushes spheres (0-1)
+this.mouseDisruptionRadius = 100;      // Radius around mouse that affects spheres (px)
+this.mouseDisruptionForce = 1;         // How strongly mouse pushes spheres (0-1)
 this.mouseShrinkAmount = 0.3;          // How much spheres shrink when touched (30%)
-this.mouseShrinkRadius = 80;           // Distance to trigger shrink effect (px)
+this.mouseShrinkRadius = 120;          // Distance to trigger shrink effect (px)
 this.sphereRecoverySpeed = 0.15;       // Recovery speed from mouse interaction
-this.mouseInfluence = 0.3;             // How much mouse affects glow position (0-1)
+this.mouseInfluence = 0.6;             // How much mouse affects glow position (0-1)
 ```
 
 #### Pulsing & Animation
@@ -455,16 +476,28 @@ this.spherePulseAmplitude = 0.2;       // Expansion/contraction amount (20%)
 this.spherePulsePhaseShift = 0.3;      // Phase difference for wave effect
 this.morphAmplitude = 20;              // Shape morphing amount (%)
 this.driftAmplitude = 5;               // Drift movement distance (px)
-this.rotationSpeedMax = 0.3;           // Maximum rotation speed
+this.rotationSpeedMax = 0.25;          // Maximum rotation speed
 ```
 
 #### Opacity & Blur
 ```javascript
-this.sphereOpacityMin = 0.7;           // Minimum sphere opacity
-this.sphereOpacityMax = 1.0;           // Maximum sphere opacity
-this.wrapperBlur = 50;                 // Main glow blur amount (px)
-this.coreBlur = 8;                     // Core blur amount (px)
+this.sphereOpacityMin = 0.6;           // Minimum sphere opacity (increased for light backgrounds)
+this.sphereOpacityMax = 0.8;           // Maximum sphere opacity
+this.coreOpacity = 0.6;                // Core base opacity
+this.wrapperBlur = 30;                 // Main glow blur amount (px) - reduced for better visibility
+this.coreBlur = 6;                     // Core blur amount (px)
 ```
+
+#### Visual Effects
+```javascript
+this.zIndex = auto;                    // Layer stacking order (auto or specific number)
+this.blendMode = 'overlay';            // How the glow blends with background
+```
+
+Available blend modes:
+- `normal`, `multiply`, `screen`, `overlay`, `darken`, `lighten`
+- `color-dodge`, `color-burn`, `hard-light`, `soft-light`
+- `difference`, `exclusion`, `hue`, `saturation`, `color`, `luminosity`
 
 ### Preset Examples
 
@@ -510,26 +543,58 @@ this.spherePulsePhaseShift = 0.5;
 this.mousePositionSmoothing = 0.1;
 ```
 
+#### Laggy Interaction
+```javascript
+this.clusterLagFactor = 0.02; 
+this.clusterMaxDistance = 200;
+this.clusterCatchUpDelay = 1.0; 
+this.mouseDisruptionRadius = 150;
+this.mouseDisruptionForce = 0.8; 
+this.sphereRecoverySpeed = 0.2;
+```
+
+#### Elastic Follow
+```javascript
+this.clusterLagFactor = 0.01; 
+this.clusterMaxDistance = 300;
+this.clusterCatchUpSpeed = 0.08; 
+this.clusterCatchUpDelay = 0.3;
+this.easingFactor = 0.15; 
+this.mouseInfluence = 0.8;
+```
+
 ### Color Palettes
 
 The effect includes three built-in color palettes based on Watson Creative brand colors:
 
 ```javascript
-warm: ['rgba(233, 56, 38, 0.8)', 'rgba(245, 128, 32, 0.7)', 'rgba(253, 183, 26, 0.6)']
-cool: ['rgba(0, 183, 149, 0.8)', 'rgba(146, 208, 195, 0.7)', 'rgba(12, 75, 65, 0.6)']
-mixed: // Combination of warm and cool colors
+warm: [
+    'rgba(233, 56, 38, 1)',     // Red
+    'rgba(245, 128, 32, 1)',    // Orange  
+    'rgba(220, 140, 0, 1)'      // Yellow-orange
+]
+cool: [
+    'rgba(12, 75, 65, 1)',      // Dark teal
+    'rgba(0, 140, 115, 1)',     // Medium teal
+    'rgba(0, 183, 149, 1)'      // Bright teal
+]
+mixed: [
+    'rgba(0, 183, 149, 1)',     // Bright teal
+    'rgba(0, 140, 115, 1)',     // Medium teal
+    'rgba(245, 128, 32, 1)'     // Orange
+]
 ```
 
 The effect automatically selects palettes based on element content:
 - Elements containing "warm" use the warm palette
-- Elements containing "nature" use the cool palette
+- Elements containing "cool" use the cool palette
 - All others use the mixed palette
 
 ### Dynamic Sizing
 
 The effect automatically adapts to each element's dimensions:
 
-- **Sphere sizes**: Based on element height (min 1.25x, max 3x)
+- **Sphere sizes**: Based on element height (min 0.75x, max 2x)
 - **Distribution area**: Based on element width and height
 - **Wrapper size**: Calculated to contain largest possible sphere plus movement space
 - **Core size**: 40-60% of element height
@@ -538,18 +603,23 @@ This ensures the effect looks proportional on any size element, from small butto
 
 ### Mouse Interaction Details
 
-The aurora effect features three types of mouse interaction:
+The aurora effect features four types of mouse interaction:
 
 1. **Mouse Following**: The entire glow subtly follows the mouse cursor
    - Controlled by `mouseInfluence` (0-1)
    - Smoothed with `easingFactor`
 
-2. **Sphere Disruption**: Mouse pushes spheres away
+2. **Cluster Lag**: The glow cluster lags behind mouse movement
+   - Lag amount controlled by `clusterLagFactor`
+   - Maximum lag distance set by `clusterMaxDistance`
+   - Catches up when mouse stops after `clusterCatchUpDelay`
+
+3. **Sphere Disruption**: Mouse pushes spheres away
    - Active within `mouseDisruptionRadius`
    - Force decreases with distance
    - Spheres recover at `sphereRecoverySpeed`
 
-3. **Touch Response**: Spheres shrink when mouse gets close
+4. **Touch Response**: Spheres shrink when mouse gets close
    - Triggers within `mouseShrinkRadius`
    - Shrinks by `mouseShrinkAmount`
    - Smooth interpolation for natural feel
@@ -558,28 +628,17 @@ The aurora effect features three types of mouse interaction:
 
 1. **Upload the Script**: Add `aurorahover.js` to your Webflow project
 2. **Add Container**: Place the aurora container div in your page
-3. **Apply Classes**: Add the `hoverglow` class to elements in the Designer
+3. **Apply Classes**: Add the `hoverglow`, `cta-right-arrow`, or `cta-load-more` class to elements in the Designer
 4. **Include Script**: Reference the script in Project Settings or page custom code
 
 #### CSS Requirements
 
-Make sure your CSS includes:
-```css
-.aurora-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 5;
-    overflow: hidden;
-}
+The aurora container is automatically created and styled by the script, but you may want to ensure your hover elements have proper styling:
 
-.hoverglow {
+```css
+.hoverglow, .cta-right-arrow, .cta-load-more {
     position: relative;
     cursor: pointer;
-    z-index: 10;
 }
 ```
 
@@ -593,8 +652,8 @@ Make sure your CSS includes:
 ### Tips for Best Results
 
 1. **Element Padding**: Ensure hovered elements have adequate padding for the effect to display properly
-2. **Z-Index**: Keep hoverglow elements above the aurora container (z-index: 10+)
-3. **Dark Backgrounds**: The effect works best on dark backgrounds due to the `mix-blend-mode: screen`
+2. **Blend Mode**: Experiment with different blend modes for various background colors
+3. **Light Backgrounds**: The default settings are optimized for light backgrounds with increased opacity
 4. **Mobile**: Consider reducing sphere count and interaction radius on mobile devices
 5. **Multiple Elements**: The effect handles multiple simultaneous hovers efficiently
 
@@ -617,6 +676,8 @@ this.sphereSizeMax = 5;
 this.spherePulseSpeed = 0.2;
 this.morphAmplitude = 30;
 this.mouseDisruptionForce = 0.2;
+this.blendMode = 'screen';
+this.clusterLagFactor = 0.05;
 ```
 
 ## Webflow Integration

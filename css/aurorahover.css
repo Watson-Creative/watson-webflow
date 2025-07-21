@@ -1,5 +1,5 @@
 .cta-load-more:hover {
-    color: var(--white);
+    color: #fff;
     background-color: var(--midnight);
 }
 .cta-load-more:active {

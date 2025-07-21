@@ -1,0 +1,40 @@
+.menu-bars-wrapper {
+	gap: 8px;
+	cursor: pointer;
+	flex-flow: column;
+	justify-content: center;
+	align-items: center;
+	margin-top: 15px;
+	display: flex;
+	position: relative;
+}
+
+.menu-bars-line {
+	background-color: #000;
+	border: 0 #000;
+	border-radius: 2px;
+	width: 50px;
+	height: 3px;
+	transition: all 0.3s ease-in-out;
+	position: relative;
+	box-sizing: border-box;
+}
+
+/* Hover effects - create right-pointing arrow */
+.menu-bars-wrapper:hover .menu-bars-line.top {
+	transform: rotate(-35deg);
+	width: 30px;
+	transform-origin: right center;
+	translate: 0 9px;
+}
+
+.menu-bars-wrapper:hover .menu-bars-line.middle {
+	/* Middle line stays exactly the same - no changes */
+}
+
+.menu-bars-wrapper:hover .menu-bars-line.bottom {
+	transform: rotate(35deg);
+	width: 30px;
+	transform-origin: right center;
+	translate: 0 -9px;
+}

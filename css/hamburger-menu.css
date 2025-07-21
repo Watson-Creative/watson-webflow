@@ -23,9 +23,9 @@
 /* Hover effects - create right-pointing arrow */
 .menu-bars-wrapper:hover .menu-bars-line.top {
 	transform: rotate(-35deg);
-	width: 30px;
+	width: 20px;
 	transform-origin: right center;
-	translate: 0 9px;
+	translate: 15px 10px;
 }
 
 .menu-bars-wrapper:hover .menu-bars-line.middle {
@@ -34,7 +34,7 @@
 
 .menu-bars-wrapper:hover .menu-bars-line.bottom {
 	transform: rotate(35deg);
-	width: 30px;
+	width: 20px;
 	transform-origin: right center;
-	translate: 0 -9px;
+	translate: 15px -10px;
 }

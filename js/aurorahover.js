@@ -746,23 +746,23 @@ class GlowEffect {
                 const pulseScale = 1 + Math.sin(pulseTime) * this.spherePulseAmplitude;
                 
                 // Shape morphing - change border radius
-                const radiusX = 50 + Math.sin(morphTime + phase) * this.morphAmplitude;
-                const radiusY = 50 + Math.cos(morphTime * 0.7 + phase) * this.morphAmplitude;
+                const radiusX = this.sphereBaseRadius + Math.sin(morphTime + phase) * this.morphAmplitude;
+                const radiusY = this.sphereBaseRadius + Math.cos(morphTime * this.orbitSpeedVariation + phase) * this.morphAmplitude;
                 
                 // Gentle drift on top of position changes
                 const driftX = Math.sin(time + phase) * this.driftAmplitude;
-                const driftY = Math.cos(time * 0.8 + phase) * this.driftAmplitude;
+                const driftY = Math.cos(time * this.orbitSpeedVariation2 + phase) * this.driftAmplitude;
                 
                 // Slight rotation
                 const rotation = time * rotationSpeed * this.rotationMultiplier;
                 
                 // Gentle scale breathing (now combined with pulse and mouse effects)
-                const scaleX = currentScale * pulseScale * (1 + Math.sin(time * 0.5 + phase) * this.scaleAmplitude);
-                const scaleY = currentScale * pulseScale * (1 + Math.cos(time * 0.5 + phase * 1.3) * this.scaleAmplitude);
+                const scaleX = currentScale * pulseScale * (1 + Math.sin(time * this.scaleAnimationSpeed + phase) * this.scaleAmplitude);
+                const scaleY = currentScale * pulseScale * (1 + Math.cos(time * this.scaleAnimationSpeed + phase * 1.3) * this.scaleAmplitude);
                 
                 // Apply all transformations including disruption
                 orb.style.transform = `
-                    translate(-50%, -50%) 
+                    translate(-${this.sphereTransformOffset}%, -${this.sphereTransformOffset}%) 
                     translate(${newX + driftX + disruptionX}px, ${newY + driftY + disruptionY}px) 
                     scale(${scaleX}, ${scaleY})
                     rotate(${rotation}deg)
@@ -800,13 +800,13 @@ class GlowEffect {
                     
                     // Add slight drift
                     const coreX = newX + Math.sin(time + phase) * this.coreDriftAmplitude;
-                    const coreY = newY + Math.cos(time * 0.7 + phase) * this.coreDriftAmplitude;
+                    const coreY = newY + Math.cos(time * this.orbitSpeedVariation + phase) * this.coreDriftAmplitude;
                     
                     const coreScale = 1 + Math.sin(time + phase) * this.coreScaleAmplitude;
-                    const coreBrightness = this.coreOpacity + Math.sin(time * 1.5 + phase) * this.coreOpacityVariation;
+                    const coreBrightness = this.coreOpacity + Math.sin(time * this.coreAnimationSpeed + phase) * this.coreOpacityVariation;
                     
                     core.style.transform = `
-                        translate(-50%, -50%) 
+                        translate(-${this.sphereTransformOffset}%, -${this.sphereTransformOffset}%) 
                         translate(${coreX}px, ${coreY}px) 
                         scale(${coreScale})
                     `;

@@ -29,7 +29,9 @@
 }
 
 .menu-bars-wrapper:hover .menu-bars-line:nth-child(2) {
-	animation: fadeAndDraw 0.6s ease-in-out forwards;
+	animation: .6s ease-in-out forwards fadeAndDraw;
+	left: -38px;
+	width: 120px;
 }
 
 /* Keyframe animation for middle line */

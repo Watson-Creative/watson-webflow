@@ -43,7 +43,7 @@ class GlowEffect {
         this.sphereSizeMin = 0.75;                   // Minimum sphere size multiplier
         this.sphereSizeMax = 2;                      // Maximum sphere size multiplier
         this.sphereCountMin = 4;                     // Minimum number of spheres
-        this.sphereCountMax = 4;                     // Maximum number of spheres
+        this.sphereCountMax = 8;                     // Maximum number of spheres
         
         // Position Constraints (based on element dimensions)
         this.spherePositionRange = 0.6;              // Spheres stay within 60% of element size
@@ -57,10 +57,10 @@ class GlowEffect {
         this.coreCountMax = 2;                       // Maximum number of cores
         
         // Opacity Settings - INCREASED FOR LIGHT BACKGROUNDS
-        this.sphereOpacityMin = 0.85;                 // Minimum sphere opacity (increased from 0.7)
-        this.sphereOpacityMax = 1.0;                 // Maximum sphere opacity
-        this.coreOpacity = 0.9;                      // Core base opacity (increased from 0.8)
-        this.coreOpacityVariation = 0.1;             // Core opacity animation range (reduced from 0.2)
+        this.sphereOpacityMin = 0.4;                 // Minimum sphere opacity (increased from 0.7)
+        this.sphereOpacityMax = 0.8;                 // Maximum sphere opacity
+        this.coreOpacity = 0.8;                      // Core base opacity (increased from 0.8)
+        this.coreOpacityVariation = 0.05;             // Core opacity animation range (reduced from 0.2)
         
         // Blur Settings - REDUCED FOR BETTER VISIBILITY
         this.wrapperBlur = 25;                       // Main wrapper blur (reduced from 50)
@@ -82,7 +82,7 @@ class GlowEffect {
         this.morphSpeedMin = 0.5;                   // Minimum shape morph speed
         this.morphSpeedMax = 1.5;                   // Maximum shape morph speed
         this.morphAmplitude = 20;                   // Shape morph amplitude (%)
-        this.rotationSpeedMax = 0.3;                // Maximum rotation speed
+        this.rotationSpeedMax = 0.25;                // Maximum rotation speed
         this.rotationMultiplier = 30;               // Rotation speed multiplier
         
         // Scale Animation
@@ -98,7 +98,7 @@ class GlowEffect {
         this.mouseDisruptionRadius = 300;           // Radius around mouse that affects spheres (px)
         this.mouseDisruptionForce = 1;            // How strongly mouse pushes spheres (0-1)
         this.mouseShrinkAmount = 0.3;               // How much spheres shrink when mouse touches (30%)
-        this.mouseShrinkRadius = 80;                // Distance from mouse to trigger shrink (px)
+        this.mouseShrinkRadius = 120;                // Distance from mouse to trigger shrink (px)
         this.sphereRecoverySpeed = 0.15;            // How fast spheres recover from mouse interaction
         this.mousePositionSmoothing = 0.2;          // Smoothing for mouse position tracking
         

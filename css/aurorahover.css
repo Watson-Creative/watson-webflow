@@ -1,0 +1,10 @@
+.cta-load-more:hover {
+    border-radius: var(--default-border-radius);
+    color: var(--glacial);
+    background-color: var(--midnight);
+}
+.cta-load-more:active {
+    border-radius: var(--default-border-radius);
+    color: var(--midnight);
+    background-color: var(--glacial);
+}

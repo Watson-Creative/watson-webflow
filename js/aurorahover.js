@@ -177,6 +177,7 @@ class GlowEffect {
 
         // Z-Index - Controls layer stacking order of glow effect
         this.zIndex = 2; // High value ensures glow appears above most content
+        this.hoverElementsIndex = 3; // To ensure hover elements are above glows
 
         // Blend Mode - Controls how the glow interacts with background
         this.blendMode = 'overlay';

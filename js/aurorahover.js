@@ -74,14 +74,14 @@ class GlowEffect {
         this.coreCountMax = 2;                       // Maximum number of cores
         
         // Opacity Settings - INCREASED FOR LIGHT BACKGROUNDS
-        this.sphereOpacityMin = 0.4;                 // Minimum sphere opacity (increased from 0.7)
-        this.sphereOpacityMax = 0.6;                 // Maximum sphere opacity
-        this.coreOpacity = 0.4;                      // Core base opacity (increased from 0.8)
-        this.coreOpacityVariation = 0.05;             // Core opacity animation range (reduced from 0.2)
+        this.sphereOpacityMin = 0.6;                 // Minimum sphere opacity (increased from 0.7)
+        this.sphereOpacityMax = 0.8;                 // Maximum sphere opacity
+        this.coreOpacity = 0.6;                      // Core base opacity (increased from 0.8)
+        this.coreOpacityVariation = 0.1;             // Core opacity animation range (reduced from 0.2)
         
         // Blur Settings - REDUCED FOR BETTER VISIBILITY
-        this.wrapperBlur = 40;                       // Main wrapper blur (reduced from 50)
-        this.coreBlur = 8;                           // Core blur (reduced from 8)
+        this.wrapperBlur = 30;                       // Main wrapper blur (reduced from 50)
+        this.coreBlur = 6;                           // Core blur (reduced from 8)
         
         // Animation Parameters
         this.positionChangeIntervalMin = 2;          // Min seconds between position changes
@@ -179,7 +179,7 @@ class GlowEffect {
         this.zIndex = 999999; // High value ensures glow appears above most content
 
         // Blend Mode - Controls how the glow interacts with background
-        this.blendMode = 'lighten';
+        this.blendMode = 'normal';
         // Available blend modes for CSS 'mix-blend-mode' and 'background-blend-mode':
         // 'normal'
         // 'multiply'
@@ -226,7 +226,7 @@ class GlowEffect {
 
     // Helper method to check if an element has any of the tracked classes
     hasGlowClass(element) {
-        if (!element) return false;
+        if (!element || !element.classList) return false;
         
         // Check for hoverglow class
         if (element.classList.contains('hoverglow')) return true;

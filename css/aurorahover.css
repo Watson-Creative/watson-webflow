@@ -9,3 +9,16 @@
 .cta-load-more {
     transition: color 0.2s ease, background-color 0.2s ease;
 }
+
+/* Make SVG icons inherit text color */
+.cta-load-more-icon svg rect,
+.cta-load-more-icon svg path,
+.cta-load-more-icon svg g,
+.cta-load-more-icon svg {
+	fill: currentColor;
+}
+
+/* Ensure the SVG inherits color transitions */
+.cta-load-more-icon {
+	color: inherit;
+}

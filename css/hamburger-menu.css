@@ -20,6 +20,30 @@
 	box-sizing: border-box;
 }
 
+/* Logo filter effect on hover */
+.site-logo {
+	transition: filter 0.3s ease-in-out;
+}
+
+.site-logo-wrapper:hover .site-logo {
+	filter: 
+		/* First make it fully black */
+		brightness(0)
+		/* Create 2px outline with multiple shadows */
+		drop-shadow(2px 0 0 #040504)
+		drop-shadow(-2px 0 0 #040504)
+		drop-shadow(0 2px 0 #040504)
+		drop-shadow(0 -2px 0 #040504)
+		drop-shadow(1.4px 1.4px 0 #040504)
+		drop-shadow(-1.4px -1.4px 0 #040504)
+		drop-shadow(1.4px -1.4px 0 #040504)
+		drop-shadow(-1.4px 1.4px 0 #040504)
+		/* Invert to make center white/transparent */
+		invert(1)
+		/* Reduce opacity for transparency effect */
+		opacity(0.8);
+}
+
 /* Hover effects - create right-pointing arrow */
 .menu-bars-wrapper:hover .menu-bars-line:nth-child(1) {
 	transform: rotate(-35deg);

@@ -41,7 +41,7 @@
 		/* Invert to make center white/transparent */
 		invert(1)
 		/* Reduce opacity for transparency effect */
-		opacity(0.8);
+		opacity(1);
 }
 
 /* Hover effects - create right-pointing arrow */

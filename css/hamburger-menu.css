@@ -20,12 +20,17 @@
 	box-sizing: border-box;
 }
 
-/* Logo filter effect on hover */
+/* Logo filter effect on hover - only when hovering menu bars */
 .site-logo {
-	transition: filter 0.3s ease-in-out;
+	transition: filter 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .site-logo-wrapper:hover .site-logo {
+	transform: scale(1.25);
+	filter: brightness(1.25) opacity(1);
+}
+
+.site-logo-wrapper:has(.menu-bars-wrapper:hover) .site-logo {
 	filter: 
 		/* Invert first to make logo white */
 		invert(1)
@@ -40,6 +45,7 @@
 		drop-shadow(-1px 1px 0 #040504)
 		/* Make the white semi-transparent */
 		brightness(10) opacity(1);
+	transform: scale(0.9);
 }
 
 /* Hover effects - create right-pointing arrow */

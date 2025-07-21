@@ -43,11 +43,11 @@ class GlowEffect {
         this.sphereSizeMin = 0.75;                   // Minimum sphere size multiplier
         this.sphereSizeMax = 2;                      // Maximum sphere size multiplier
         this.sphereCountMin = 4;                     // Minimum number of spheres
-        this.sphereCountMax = 12;                     // Maximum number of spheres (actual max is min + max)
+        this.sphereCountMax = 4;                     // Maximum number of spheres
         
         // Position Constraints (based on element dimensions)
-        this.spherePositionRange = 1;              // Spheres stay within 60% of element size
-        this.corePositionRange = 0.1;                // Cores stay within 30% of element size
+        this.spherePositionRange = 0.6;              // Spheres stay within 60% of element size
+        this.corePositionRange = 0.3;                // Cores stay within 30% of element size
         this.mouseInfluence = 0.6;                   // How much mouse position affects glow (0-1)
         
         // Core Settings
@@ -56,15 +56,15 @@ class GlowEffect {
         this.coreCountMin = 1;                       // Minimum number of cores
         this.coreCountMax = 2;                       // Maximum number of cores
         
-        // Opacity Settings
-        this.sphereOpacityMin = 0.7;                 // Minimum sphere opacity
+        // Opacity Settings - INCREASED FOR LIGHT BACKGROUNDS
+        this.sphereOpacityMin = 0.85;                 // Minimum sphere opacity (increased from 0.7)
         this.sphereOpacityMax = 1.0;                 // Maximum sphere opacity
-        this.coreOpacity = 0.8;                      // Core base opacity
-        this.coreOpacityVariation = 0.2;             // Core opacity animation range
+        this.coreOpacity = 0.9;                      // Core base opacity (increased from 0.8)
+        this.coreOpacityVariation = 0.1;             // Core opacity animation range (reduced from 0.2)
         
-        // Blur Settings
-        this.wrapperBlur = 50;                       // Main wrapper blur (px)
-        this.coreBlur = 8;                           // Core blur (px)
+        // Blur Settings - REDUCED FOR BETTER VISIBILITY
+        this.wrapperBlur = 25;                       // Main wrapper blur (reduced from 50)
+        this.coreBlur = 4;                           // Core blur (reduced from 8)
         
         // Animation Parameters
         this.positionChangeIntervalMin = 2;          // Min seconds between position changes
@@ -139,25 +139,46 @@ class GlowEffect {
         // this.mouseDisruptionForce = 0.3; this.mouseShrinkAmount = 0.1;
         // this.spherePulsePhaseShift = 0.5; this.mousePositionSmoothing = 0.1;
         
-        // Dynamic color palettes
+        // Blend Mode - Controls how the glow interacts with background
+        this.blendMode = 'lighten';
+        // Available blend modes for CSS 'mix-blend-mode' and 'background-blend-mode':
+        // 'normal'
+        // 'multiply'
+        // 'screen'
+        // 'overlay'
+        // 'darken'
+        // 'lighten'
+        // 'color-dodge'
+        // 'color-burn'
+        // 'hard-light'
+        // 'soft-light'
+        // 'difference'
+        // 'exclusion'
+        // 'hue'
+        // 'saturation'
+        // 'color'
+        // 'luminosity'
+
+        
+        // Dynamic color palettes - MORE SATURATED FOR LIGHT BACKGROUNDS
         this.colorPalettes = {
             warm: [
-                'rgba(233, 56, 38, 0.8)',   // redwood
-                'rgba(245, 128, 32, 0.7)',  // sunset
-                'rgba(253, 183, 26, 0.6)'   // larch
+                'rgba(233, 56, 38, 1)',
+                'rgba(245, 128, 32, 1)',
+                'rgba(220, 140, 0, 1)'
             ],
             cool: [
-                'rgba(0, 183, 149, 0.8)',   // glacial
-                'rgba(146, 208, 195, 0.7)', // light-green
-                'rgba(12, 75, 65, 0.6)'     // forest
+                'rgba(0, 140, 115, 1)',
+                'rgba(0, 183, 149, 1)',
+                'rgba(12, 75, 65, 1)'
             ],
             mixed: [
-                'rgba(233, 56, 38, 0.8)',   // redwood
-                'rgba(245, 128, 32, 0.7)',  // sunset
-                'rgba(253, 183, 26, 0.6)',   // larch
-                'rgba(0, 183, 149, 0.8)',   // glacial
-                'rgba(146, 208, 195, 0.7)', // light-green
-                'rgba(12, 75, 65, 0.6)'     // forest
+                // 'rgba(233, 56, 38, 1)',
+                'rgba(245, 128, 32, 1)',
+                'rgba(220, 140, 0, 1)',
+                'rgba(0, 140, 115, 1)',
+                'rgba(0, 183, 149, 1)',
+                'rgba(12, 75, 65, 1)'
             ]
         };
         
@@ -284,7 +305,7 @@ class GlowEffect {
                 will-change: transform, opacity, filter;
                 pointer-events: none;
                 transition: opacity ${this.fadeInDuration} ease-in;
-                mix-blend-mode: screen;
+                mix-blend-mode: ${this.blendMode};
             `;
             
             const centerX = rect.left + rect.width / 2;
@@ -356,7 +377,7 @@ class GlowEffect {
 
     createGlowLayers(wrapper, glowData) {
         // Create random circles for more variation
-        const circleCount = this.sphereCountMin + Math.floor(Math.random() * this.sphereCountMax);
+        const circleCount = this.sphereCountMin + Math.floor(Math.random() * (this.sphereCountMax - this.sphereCountMin + 1));
         const elementWidth = glowData.rect.width;
         const elementHeight = glowData.rect.height;
         
@@ -438,7 +459,7 @@ class GlowEffect {
         `;
         
         // Add bright cores based on element size
-        const coreCount = this.coreCountMin + Math.floor(Math.random() * this.coreCountMax);
+        const coreCount = this.coreCountMin + Math.floor(Math.random() * (this.coreCountMax - this.coreCountMin + 1));
         glowData.cores = [];
         
         for (let i = 0; i < coreCount; i++) {
@@ -456,8 +477,8 @@ class GlowEffect {
                 transform: translate(-50%, -50%) translate(${coreX}px, ${coreY}px);
                 border-radius: 50%;
                 background: radial-gradient(circle, 
-                    rgba(255,255,255,0.9) 0%, 
-                    ${glowData.palette[0]} 50%, 
+                    ${glowData.palette[0]} 0%, 
+                    ${glowData.palette[1] || glowData.palette[0]} 40%, 
                     transparent 100%);
                 filter: blur(${this.coreBlur}px);
                 pointer-events: none;

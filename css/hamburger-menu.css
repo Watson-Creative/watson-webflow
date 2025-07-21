@@ -27,9 +27,9 @@
 
 .site-logo-wrapper:hover .site-logo {
 	filter: 
-		/* First make it fully black */
-		brightness(0)
-		/* Create 2px outline with multiple shadows */
+		/* Invert first to make logo white */
+		invert(1)
+		/* Create black outline with shadows */
 		drop-shadow(2px 0 0 #040504)
 		drop-shadow(-2px 0 0 #040504)
 		drop-shadow(0 2px 0 #040504)
@@ -38,10 +38,8 @@
 		drop-shadow(-1.4px -1.4px 0 #040504)
 		drop-shadow(1.4px -1.4px 0 #040504)
 		drop-shadow(-1.4px 1.4px 0 #040504)
-		/* Invert to make center white/transparent */
-		invert(1)
-		/* Reduce opacity for transparency effect */
-		opacity(1);
+		/* Make the white semi-transparent */
+		brightness(10) opacity(0.1);
 }
 
 /* Hover effects - create right-pointing arrow */

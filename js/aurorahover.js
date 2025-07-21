@@ -96,7 +96,7 @@ class GlowEffect {
         
         // Mouse Interaction
         this.mouseDisruptionRadius = 300;           // Radius around mouse that affects spheres (px)
-        this.mouseDisruptionForce = 1;            // How strongly mouse pushes spheres (0-1)
+        this.mouseDisruptionForce = 1;              // How strongly mouse pushes spheres (0-1)
         this.mouseShrinkAmount = 0.3;               // How much spheres shrink when mouse touches (30%)
         this.mouseShrinkRadius = 120;                // Distance from mouse to trigger shrink (px)
         this.sphereRecoverySpeed = 0.15;            // How fast spheres recover from mouse interaction

@@ -179,7 +179,7 @@ class GlowEffect {
         this.zIndex = 999999; // High value ensures glow appears above most content
 
         // Blend Mode - Controls how the glow interacts with background
-        this.blendMode = 'normal';
+        this.blendMode = 'overlay';
         // Available blend modes for CSS 'mix-blend-mode' and 'background-blend-mode':
         // 'normal'
         // 'multiply'

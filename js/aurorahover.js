@@ -38,6 +38,21 @@ class GlowEffect {
         this.fadeInDuration = '0.3s';                // Glow fade in time
         this.fadeOutDuration = '0.4s';               // Glow fade out time
         this.animationFPS = 0.016;                   // Animation frame time (60fps)
+        this.millisecondsToSeconds = 1000;           // Conversion factor
+        this.mouseMovementThreshold = 1;             // Minimum pixels to consider mouse moved
+        this.transformCenterOffset = 0.5;            // Center offset for transforms (50%)
+        
+        // Cluster Movement Lag (NEW)
+        this.clusterLagFactor = 0.03;                // How slowly the cluster follows mouse (0.01 = very slow, 1 = instant)
+        this.clusterMaxDistance = 150;              // Maximum distance cluster can lag behind mouse (px)
+        this.clusterCatchUpDelay = 0.5;             // Seconds before cluster starts catching up after mouse stops
+        this.clusterCatchUpSpeed = 0.05;            // Speed at which cluster catches up when mouse is still
+        
+        // CLUSTER LAG TUNING:
+        // - Lower clusterLagFactor = more lag, more sphere interaction opportunity
+        // - Higher clusterMaxDistance = cluster can fall further behind
+        // - Higher clusterCatchUpDelay = cluster waits longer before catching up
+        // - These settings create space for mouse-sphere interactions
         
         // Sphere Sizing (based on element height).
         this.sphereSizeMin = 0.75;                   // Minimum sphere size multiplier
@@ -49,6 +64,8 @@ class GlowEffect {
         this.spherePositionRange = 0.6;              // Spheres stay within 60% of element size
         this.corePositionRange = 0.3;                // Cores stay within 30% of element size
         this.mouseInfluence = 0.6;                   // How much mouse position affects glow (0-1)
+        this.wrapperSizePadding = 1;                 // Extra size for wrapper (multiplier of sphere size)
+        this.wrapperCenterDivisor = 2;               // Divisor for centering wrapper
         
         // Core Settings
         this.coreSizeMin = 0.4;                      // Minimum core size (40% of element height)
@@ -106,6 +123,15 @@ class GlowEffect {
         this.hueRotateSpeed = 0.1;                  // Hue rotation speed
         this.hueRotateAmount = 10;                  // Maximum hue rotation (degrees)
         
+        // Mathematical Constants
+        this.twoPi = Math.PI * 2;                   // Full circle in radians
+        this.sphereTransformOffset = 50;            // Sphere transform center offset (%)
+        this.sphereBaseRadius = 50;                  // Base border radius for spheres (%)
+        this.orbitSpeedVariation = 0.7;              // Variation factor for orbit speeds
+        this.orbitSpeedVariation2 = 0.8;             // Second variation factor
+        this.scaleAnimationSpeed = 0.5;              // Speed factor for scale animations
+        this.coreAnimationSpeed = 1.5;               // Speed factor for core animations
+        
         // ===== PRESET EXAMPLES =====
         // Uncomment and modify values above to achieve different effects:
         
@@ -139,8 +165,18 @@ class GlowEffect {
         // this.mouseDisruptionForce = 0.3; this.mouseShrinkAmount = 0.1;
         // this.spherePulsePhaseShift = 0.5; this.mousePositionSmoothing = 0.1;
         
+        // LAGGY INTERACTION (NEW):
+        // this.clusterLagFactor = 0.02; this.clusterMaxDistance = 200;
+        // this.clusterCatchUpDelay = 1.0; this.mouseDisruptionRadius = 150;
+        // this.mouseDisruptionForce = 0.8; this.sphereRecoverySpeed = 0.2;
+        
+        // ELASTIC FOLLOW (NEW):
+        // this.clusterLagFactor = 0.01; this.clusterMaxDistance = 300;
+        // this.clusterCatchUpSpeed = 0.08; this.clusterCatchUpDelay = 0.3;
+        // this.easingFactor = 0.15; this.mouseInfluence = 0.8;
+        
         // Blend Mode - Controls how the glow interacts with background
-        this.blendMode = 'lighten';
+        this.blendMode = 'normal';
         // Available blend modes for CSS 'mix-blend-mode' and 'background-blend-mode':
         // 'normal'
         // 'multiply'
@@ -178,7 +214,7 @@ class GlowEffect {
                 'rgba(220, 140, 0, 1)',
                 'rgba(0, 140, 115, 1)',
                 'rgba(0, 183, 149, 1)',
-                'rgba(12, 75, 65, 1)'
+                // 'rgba(12, 75, 65, 1)'
             ]
         };
         
@@ -291,10 +327,10 @@ class GlowEffect {
             });
             
             // Calculate wrapper size based on element dimensions
-            // Wrapper needs to be large enough to contain the largest sphere (3x height)
+            // Wrapper needs to be large enough to contain the largest sphere
             // Plus some extra room for movement
-            const wrapperWidth = rect.width + (rect.height * this.sphereSizeMax); // Element width + max sphere size
-            const wrapperHeight = rect.height + (rect.height * this.sphereSizeMax); // Element height + max sphere size
+            const wrapperWidth = rect.width + (rect.height * this.sphereSizeMax * this.wrapperSizePadding);
+            const wrapperHeight = rect.height + (rect.height * this.sphereSizeMax * this.wrapperSizePadding);
             const glowSize = Math.max(wrapperWidth, wrapperHeight); // Use the larger dimension
             
             // Create main wrapper
@@ -308,8 +344,8 @@ class GlowEffect {
                 mix-blend-mode: ${this.blendMode};
             `;
             
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+            const centerX = rect.left + rect.width / this.wrapperCenterDivisor;
+            const centerY = rect.top + rect.height / this.wrapperCenterDivisor;
             
             const mouseOffsetX = event.clientX - centerX;
             const mouseOffsetY = event.clientY - centerY;
@@ -317,8 +353,8 @@ class GlowEffect {
             const initialX = centerX + (mouseOffsetX * mouseInfluence);
             const initialY = centerY + (mouseOffsetY * mouseInfluence);
             
-            wrapper.style.left = `${initialX - glowSize/2}px`;
-            wrapper.style.top = `${initialY - glowSize/2}px`;
+            wrapper.style.left = `${initialX - glowSize/this.wrapperCenterDivisor}px`;
+            wrapper.style.top = `${initialY - glowSize/this.wrapperCenterDivisor}px`;
             wrapper.style.width = `${glowSize}px`;
             wrapper.style.height = `${glowSize}px`;
 
@@ -348,6 +384,10 @@ class GlowEffect {
                 mouseY: event.clientY,               // Track actual mouse position
                 smoothMouseX: event.clientX,         // Smoothed mouse position
                 smoothMouseY: event.clientY,         // Smoothed mouse position
+                lastMouseMoveTime: Date.now(),       // Track when mouse last moved
+                mouseStillTime: 0,                  // How long mouse has been still
+                clusterTargetX: initialX,            // Where cluster wants to be
+                clusterTargetY: initialY,            // Where cluster wants to be
                 time: 0,
                 palette: palette,
                 active: true,
@@ -428,7 +468,7 @@ class GlowEffect {
             circle.dataset.maxOffsetY = maxOffsetY.toString();
             circle.dataset.driftSpeed = (this.driftSpeedMin + Math.random() * (this.driftSpeedMax - this.driftSpeedMin)).toString();
             circle.dataset.morphSpeed = (this.morphSpeedMin + Math.random() * (this.morphSpeedMax - this.morphSpeedMin)).toString();
-            circle.dataset.phase = (Math.random() * Math.PI * 2).toString();
+            circle.dataset.phase = (Math.random() * this.twoPi).toString();
             circle.dataset.rotationSpeed = ((Math.random() - 0.5) * this.rotationSpeedMax).toString();
             circle.dataset.lastPositionChange = '0';
             circle.dataset.positionChangeInterval = (this.positionChangeIntervalMin + Math.random() * (this.positionChangeIntervalMax - this.positionChangeIntervalMin)).toString();
@@ -438,7 +478,7 @@ class GlowEffect {
             circle.dataset.disruptionY = '0';
             circle.dataset.currentScale = '1';
             circle.dataset.targetScale = '1';
-            circle.dataset.pulseOffset = (Math.random() * Math.PI * 2).toString(); // Random start for pulse wave
+            circle.dataset.pulseOffset = (Math.random() * this.twoPi).toString(); // Random start for pulse wave
             
             glowData.orbs.push(circle);
         }
@@ -495,7 +535,7 @@ class GlowEffect {
             core.dataset.maxOffsetX = (elementWidth * this.corePositionRange).toString();
             core.dataset.maxOffsetY = (elementHeight * this.corePositionRange).toString();
             core.dataset.animSpeed = (2 + Math.random()).toString();
-            core.dataset.phase = (Math.random() * Math.PI * 2).toString();
+            core.dataset.phase = (Math.random() * this.twoPi).toString();
             core.dataset.lastPositionChange = '0';
             
             coreWrapper.appendChild(core);
@@ -515,21 +555,50 @@ class GlowEffect {
         glowData.rect = element.getBoundingClientRect();
         
         // Update center position
-        glowData.centerX = glowData.rect.left + glowData.rect.width / 2;
-        glowData.centerY = glowData.rect.top + glowData.rect.height / 2;
+        glowData.centerX = glowData.rect.left + glowData.rect.width / this.wrapperCenterDivisor;
+        glowData.centerY = glowData.rect.top + glowData.rect.height / this.wrapperCenterDivisor;
         
         // Track actual mouse position
+        const prevMouseX = glowData.mouseX;
+        const prevMouseY = glowData.mouseY;
         glowData.mouseX = event.clientX;
         glowData.mouseY = event.clientY;
+        
+        // Check if mouse actually moved
+        const mouseMoved = Math.abs(glowData.mouseX - prevMouseX) > this.mouseMovementThreshold || 
+                          Math.abs(glowData.mouseY - prevMouseY) > this.mouseMovementThreshold;
+        
+        if (mouseMoved) {
+            glowData.lastMouseMoveTime = Date.now();
+            glowData.mouseStillTime = 0;
+        }
         
         // Calculate mouse offset from element center
         const mouseOffsetX = event.clientX - glowData.centerX;
         const mouseOffsetY = event.clientY - glowData.centerY;
         
-        // Constrain the glow movement to a percentage of the offset
-        // This keeps the glow mostly centered while allowing subtle movement
-        glowData.targetX = glowData.centerX + (mouseOffsetX * glowData.mouseInfluence);
-        glowData.targetY = glowData.centerY + (mouseOffsetY * glowData.mouseInfluence);
+        // Calculate ideal cluster position (where it wants to be eventually)
+        const idealX = glowData.centerX + (mouseOffsetX * glowData.mouseInfluence);
+        const idealY = glowData.centerY + (mouseOffsetY * glowData.mouseInfluence);
+        
+        // Update cluster target with lag
+        // Don't update target position immediately - let it lag behind
+        const distToIdeal = Math.sqrt(
+            Math.pow(idealX - glowData.clusterTargetX, 2) + 
+            Math.pow(idealY - glowData.clusterTargetY, 2)
+        );
+        
+        // Only update cluster target if it's getting too far from ideal position
+        if (distToIdeal > this.clusterMaxDistance) {
+            // Pull cluster target towards ideal position, but maintain max distance
+            const angle = Math.atan2(idealY - glowData.clusterTargetY, idealX - glowData.clusterTargetX);
+            glowData.clusterTargetX = idealX - Math.cos(angle) * this.clusterMaxDistance;
+            glowData.clusterTargetY = idealY - Math.sin(angle) * this.clusterMaxDistance;
+        }
+        
+        // Set wrapper target to cluster target (with lag)
+        glowData.targetX = glowData.clusterTargetX;
+        glowData.targetY = glowData.clusterTargetY;
     }
 
     animate() {
@@ -547,19 +616,47 @@ class GlowEffect {
 
             glowData.time += this.animationFPS;
             
+            // Update mouse still time
+            const currentTime = Date.now();
+            glowData.mouseStillTime = (currentTime - glowData.lastMouseMoveTime) / this.millisecondsToSeconds; // Convert to seconds
+            
             // Smooth mouse position tracking
             glowData.smoothMouseX += (glowData.mouseX - glowData.smoothMouseX) * this.mousePositionSmoothing;
             glowData.smoothMouseY += (glowData.mouseY - glowData.smoothMouseY) * this.mousePositionSmoothing;
             
-            // Smooth position interpolation
+            // Calculate ideal cluster position based on current mouse
+            const mouseOffsetX = glowData.smoothMouseX - glowData.centerX;
+            const mouseOffsetY = glowData.smoothMouseY - glowData.centerY;
+            const idealX = glowData.centerX + (mouseOffsetX * glowData.mouseInfluence);
+            const idealY = glowData.centerY + (mouseOffsetY * glowData.mouseInfluence);
+            
+            // Update cluster target to slowly follow ideal position
+            let clusterSpeed = this.clusterLagFactor;
+            
+            // If mouse has been still for a while, increase catch-up speed
+            if (glowData.mouseStillTime > this.clusterCatchUpDelay) {
+                clusterSpeed = this.clusterCatchUpSpeed;
+            }
+            
+            // Move cluster target towards ideal position
+            const clusterDeltaX = idealX - glowData.clusterTargetX;
+            const clusterDeltaY = idealY - glowData.clusterTargetY;
+            glowData.clusterTargetX += clusterDeltaX * clusterSpeed;
+            glowData.clusterTargetY += clusterDeltaY * clusterSpeed;
+            
+            // Update wrapper target to cluster target
+            glowData.targetX = glowData.clusterTargetX;
+            glowData.targetY = glowData.clusterTargetY;
+            
+            // Smooth position interpolation for wrapper (using standard easing)
             const deltaX = glowData.targetX - glowData.currentX;
             const deltaY = glowData.targetY - glowData.currentY;
             
             glowData.currentX += deltaX * this.easingFactor;
             glowData.currentY += deltaY * this.easingFactor;
             
-            const wrapperX = glowData.currentX - glowData.glowSize/2;
-            const wrapperY = glowData.currentY - glowData.glowSize/2;
+            const wrapperX = glowData.currentX - glowData.glowSize/this.wrapperCenterDivisor;
+            const wrapperY = glowData.currentY - glowData.glowSize/this.wrapperCenterDivisor;
             
             glowData.wrapper.style.left = `${wrapperX}px`;
             glowData.wrapper.style.top = `${wrapperY}px`;

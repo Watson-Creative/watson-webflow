@@ -1,5 +1,6 @@
 class GlowEffect {
     constructor() {
+        var otherClasses = ['cta-right-arrow'];
         this.container = document.getElementById('auroraContainer');
         this.activeGlows = new Map();
         this.frameId = null;

@@ -1,7 +1,7 @@
 class GlowEffect {
     constructor() {
         // Define classes that should trigger the glow effect
-        this.otherClasses = ['cta-right-arrow', 'cta-load-more'];
+        this.otherClasses = ['cta-load-more'];
         
         this.container = document.getElementById('auroraContainer');
         this.activeGlows = new Map();

@@ -174,9 +174,12 @@ class GlowEffect {
         // this.clusterLagFactor = 0.01; this.clusterMaxDistance = 300;
         // this.clusterCatchUpSpeed = 0.08; this.clusterCatchUpDelay = 0.3;
         // this.easingFactor = 0.15; this.mouseInfluence = 0.8;
-        
+
+        // Z-Index - Controls layer stacking order of glow effect
+        this.zIndex = 999999; // High value ensures glow appears above most content
+
         // Blend Mode - Controls how the glow interacts with background
-        this.blendMode = 'normal';
+        this.blendMode = 'overlay';
         // Available blend modes for CSS 'mix-blend-mode' and 'background-blend-mode':
         // 'normal'
         // 'multiply'
@@ -342,6 +345,7 @@ class GlowEffect {
                 pointer-events: none;
                 transition: opacity ${this.fadeInDuration} ease-in;
                 mix-blend-mode: ${this.blendMode};
+                z-index: ${this.zIndex};
             `;
             
             const centerX = rect.left + rect.width / this.wrapperCenterDivisor;

@@ -15,7 +15,7 @@
 .cta-load-more-icon svg path,
 .cta-load-more-icon svg g,
 .cta-load-more-icon svg {
-	fill: currentColor;
+	fill: currentColor !important;
 }
 
 /* Ensure the SVG inherits color transitions */

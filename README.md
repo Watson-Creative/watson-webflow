@@ -43,12 +43,16 @@ This will:
 ```
 /
 ├── css/                  # Source CSS files
+│   ├── animated-svg-logo.css
+│   ├── glass-button.css
 │   ├── no-highlight.css
 │   ├── splide.css
 │   ├── text-animations.css
 │   └── virtual-scroll.css
 ├── js/                   # Source JS files
 │   ├── anime.min.js      # Animation library (bundled)
+│   ├── animated-svg-logo.js
+│   ├── aurorahover.js    # Aurora hover effect
 │   ├── slider.js
 │   ├── smooth-scroll.js
 │   └── text-animations.js
@@ -363,6 +367,258 @@ This ensures smooth animation sequencing regardless of whether the preloader is 
 - Test both with and without the preloader to ensure animations work correctly
 - Use consistent placement of the loaderholder div across pages for a cohesive experience
 
+## Aurora Hover Effect
+
+The `aurorahover.js` file provides a sophisticated hover effect that creates an organic, animated aurora-like glow around any element. The effect features multiple animated spheres that respond to mouse movement, creating a dynamic and engaging user experience.
+
+### Features
+
+- **Dynamic Sizing**: Spheres automatically scale based on the hovered element's dimensions
+- **Mouse Interaction**: Spheres react to mouse movement with three distinct behaviors:
+  - **Disruption**: Mouse pushes spheres away like magnetic repulsion
+  - **Shrinking**: Spheres shrink when the mouse gets close, then expand back
+  - **Following**: The entire glow subtly follows mouse movement
+- **Pulsing Animation**: Spheres expand and contract rhythmically with configurable wave patterns
+- **Shape Morphing**: Spheres continuously morph between circular and elliptical shapes
+- **Color Palettes**: Built-in warm, cool, and mixed color schemes using Watson Creative brand colors
+- **Fully Configurable**: Every aspect can be customized through configuration variables
+
+### Basic Usage
+
+1. **Include the aurora container** in your HTML:
+```html
+<div class="aurora-container" id="auroraContainer"></div>
+```
+
+2. **Add the hoverglow class** to any element you want to have the effect:
+```html
+<button class="hoverglow">Hover Me</button>
+<h1 class="hoverglow">Glowing Heading</h1>
+<a href="#" class="hoverglow">Glowing Link</a>
+```
+
+3. **Include the script**:
+```html
+<script src="js/aurorahover.js"></script>
+```
+
+### How It Works
+
+The aurora effect creates multiple layers of animated elements:
+
+1. **Spheres (4-12)**: Main glow elements with varying sizes and colors
+2. **Cores (1-2)**: Bright center points for added depth
+3. **Wrapper**: Container with blur filter for soft glow effect
+
+Each sphere has its own:
+- Size (based on element height: 1.25x to 3x)
+- Position (constrained within element bounds)
+- Color (randomly selected from palette)
+- Animation phase (for organic movement)
+- Interaction state (disruption, scale, position)
+
+### Configuration Variables
+
+The effect is highly customizable through configuration variables at the top of the `GlowEffect` class:
+
+#### Animation & Timing
+```javascript
+this.easingFactor = 0.12;              // Mouse follow smoothness (0.01 = very smooth, 1 = instant)
+this.fadeInDuration = '0.3s';          // Glow fade in time
+this.fadeOutDuration = '0.4s';         // Glow fade out time
+this.animationFPS = 0.016;             // Animation frame time (60fps)
+```
+
+#### Sphere Settings
+```javascript
+this.sphereSizeMin = 1.25;             // Minimum sphere size (125% of element height)
+this.sphereSizeMax = 3;                // Maximum sphere size (300% of element height)
+this.sphereCountMin = 4;               // Minimum number of spheres
+this.sphereCountMax = 8;               // Maximum additional spheres
+this.spherePositionRange = 0.6;        // Spheres stay within 60% of element size
+```
+
+#### Mouse Interaction
+```javascript
+this.mouseDisruptionRadius = 150;      // Radius around mouse that affects spheres (px)
+this.mouseDisruptionForce = 0.6;       // How strongly mouse pushes spheres (0-1)
+this.mouseShrinkAmount = 0.3;          // How much spheres shrink when touched (30%)
+this.mouseShrinkRadius = 80;           // Distance to trigger shrink effect (px)
+this.sphereRecoverySpeed = 0.15;       // Recovery speed from mouse interaction
+this.mouseInfluence = 0.3;             // How much mouse affects glow position (0-1)
+```
+
+#### Pulsing & Animation
+```javascript
+this.spherePulseSpeed = 0.5;           // Speed of sphere pulsing
+this.spherePulseAmplitude = 0.2;       // Expansion/contraction amount (20%)
+this.spherePulsePhaseShift = 0.3;      // Phase difference for wave effect
+this.morphAmplitude = 20;              // Shape morphing amount (%)
+this.driftAmplitude = 5;               // Drift movement distance (px)
+this.rotationSpeedMax = 0.3;           // Maximum rotation speed
+```
+
+#### Opacity & Blur
+```javascript
+this.sphereOpacityMin = 0.7;           // Minimum sphere opacity
+this.sphereOpacityMax = 1.0;           // Maximum sphere opacity
+this.wrapperBlur = 50;                 // Main glow blur amount (px)
+this.coreBlur = 8;                     // Core blur amount (px)
+```
+
+### Preset Examples
+
+The effect includes several preset configurations you can use:
+
+#### Subtle Professional
+```javascript
+this.sphereOpacityMin = 0.3; 
+this.sphereOpacityMax = 0.5;
+this.wrapperBlur = 80; 
+this.scaleAmplitude = 0.05;
+this.morphAmplitude = 10; 
+this.driftAmplitude = 2;
+```
+
+#### Dramatic Neon
+```javascript
+this.sphereOpacityMin = 0.8; 
+this.sphereOpacityMax = 1.0;
+this.wrapperBlur = 40; 
+this.sphereSizeMax = 4;
+this.morphAmplitude = 30; 
+this.coreOpacity = 1.0;
+```
+
+#### Reactive Bubbles
+```javascript
+this.mouseDisruptionRadius = 200; 
+this.mouseDisruptionForce = 0.8;
+this.mouseShrinkAmount = 0.5; 
+this.sphereRecoverySpeed = 0.2;
+this.spherePulseAmplitude = 0.3; 
+this.spherePulseSpeed = 0.7;
+```
+
+#### Gentle Flow
+```javascript
+this.spherePulseSpeed = 0.3; 
+this.spherePulseAmplitude = 0.15;
+this.mouseDisruptionForce = 0.3; 
+this.mouseShrinkAmount = 0.1;
+this.spherePulsePhaseShift = 0.5; 
+this.mousePositionSmoothing = 0.1;
+```
+
+### Color Palettes
+
+The effect includes three built-in color palettes based on Watson Creative brand colors:
+
+```javascript
+warm: ['rgba(233, 56, 38, 0.8)', 'rgba(245, 128, 32, 0.7)', 'rgba(253, 183, 26, 0.6)']
+cool: ['rgba(0, 183, 149, 0.8)', 'rgba(146, 208, 195, 0.7)', 'rgba(12, 75, 65, 0.6)']
+mixed: // Combination of warm and cool colors
+```
+
+The effect automatically selects palettes based on element content:
+- Elements containing "warm" use the warm palette
+- Elements containing "nature" use the cool palette
+- All others use the mixed palette
+
+### Dynamic Sizing
+
+The effect automatically adapts to each element's dimensions:
+
+- **Sphere sizes**: Based on element height (min 1.25x, max 3x)
+- **Distribution area**: Based on element width and height
+- **Wrapper size**: Calculated to contain largest possible sphere plus movement space
+- **Core size**: 40-60% of element height
+
+This ensures the effect looks proportional on any size element, from small buttons to large headings.
+
+### Mouse Interaction Details
+
+The aurora effect features three types of mouse interaction:
+
+1. **Mouse Following**: The entire glow subtly follows the mouse cursor
+   - Controlled by `mouseInfluence` (0-1)
+   - Smoothed with `easingFactor`
+
+2. **Sphere Disruption**: Mouse pushes spheres away
+   - Active within `mouseDisruptionRadius`
+   - Force decreases with distance
+   - Spheres recover at `sphereRecoverySpeed`
+
+3. **Touch Response**: Spheres shrink when mouse gets close
+   - Triggers within `mouseShrinkRadius`
+   - Shrinks by `mouseShrinkAmount`
+   - Smooth interpolation for natural feel
+
+### Webflow Integration
+
+1. **Upload the Script**: Add `aurorahover.js` to your Webflow project
+2. **Add Container**: Place the aurora container div in your page
+3. **Apply Classes**: Add the `hoverglow` class to elements in the Designer
+4. **Include Script**: Reference the script in Project Settings or page custom code
+
+#### CSS Requirements
+
+Make sure your CSS includes:
+```css
+.aurora-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+}
+
+.hoverglow {
+    position: relative;
+    cursor: pointer;
+    z-index: 10;
+}
+```
+
+### Performance Considerations
+
+- The effect uses `requestAnimationFrame` for smooth 60fps animation
+- Animations pause when no elements are hovered
+- Each sphere tracks its own state to minimize calculations
+- Blur effects are GPU-accelerated via CSS
+
+### Tips for Best Results
+
+1. **Element Padding**: Ensure hovered elements have adequate padding for the effect to display properly
+2. **Z-Index**: Keep hoverglow elements above the aurora container (z-index: 10+)
+3. **Dark Backgrounds**: The effect works best on dark backgrounds due to the `mix-blend-mode: screen`
+4. **Mobile**: Consider reducing sphere count and interaction radius on mobile devices
+5. **Multiple Elements**: The effect handles multiple simultaneous hovers efficiently
+
+### Advanced Customization
+
+To create your own preset:
+
+1. Copy the configuration section from the GlowEffect constructor
+2. Adjust values to achieve your desired effect
+3. Test with different element sizes to ensure it scales well
+4. Document your preset for team use
+
+Example custom configuration:
+```javascript
+// Ethereal Mist
+this.sphereOpacityMin = 0.2;
+this.sphereOpacityMax = 0.4;
+this.wrapperBlur = 100;
+this.sphereSizeMax = 5;
+this.spherePulseSpeed = 0.2;
+this.morphAmplitude = 30;
+this.mouseDisruptionForce = 0.2;
+```
+
 ## Webflow Integration
 
 You have two options for integrating the minified files into your Webflow project:
@@ -388,4 +644,4 @@ Link directly to the minified [stylesheet](https://raw.githack.com/Watson-Creati
 
 - The build script preserves important global variables like `$`, `jQuery`, `Webflow`, `anime`, `Splide`, and `Smooth`
 - CSS is optimized for IE11+ compatibility
-- Console statements are preserved in the minified JS for debugging 
+- Console statements are preserved in the minified JS for debugging

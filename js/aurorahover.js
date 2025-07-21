@@ -75,13 +75,13 @@ class GlowEffect {
         
         // Opacity Settings - INCREASED FOR LIGHT BACKGROUNDS
         this.sphereOpacityMin = 0.4;                 // Minimum sphere opacity (increased from 0.7)
-        this.sphereOpacityMax = 0.8;                 // Maximum sphere opacity
-        this.coreOpacity = 0.8;                      // Core base opacity (increased from 0.8)
+        this.sphereOpacityMax = 0.6;                 // Maximum sphere opacity
+        this.coreOpacity = 0.4;                      // Core base opacity (increased from 0.8)
         this.coreOpacityVariation = 0.05;             // Core opacity animation range (reduced from 0.2)
         
         // Blur Settings - REDUCED FOR BETTER VISIBILITY
-        this.wrapperBlur = 25;                       // Main wrapper blur (reduced from 50)
-        this.coreBlur = 4;                           // Core blur (reduced from 8)
+        this.wrapperBlur = 40;                       // Main wrapper blur (reduced from 50)
+        this.coreBlur = 8;                           // Core blur (reduced from 8)
         
         // Animation Parameters
         this.positionChangeIntervalMin = 2;          // Min seconds between position changes
@@ -112,7 +112,7 @@ class GlowEffect {
         this.spherePulsePhaseShift = 0.3;           // Phase difference between spheres for wave effect
         
         // Mouse Interaction
-        this.mouseDisruptionRadius = 300;           // Radius around mouse that affects spheres (px)
+        this.mouseDisruptionRadius = 100;           // Radius around mouse that affects spheres (px)
         this.mouseDisruptionForce = 1;              // How strongly mouse pushes spheres (0-1)
         this.mouseShrinkAmount = 0.3;               // How much spheres shrink when mouse touches (30%)
         this.mouseShrinkRadius = 120;                // Distance from mouse to trigger shrink (px)
@@ -121,7 +121,7 @@ class GlowEffect {
         
         // Color Animation
         this.hueRotateSpeed = 0.1;                  // Hue rotation speed
-        this.hueRotateAmount = 10;                  // Maximum hue rotation (degrees)
+        this.hueRotateAmount = 2;                  // Maximum hue rotation (degrees)
         
         // Mathematical Constants
         this.twoPi = Math.PI * 2;                   // Full circle in radians
@@ -179,7 +179,7 @@ class GlowEffect {
         this.zIndex = 999999; // High value ensures glow appears above most content
 
         // Blend Mode - Controls how the glow interacts with background
-        this.blendMode = 'overlay';
+        this.blendMode = 'lighten';
         // Available blend modes for CSS 'mix-blend-mode' and 'background-blend-mode':
         // 'normal'
         // 'multiply'
@@ -258,6 +258,25 @@ class GlowEffect {
 
     init() {
         console.log('GlowEffect initialized');
+        
+        // Ensure the container exists and is properly styled
+        if (!this.container) {
+            // Create container if it doesn't exist
+            this.container = document.createElement('div');
+            this.container.id = 'auroraContainer';
+            document.body.appendChild(this.container);
+        }
+        
+        // Apply proper styling to ensure glows appear above other content
+        this.container.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: ${this.zIndex};
+        `;
         
         // Use event delegation for better handling of all hoverglow elements
         document.addEventListener('mouseenter', (e) => {

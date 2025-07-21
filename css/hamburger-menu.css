@@ -38,6 +38,7 @@
 }
 
 /* Keyframe animation for drawing the outline */
+/**/
 @keyframes drawOutline {
 	0% {
 		filter: invert(1) brightness(10) opacity(1);
@@ -119,6 +120,75 @@
 			brightness(10) opacity(1);
 	}
 }
+/**/
+
+/* Alternative: Smooth clip-path drawing animation */
+/* Uncomment this and comment out the above to use this version */
+/** /
+@keyframes drawOutline {
+	0% {
+		filter: 
+			invert(1)
+			drop-shadow(1px 0 0 #040504)
+			drop-shadow(-1px 0 0 #040504)
+			drop-shadow(0 1px 0 #040504)
+			drop-shadow(0 -1px 0 #040504)
+			drop-shadow(1px 1px 0 #040504)
+			drop-shadow(-1px -1px 0 #040504)
+			drop-shadow(1px -1px 0 #040504)
+			drop-shadow(-1px 1px 0 #040504)
+			brightness(10) opacity(1);
+		clip-path: circle(0% at 50% 0%);
+	}
+	100% {
+		filter: 
+			invert(1)
+			drop-shadow(1px 0 0 #040504)
+			drop-shadow(-1px 0 0 #040504)
+			drop-shadow(0 1px 0 #040504)
+			drop-shadow(0 -1px 0 #040504)
+			drop-shadow(1px 1px 0 #040504)
+			drop-shadow(-1px -1px 0 #040504)
+			drop-shadow(1px -1px 0 #040504)
+			drop-shadow(-1px 1px 0 #040504)
+			brightness(10) opacity(1);
+		clip-path: circle(150% at 50% 50%);
+	}
+}
+/**/
+
+/* Alternative 2: Stroke-like drawing with opacity masks */
+/* This creates a more organic drawing effect */
+/** /
+@keyframes drawOutline {
+	0% {
+		filter: 
+			invert(1)
+			drop-shadow(1px 0 0 transparent)
+			drop-shadow(-1px 0 0 transparent)
+			drop-shadow(0 1px 0 transparent)
+			drop-shadow(0 -1px 0 transparent)
+			drop-shadow(1px 1px 0 transparent)
+			drop-shadow(-1px -1px 0 transparent)
+			drop-shadow(1px -1px 0 transparent)
+			drop-shadow(-1px 1px 0 transparent)
+			brightness(10) opacity(1);
+	}
+	100% {
+		filter: 
+			invert(1)
+			drop-shadow(1px 0 0 #040504)
+			drop-shadow(-1px 0 0 #040504)
+			drop-shadow(0 1px 0 #040504)
+			drop-shadow(0 -1px 0 #040504)
+			drop-shadow(1px 1px 0 #040504)
+			drop-shadow(-1px -1px 0 #040504)
+			drop-shadow(1px -1px 0 #040504)
+			drop-shadow(-1px 1px 0 #040504)
+			brightness(10) opacity(1);
+	}
+}
+/**/
 
 /* Hover effects - create right-pointing arrow */
 .menu-bars-wrapper:hover .menu-bars-line:nth-child(1) {

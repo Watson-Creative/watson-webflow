@@ -1,6 +1,8 @@
 class GlowEffect {
     constructor() {
-        var otherClasses = ['cta-right-arrow'];
+        // Define classes that should trigger the glow effect
+        this.otherClasses = ['cta-right-arrow'];
+        
         this.container = document.getElementById('auroraContainer');
         this.activeGlows = new Map();
         this.frameId = null;
@@ -162,13 +164,45 @@ class GlowEffect {
         this.init();
     }
 
+    // Helper method to check if an element has any of the tracked classes
+    hasGlowClass(element) {
+        if (!element) return false;
+        
+        // Check for hoverglow class
+        if (element.classList.contains('hoverglow')) return true;
+        
+        // Check for any of the other classes
+        for (const className of this.otherClasses) {
+            if (element.classList.contains(className)) return true;
+        }
+        
+        return false;
+    }
+    
+    // Helper method to find the closest element with any glow class
+    findGlowElement(element) {
+        if (!element) return null;
+        
+        // Check the element itself
+        if (this.hasGlowClass(element)) return element;
+        
+        // Check parent elements
+        let parent = element.parentElement;
+        while (parent) {
+            if (this.hasGlowClass(parent)) return parent;
+            parent = parent.parentElement;
+        }
+        
+        return null;
+    }
+
     init() {
         console.log('GlowEffect initialized');
         
         // Use event delegation for better handling of all hoverglow elements
         document.addEventListener('mouseenter', (e) => {
-            // Check if the target or any parent has hoverglow class
-            const hoverElement = e.target.closest('.hoverglow');
+            // Check if the target or any parent has a glow class
+            const hoverElement = this.findGlowElement(e.target);
             if (hoverElement && !this.activeGlows.has(hoverElement)) {
                 console.log('Mouse enter on:', hoverElement);
                 // Create a new event with the hoverglow element as target
@@ -177,14 +211,14 @@ class GlowEffect {
         }, true);
         
         document.addEventListener('mousemove', (e) => {
-            const hoverElement = e.target.closest('.hoverglow');
+            const hoverElement = this.findGlowElement(e.target);
             if (hoverElement && this.activeGlows.has(hoverElement)) {
                 this.handleMouseMove(e, hoverElement);
             }
         }, true);
         
         document.addEventListener('mouseleave', (e) => {
-            const hoverElement = e.target.closest('.hoverglow');
+            const hoverElement = this.findGlowElement(e.target);
             if (hoverElement) {
                 // Check if we're actually leaving the hoverglow element
                 const relatedTarget = e.relatedTarget;
@@ -699,12 +733,23 @@ class GlowEffect {
 document.addEventListener('DOMContentLoaded', () => {
     const effect = new GlowEffect();
     
-    // Debug: Check how many hoverglow elements exist
+    // Debug: Check how many glow elements exist
     const hoverElements = document.querySelectorAll('.hoverglow');
-    console.log(`Found ${hoverElements.length} hoverglow elements`);
+    const otherElements = [];
     
-    // Ensure all hoverglow elements are properly styled
-    hoverElements.forEach(element => {
+    // Count elements with other classes
+    effect.otherClasses.forEach(className => {
+        const elements = document.querySelectorAll(`.${className}`);
+        otherElements.push(...elements);
+    });
+    
+    console.log(`Found ${hoverElements.length} hoverglow elements`);
+    console.log(`Found ${otherElements.length} elements with other glow classes`);
+    console.log(`Total glow elements: ${hoverElements.length + otherElements.length}`);
+    
+    // Ensure all glow elements are properly styled
+    const allGlowElements = [...hoverElements, ...otherElements];
+    allGlowElements.forEach(element => {
         // Make sure the element is interactive
         const computedStyle = window.getComputedStyle(element);
         if (computedStyle.pointerEvents === 'none') {

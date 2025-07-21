@@ -176,7 +176,7 @@ class GlowEffect {
         // this.easingFactor = 0.15; this.mouseInfluence = 0.8;
 
         // Z-Index - Controls layer stacking order of glow effect
-        this.zIndex = auto; // High value ensures glow appears above most content
+        this.zIndex = 2; // High value ensures glow appears above most content
 
         // Blend Mode - Controls how the glow interacts with background
         this.blendMode = 'overlay';

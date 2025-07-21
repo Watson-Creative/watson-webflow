@@ -10,8 +10,8 @@
 }
 
 .menu-bars-line {
-	background-color: #000;
-	border: 0 #000;
+	background-color: #040504;
+	border: 0 #040504;
 	border-radius: 2px;
 	width: 50px;
 	height: 3px;
@@ -21,14 +21,14 @@
 }
 
 /* Hover effects - create right-pointing arrow */
-.menu-bars-wrapper:hover .menu-bars-line.top {
+.menu-bars-wrapper:hover .menu-bars-line:nth-child(1) {
 	transform: rotate(-35deg);
 	width: 20px;
 	transform-origin: right center;
 	translate: 15px 10px;
 }
 
-.menu-bars-wrapper:hover .menu-bars-line.middle {
+.menu-bars-wrapper:hover .menu-bars-line:nth-child(2) {
 	animation: fadeAndDraw 0.6s ease-in-out forwards;
 }
 
@@ -52,7 +52,7 @@
 	}
 }
 
-.menu-bars-wrapper:hover .menu-bars-line.bottom {
+.menu-bars-wrapper:hover .menu-bars-line:nth-child(3) {
 	transform: rotate(35deg);
 	width: 20px;
 	transform-origin: right center;

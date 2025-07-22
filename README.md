@@ -2,7 +2,7 @@
 
 This build script combines and minifies all CSS and JavaScript files for your Webflow project.
 
-## Features
+## Build Script Features
 
 - **Combines** all CSS files from `/css` directory into a single minified file
 - **Combines** all JS files from `/js` directory into a single minified file
@@ -70,8 +70,11 @@ The `text-animations.js` file provides several animation classes that can be app
 
 - **Viewport-Based Triggering**: All animations automatically trigger when elements enter the viewport (10% visibility threshold)
 - **One-Time Animation**: Each element animates only once when it first becomes visible
+- **Click to Retrigger**: Click any animated text to replay its animation
 - **Performance Optimized**: Uses Intersection Observer for efficient scroll detection
 - **Manual Control**: Animations can also be triggered programmatically via JavaScript
+- **10 Different Animation Styles**: Wide variety of professional text effects
+- **Custom Class Mapping**: Support for automatic animation assignment to custom classes
 
 ### Available Animation Classes
 
@@ -254,7 +257,13 @@ The script also animates elements with the `image-card` class:
    window.triggerAnimation(selector, animationType);
    ```
 
-5. **Event-Based Triggers** (custom code):
+5. **Click to Retrigger Animations**:
+   - All animated text is automatically clickable
+   - Clicking any animated text will replay its animation
+   - The cursor changes to a pointer on hover to indicate interactivity
+   - No additional code needed - this feature is built-in
+
+6. **Event-Based Triggers** (custom code):
    ```javascript
    // Click trigger example
    document.getElementById('my-button').addEventListener('click', function() {

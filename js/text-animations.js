@@ -293,6 +293,86 @@ elementsToAnimate.forEach(function(element) {
   observer.observe(element);
 });
 
+// Add click handlers to all animated elements to retrigger animations
+elementsToAnimate.forEach(function(element) {
+  element.style.cursor = 'pointer'; // Add pointer cursor to indicate clickability
+  
+  element.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Remove the animated attribute to allow re-animation
+    element.removeAttribute('data-animated');
+    
+    // Reset opacity for all animation types
+    if (element.classList.contains('fadeup')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createFadeUpAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('slideup')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createSlideUpAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('slidein')) {
+      element.querySelectorAll('.tricksword').forEach(function(word) {
+        word.style.opacity = '0';
+      });
+      var animation = createSlideInAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('rotatein')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createRotateInAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('popin')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createPopInAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('typewriter')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createTypewriterAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('wavein')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createWaveInAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('zoomin')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createZoomInAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('flipin')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createFlipInAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('bouncein')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createBounceInAnimation(element);
+      animation.play();
+    }
+    
+    // Re-mark as animated after a short delay to prevent immediate re-triggering
+    setTimeout(function() {
+      element.setAttribute('data-animated', 'true');
+    }, 100);
+  });
+});
+
 // Special observer for image cards
 var imageCardObserver = new IntersectionObserver(function(entries, observer) {
   var visibleCards = [];

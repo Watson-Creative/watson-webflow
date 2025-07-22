@@ -3,9 +3,18 @@
 <head>
 <meta charset="utf-8"/>
 <title>Text Animations Demo - All Options</title>
+<!-- CSS files commented out as they're not found
 <link href="css/normalize.css" rel="stylesheet" type="text/css"/>
 <link href="css/webflow.css" rel="stylesheet" type="text/css"/>
+-->
 <style>
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #f5f5f5;
@@ -77,6 +86,7 @@ p {
   font-size: 56px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -113,6 +123,15 @@ p {
   margin: 10px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
+
+/* Add some spacing for demo purposes */
+.spacer {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
 </style>
 </head>
 <body>
@@ -120,7 +139,7 @@ p {
 <div class="container">
   <div class="page-title">
     <h1 class="popin">Text Animation Showcase</h1>
-    <p style="font-size: 20px; color: #666; margin-top: 10px;">Explore all available text animation options</p>
+    <p style="font-size: 20px; color: #666; margin-top: 10px;">Animations trigger when scrolled into view</p>
   </div>
 
   <div class="controls">
@@ -134,12 +153,7 @@ p {
     <p class="fadeup">This text gracefully fades in from bottom with a long, smooth duration.</p>
   </div>
 
-  <!-- Fade Up 3 Animation -->
-  <div class="demo-section">
-    <span class="demo-label">fadeup3 animation</span>
-    <h2 class="fadeup3">Quick Fade Up Animation</h2>
-    <p class="fadeup3">A faster version of the fade up effect with shorter duration.</p>
-  </div>
+  <div class="spacer">↓ Scroll down to see more animations ↓</div>
 
   <!-- Slide Up Animation -->
   <div class="demo-section">
@@ -154,6 +168,8 @@ p {
     <h2 class="slidein">Word by Word Slide In</h2>
     <p class="slidein">Words appear one after another with opacity transition.</p>
   </div>
+
+  <div class="spacer">↓ Keep scrolling ↓</div>
 
   <!-- Rotate In Animation -->
   <div class="demo-section">
@@ -194,17 +210,21 @@ p {
     </div>
   </div>
 
+  <div class="spacer">↓ Almost there ↓</div>
+
   <!-- Multiple Animations Example -->
   <div class="demo-section">
     <span class="demo-label">Combined Example</span>
     <h1 class="slideup">Welcome to Our Site</h1>
-    <h2 class="fadeup3">We Build Amazing Things</h2>
+    <h2 class="fadeup">We Build Amazing Things</h2>
     <p class="slidein">Creating digital experiences that inspire and engage users worldwide.</p>
     <div style="margin-top: 30px;">
       <h3 class="rotatein">Our Services</h3>
       <p class="fadeup">Design • Development • Strategy • Innovation</p>
     </div>
   </div>
+
+  <div class="spacer" style="height: 100px;">🎉 That's all folks! 🎉</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" type="text/javascript" crossorigin="anonymous"></script>

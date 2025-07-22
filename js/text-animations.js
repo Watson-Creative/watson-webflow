@@ -1,5 +1,5 @@
-var startdelay = 500;
-var animationClasses = ['fadeup', 'fadeup3', 'slideup', 'slidein', 'rotatein', 'popin'];
+var startdelay = 200;
+var animationClasses = ['fadeup', 'slideup', 'slidein', 'rotatein', 'popin'];
 var extraClasses = { 
   'intro-heading': 'slideup',
   'heading-2-big': 'popin'
@@ -29,6 +29,8 @@ Object.keys(extraClasses).forEach(function(customClass) {
 
 // Process each element to wrap words and letters
 elementsToAnimate.forEach(function(element) {
+  // Add a marker that this element is prepared for animation
+  element.setAttribute('data-animation-ready', 'true');
   element.innerHTML = element.innerHTML.replace(/(^|<\/?[^>]+>|\s+)([^\s<]+)/g, '$1<span class="tricksword">$2</span>');
 });
 
@@ -52,7 +54,7 @@ for (var i = 0; i < letters.length; i++) {
 }
 
 // Set initial opacity for animated elements
-document.querySelectorAll('.fadeup .letter, .fadeup3 .letter').forEach(function(el) {
+document.querySelectorAll('.fadeup .letter').forEach(function(el) {
   el.style.opacity = '0';
 });
 
@@ -75,170 +77,189 @@ document.querySelectorAll('.popin .letter').forEach(function(el) {
 document.querySelectorAll('.image-card').forEach(function(el) {
   el.style.opacity = '0';
 });
-// Copyright end
 
-// Slide In Animation
-var slideIn = anime.timeline({
-  loop: false,
-  autoplay: false,
-});
-
-slideIn
-  .add({
-    targets: '.slidein .tricksword',
-    opacity: [0,1],
-    easing: "easeInOutQuad",
-    duration: 1000,
-    delay: (el, i) => 400 + 90 * (i+1)
-  });
-
-// Slide Up Animation
-var slideUp = anime.timeline({
-  loop: false,
-  autoplay: false,
-});
-
-slideUp
-  .add({
-    targets: '.slideup .letter',
-    translateY: ["1.1em", 0],
-    opacity: [0,1],
-    translateZ: 0,
-    duration: 750,
-    delay: (el, i) => 50 * i
-  });
-
-// Fade Up Animation
-var fadeUp = anime.timeline({
-  loop: false,
-  autoplay: false,
-});
-
-fadeUp 
-  .add({
-    targets: '.fadeup .letter',
+// Create animation functions that can be called on demand
+function createFadeUpAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
     translateY: [100,0],
     translateZ: 0,
     opacity: [0,1],
     easing: "easeOutExpo",
     duration: 2500,
-    delay: (el, i) => 500 + 50 * i
+    delay: (el, i) => startdelay + 50 * i,
+    autoplay: false
   });
+}
 
-// Fade Up3 Animation
-var fadeUp3 = anime.timeline({
-  loop: false,
-  autoplay: false,
-});
-
-fadeUp3 
-  .add({
-    targets: '.fadeup3 .letter',
-    translateY: [100,0],
-    translateZ: 0,
+function createSlideUpAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateY: ["1.1em", 0],
     opacity: [0,1],
-    easing: "easeOutExpo",
-    duration: 600,
-    delay: (el, i) => 50 + 20 * i
+    translateZ: 0,
+    duration: 750,
+    delay: (el, i) => startdelay + 50 * i,
+    autoplay: false
   });
+}
 
-// Fade Up Card Animation
-var fadeUpCard = anime.timeline({
-  loop: false,
-  autoplay: false,
-});
+function createSlideInAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.tricksword'),
+    opacity: [0,1],
+    easing: "easeInOutQuad",
+    duration: 1000,
+    delay: (el, i) => startdelay + 90 * (i+1),
+    autoplay: false
+  });
+}
 
-fadeUpCard 
-  .add({
+function createRotateInAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateY: ["1.1em", 0],
+    translateX: ["0.55em", 0],
+    translateZ: 0,
+    rotateZ: [180, 0],
+    opacity: [0,1],
+    duration: 750,
+    easing: "easeOutExpo",
+    delay: (el, i) => startdelay + 50 * i,
+    autoplay: false
+  });
+}
+
+function createPopInAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    scale: [0, 1],
+    opacity: [0,1],
+    duration: 1500,
+    elasticity: 600,
+    delay: (el, i) => startdelay + 45 * (i+1),
+    autoplay: false
+  });
+}
+
+function createImageCardAnimation() {
+  return anime({
     targets: '.image-card',
     translateY: [100,0],
     translateZ: 0,
     opacity: [0,1],
     easing: "easeOutExpo",
     duration: 1400,
-    delay: (el, i) => 850 + 150 * i
+    delay: (el, i) => startdelay + 150 * i,
+    autoplay: false
   });
-
-// Rotate In Animation
-var rotateIn = anime.timeline({
-  loop: false,
-  autoplay: false,
-});
-
-rotateIn 
-  .add({
-    targets: '.rotatein .letter',
-    translateY: ["1.1em", 0],
-    translateX: ["0.55em", 0],
-    translateZ: 0,
-    rotateZ: [180, 0],
-    duration: 750,
-    easing: "easeOutExpo",
-    delay: (el, i) => 50 * i
-  });
-
-// Pop In Animation
-var popIn = anime.timeline({
-  loop: false,
-  autoplay: false,
-});
-
-popIn
-  .add({
-    targets: '.popin .letter',
-    scale: [0, 1],
-    duration: 1500,
-    elasticity: 600,
-    delay: (el, i) => 45 * (i+1)
-  });
-
-// Function to play all animations
-function playAllAnimations() {
-  // Play your animation with these
-  fadeUp.play();
-  slideUp.play();
-  rotateIn.play();
-  popIn.play();
-
-  // Wait before playing animation
-  setTimeout(() => {  
-    // Put the play below this line
-    fadeUpCard.play();
-    slideIn.play();
-  }, 800);
 }
 
-// Check if SVG preloader exists and wait for it to complete
-if (typeof window.AnimatedSVGPreloader !== 'undefined' && !window.AnimatedSVGPreloader.isComplete()) {
-  // Wait for preloader to complete
-  document.addEventListener('preloadComplete', function() {
-    // Add startdelay after preloader completes
-    setTimeout(function() {
-      playAllAnimations();
-    }, startdelay);
+// Create Intersection Observer to trigger animations when elements come into view
+var observerOptions = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.1 // Trigger when 10% of element is visible
+};
+
+var observer = new IntersectionObserver(function(entries, observer) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
+      // Mark as animated to prevent re-animation
+      entry.target.setAttribute('data-animated', 'true');
+      
+      var element = entry.target;
+      var animation = null;
+      
+      // Create and play the appropriate animation
+      if (element.classList.contains('fadeup')) {
+        animation = createFadeUpAnimation(element);
+      } else if (element.classList.contains('slideup')) {
+        animation = createSlideUpAnimation(element);
+      } else if (element.classList.contains('slidein')) {
+        animation = createSlideInAnimation(element);
+      } else if (element.classList.contains('rotatein')) {
+        animation = createRotateInAnimation(element);
+      } else if (element.classList.contains('popin')) {
+        animation = createPopInAnimation(element);
+      }
+      
+      if (animation) {
+        animation.play();
+      }
+      
+      // Stop observing this element
+      observer.unobserve(entry.target);
+    }
   });
-} else {
-  // Preloader doesn't exist, is already complete, or wasn't initialized (no loaderholder)
-  // Play animations after startdelay
-  setTimeout(function() {
-    playAllAnimations();
-  }, startdelay);
-}
+}, observerOptions);
 
-// Play animation when something is clicked
-$( ".your-button-class" ).click(function() {
-  // Put the play below this line
+// Observe all animated elements
+elementsToAnimate.forEach(function(element) {
+  observer.observe(element);
 });
 
-// Play animation when hovered in
-$( ".your-button-class" ).mouseenter(function() {
-  // Put the play below this line
-});
-
-// Play animation when scrolled into view
-$('#text-container').on('inview', function(event, isInView) {
-  if (isInView) {
-    fadeUp3.play();
-  } else {
+// Special observer for image cards
+var imageCardObserver = new IntersectionObserver(function(entries, observer) {
+  var visibleCards = [];
+  
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting && !entry.target.hasAttribute('data-animated')) {
+      visibleCards.push(entry.target);
+    }
+  });
+  
+  if (visibleCards.length > 0) {
+    // Mark all visible cards as animated
+    visibleCards.forEach(function(card) {
+      card.setAttribute('data-animated', 'true');
+      observer.unobserve(card);
+    });
+    
+    // Animate all visible cards together
+    var animation = createImageCardAnimation();
+    animation.play();
   }
-}); 
+}, observerOptions);
+
+// Observe all image cards
+document.querySelectorAll('.image-card').forEach(function(card) {
+  imageCardObserver.observe(card);
+});
+
+// Handle SVG preloader if it exists
+if (typeof window.AnimatedSVGPreloader !== 'undefined' && !window.AnimatedSVGPreloader.isComplete()) {
+  document.addEventListener('preloadComplete', function() {
+    // Preloader complete - animations will trigger on scroll
+  });
+}
+
+// Event-based animation triggers for manual control
+window.triggerAnimation = function(selector, animationType) {
+  var element = document.querySelector(selector);
+  if (!element) return;
+  
+  var animation = null;
+  
+  switch(animationType) {
+    case 'fadeup':
+      animation = createFadeUpAnimation(element);
+      break;
+    case 'slideup':
+      animation = createSlideUpAnimation(element);
+      break;
+    case 'slidein':
+      animation = createSlideInAnimation(element);
+      break;
+    case 'rotatein':
+      animation = createRotateInAnimation(element);
+      break;
+    case 'popin':
+      animation = createPopInAnimation(element);
+      break;
+  }
+  
+  if (animation) {
+    animation.play();
+  }
+}; 

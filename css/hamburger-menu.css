@@ -38,7 +38,7 @@
 }
 
 /* Keyframe animation for drawing the outline */
-/**/
+/** /
 @keyframes drawOutline {
 	0% {
 		filter: invert(1) brightness(10) opacity(1);

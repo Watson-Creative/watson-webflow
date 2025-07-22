@@ -64,7 +64,14 @@ This will:
 
 ## Text Animations
 
-The `text-animations.js` file provides several animation classes that can be applied to text elements in Webflow. These animations automatically wrap words and letters in spans and animate them using anime.js.
+The `text-animations.js` file provides several animation classes that can be applied to text elements in Webflow. These animations automatically wrap words and letters in spans and animate them using anime.js. All animations are viewport-triggered, meaning they only play when the element becomes visible during scrolling.
+
+### Key Features
+
+- **Viewport-Based Triggering**: All animations automatically trigger when elements enter the viewport (10% visibility threshold)
+- **One-Time Animation**: Each element animates only once when it first becomes visible
+- **Performance Optimized**: Uses Intersection Observer for efficient scroll detection
+- **Manual Control**: Animations can also be triggered programmatically via JavaScript
 
 ### Available Animation Classes
 
@@ -73,49 +80,43 @@ Apply these classes to any text element (heading, paragraph, text block, etc.) i
 #### 1. **fadeup**
 - **Effect**: Letters fade in from below with a smooth upward motion
 - **Duration**: 2.5 seconds
+- **Trigger**: When element enters viewport
 - **Usage**: Great for hero headings or important text that needs emphasis
 ```html
 <h1 class="fadeup">Your animated text here</h1>
 ```
 
-#### 2. **fadeup3**
-- **Effect**: Similar to fadeup but much faster
-- **Duration**: 600ms
-- **Trigger**: Activates when scrolled into view (requires element with ID `text-container`)
-- **Usage**: Perfect for section headings that appear on scroll
-```html
-<div id="text-container">
-  <h2 class="fadeup3">This animates on scroll</h2>
-</div>
-```
-
-#### 3. **slideup**
+#### 2. **slideup**
 - **Effect**: Letters slide up from below with opacity fade
 - **Duration**: 750ms
+- **Trigger**: When element enters viewport
 - **Usage**: Good for subheadings or secondary text
 ```html
 <p class="slideup">Sliding text animation</p>
 ```
 
-#### 4. **slidein**
+#### 3. **slidein**
 - **Effect**: Entire words (not individual letters) slide in with opacity fade
 - **Duration**: 1 second with staggered delay
+- **Trigger**: When element enters viewport
 - **Usage**: Best for longer text where letter-by-letter might be too slow
 ```html
 <p class="slidein">Words slide in one by one</p>
 ```
 
-#### 5. **rotatein**
+#### 4. **rotatein**
 - **Effect**: Letters rotate in with a 3D effect while sliding from top-right
 - **Duration**: 750ms
+- **Trigger**: When element enters viewport
 - **Usage**: Eye-catching effect for special callouts or CTAs
 ```html
 <span class="rotatein">Rotating text!</span>
 ```
 
-#### 6. **popin**
+#### 5. **popin**
 - **Effect**: Letters scale from 0 to full size with elastic bounce
 - **Duration**: 1.5 seconds
+- **Trigger**: When element enters viewport
 - **Usage**: Playful effect for informal or creative content
 ```html
 <h3 class="popin">Pop in animation</h3>
@@ -176,7 +177,9 @@ The script also animates elements with the `image-card` class:
   <!-- Your card content -->
 </div>
 ```
-- Cards fade up from below with 850ms base delay + 150ms stagger between cards
+- Cards fade up from below when they enter the viewport
+- Multiple cards visible at once animate together with 150ms stagger between them
+- Perfect for gallery grids or card layouts
 
 ### Implementation in Webflow
 
@@ -188,16 +191,36 @@ The script also animates elements with the `image-card` class:
    - Select your text element
    - Add the desired animation class (e.g., `fadeup`, `slidein`, etc.)
    - OR use your custom semantic classes defined in `extraClasses` (e.g., `intro-heading`, `hero-title`)
-   - The animations will trigger automatically on page load
+   - The animations will trigger automatically when scrolled into view
 
-3. **Timing control**:
-   - Most animations start immediately on page load
-   - `slidein` and `image-card` animations have an 800ms delay
-   - `fadeup3` requires scroll trigger setup (element with ID `text-container`)
+3. **Viewport Detection**:
+   - Animations trigger when 10% of the element becomes visible
+   - Each element animates only once
+   - No need for separate scroll triggers - it's built-in
+   - Works with all modern browsers that support Intersection Observer
 
-4. **Custom triggers** (requires custom code):
-   - The script includes placeholders for click and hover triggers
-   - Modify the jQuery selectors at the bottom of `text-animations.js` to add custom triggers
+4. **Manual Animation Control**:
+   ```javascript
+   // Trigger any animation manually
+   window.triggerAnimation('#my-element', 'fadeup');
+   window.triggerAnimation('.my-class', 'slideup');
+   
+   // Works with any animation type
+   window.triggerAnimation(selector, animationType);
+   ```
+
+5. **Event-Based Triggers** (custom code):
+   ```javascript
+   // Click trigger example
+   document.getElementById('my-button').addEventListener('click', function() {
+     window.triggerAnimation('#target-element', 'popin');
+   });
+   
+   // Hover trigger example
+   document.getElementById('hover-zone').addEventListener('mouseenter', function() {
+     window.triggerAnimation('#hover-text', 'rotatein');
+   });
+   ```
 
 ### Tips for Webflow
 
@@ -205,7 +228,10 @@ The script also animates elements with the `image-card` class:
 - **Mobile**: Consider reducing animation complexity on mobile devices
 - **Accessibility**: Add `prefers-reduced-motion` media query in custom CSS for users who prefer no animations
 - **Multiple animations**: You can apply different animation classes to different text elements on the same page
-- **Timing**: Stagger your animations by using different classes to create a sequential reveal effect
+- **Natural Flow**: Animations trigger as users scroll, creating a natural reveal effect
+- **Above the Fold**: Elements visible on page load will animate immediately after a short delay
+- **Long Pages**: Perfect for long-scrolling pages where content reveals progressively
+- **Debugging**: Check browser console for Intersection Observer support on older browsers
 
 ## Animated SVG Preloader
 
@@ -354,10 +380,11 @@ The loader element has these states:
 
 The text animations in `text-animations.js` automatically detect whether the preloader is active:
 
-- **With preloader**: Text animations wait for the preloader to complete
-- **Without preloader**: Text animations start after the standard delay (500ms)
+- **With preloader**: Viewport-based animations still work normally after preloader completes
+- **Without preloader**: Animations trigger immediately when elements enter viewport
+- **Seamless Integration**: The viewport detection system works independently of the preloader
 
-This ensures smooth animation sequencing regardless of whether the preloader is shown.
+This ensures animations work consistently regardless of whether the preloader is shown.
 
 ### Best Practices
 

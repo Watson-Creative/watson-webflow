@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Text Animations - Event Triggers Demo</title>
+<link href="css/normalize.css" rel="stylesheet" type="text/css"/>
+<link href="css/webflow.css" rel="stylesheet" type="text/css"/>
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f5f5f5;
+  padding: 40px 20px;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.demo-section {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.trigger-button {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
+.trigger-button:hover {
+  background: #764ba2;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.hover-zone {
+  background: #f0f4ff;
+  border: 2px dashed #667eea;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hover-zone:hover {
+  background: #e8eeff;
+  border-color: #764ba2;
+}
+
+h2 {
+  font-size: 36px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+}
+
+p {
+  font-size: 18px;
+  color: #555;
+  margin: 0;
+}
+
+.info-box {
+  background: #f8f9fa;
+  border-left: 4px solid #667eea;
+  padding: 15px 20px;
+  margin-top: 20px;
+  border-radius: 4px;
+}
+
+.info-box code {
+  background: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div style="text-align: center; margin-bottom: 60px;">
+    <h1 style="font-size: 48px; color: #333;">Event-Triggered Animations</h1>
+    <p style="font-size: 20px; color: #666;">Interactive text animations with click and hover triggers</p>
+  </div>
+
+  <!-- Click Trigger Demo -->
+  <div class="demo-section">
+    <h2>Click Triggers</h2>
+    <p style="margin-bottom: 20px;">Click the buttons to trigger different animations:</p>
+    
+    <button class="trigger-button click-fadeup">Trigger Fade Up</button>
+    <button class="trigger-button click-slideup">Trigger Slide Up</button>
+    <button class="trigger-button click-popin">Trigger Pop In</button>
+    <button class="trigger-button click-rotatein">Trigger Rotate In</button>
+    
+    <div style="margin-top: 30px;">
+      <h2 class="click-target-fadeup" style="opacity: 0;">Click Animation Demo</h2>
+      <p class="click-target-slideup" style="opacity: 0;">This text animates when you click the buttons above.</p>
+      <p class="click-target-popin" style="opacity: 0;">Try different animations to see the effects!</p>
+      <p class="click-target-rotatein" style="opacity: 0;">Each animation has its own unique style.</p>
+    </div>
+    
+    <div class="info-box">
+      <strong>How it works:</strong> The JavaScript file includes click handlers. You can target elements with class <code>.your-button-class</code> and trigger animations on click.
+    </div>
+  </div>
+
+  <!-- Hover Trigger Demo -->
+  <div class="demo-section">
+    <h2>Hover Triggers</h2>
+    <p style="margin-bottom: 20px;">Hover over the zones below to trigger animations:</p>
+    
+    <div class="hover-zone hover-trigger-1">
+      <p>Hover over this zone</p>
+    </div>
+    <h2 class="hover-target-1 fadeup3" style="opacity: 0;">Hover-triggered Animation!</h2>
+    
+    <div class="hover-zone hover-trigger-2" style="margin-top: 30px;">
+      <p>Hover here for another effect</p>
+    </div>
+    <p class="hover-target-2 slidein" style="opacity: 0;">This text slides in when you hover over the zone above.</p>
+    
+    <div class="info-box">
+      <strong>How it works:</strong> Use <code>$(".your-button-class").mouseenter()</code> to trigger animations on hover.
+    </div>
+  </div>
+
+  <!-- Scroll Trigger Demo -->
+  <div class="demo-section">
+    <h2>Scroll Triggers</h2>
+    <p style="margin-bottom: 20px;">Scroll down slowly to see the animation trigger:</p>
+    
+    <div style="height: 200px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 20px 0;">
+      <p style="color: #999;">↓ Keep scrolling ↓</p>
+    </div>
+    
+    <div id="text-container">
+      <h2 class="fadeup3">Scroll-triggered Animation!</h2>
+      <p class="fadeup3">This text animates when scrolled into view.</p>
+    </div>
+    
+    <div class="info-box">
+      <strong>How it works:</strong> The script includes scroll detection using <code>$('#text-container').on('inview')</code> to trigger animations when elements come into viewport.
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" type="text/javascript" crossorigin="anonymous"></script>
+<script src="js/anime.min.js"></script>
+
+<!-- Modified version of text-animations.js for event demos -->
+<script>
+// Basic setup for event-triggered animations
+var animationClasses = ['fadeup', 'fadeup3', 'slideup', 'slidein', 'rotatein', 'popin'];
+
+// Process elements for click demos
+document.querySelectorAll('.click-target-fadeup, .click-target-slideup, .click-target-popin, .click-target-rotatein').forEach(function(element) {
+  element.innerHTML = element.innerHTML.replace(/(^|<\/?[^>]+>|\s+)([^\s<]+)/g, '$1<span class="tricksword">$2</span>');
+});
+
+// Process elements for hover demos
+document.querySelectorAll('.hover-target-1, .hover-target-2').forEach(function(element) {
+  element.innerHTML = element.innerHTML.replace(/(^|<\/?[^>]+>|\s+)([^\s<]+)/g, '$1<span class="tricksword">$2</span>');
+});
+
+// Wrap letters
+document.querySelectorAll('.tricksword').forEach(function(word) {
+  word.style.whiteSpace = 'nowrap';
+  word.innerHTML = word.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+});
+
+document.querySelectorAll('.letter').forEach(function(letter) {
+  letter.style.display = 'inline-block';
+});
+
+// Click animations
+$('.click-fadeup').click(function() {
+  anime({
+    targets: '.click-target-fadeup .letter',
+    translateY: [100, 0],
+    opacity: [0, 1],
+    easing: "easeOutExpo",
+    duration: 1500,
+    delay: (el, i) => 50 * i
+  });
+});
+
+$('.click-slideup').click(function() {
+  anime({
+    targets: '.click-target-slideup .letter',
+    translateY: ["1.1em", 0],
+    opacity: [0, 1],
+    duration: 750,
+    delay: (el, i) => 50 * i
+  });
+});
+
+$('.click-popin').click(function() {
+  anime({
+    targets: '.click-target-popin .letter',
+    scale: [0, 1],
+    opacity: [0, 1],
+    duration: 1500,
+    elasticity: 600,
+    delay: (el, i) => 45 * (i + 1)
+  });
+});
+
+$('.click-rotatein').click(function() {
+  anime({
+    targets: '.click-target-rotatein .letter',
+    translateY: ["1.1em", 0],
+    translateX: ["0.55em", 0],
+    rotateZ: [180, 0],
+    opacity: [0, 1],
+    duration: 750,
+    easing: "easeOutExpo",
+    delay: (el, i) => 50 * i
+  });
+});
+
+// Hover animations
+$('.hover-trigger-1').mouseenter(function() {
+  anime({
+    targets: '.hover-target-1 .letter',
+    translateY: [100, 0],
+    opacity: [0, 1],
+    easing: "easeOutExpo",
+    duration: 600,
+    delay: (el, i) => 20 * i
+  });
+});
+
+$('.hover-trigger-2').mouseenter(function() {
+  anime({
+    targets: '.hover-target-2 .tricksword',
+    opacity: [0, 1],
+    easing: "easeInOutQuad",
+    duration: 1000,
+    delay: (el, i) => 90 * (i + 1)
+  });
+});
+
+// Simple scroll detection (requires jQuery Inview plugin for full functionality)
+// This is a simplified version for demo purposes
+$(window).on('scroll', function() {
+  var scrollTop = $(window).scrollTop();
+  var elementTop = $('#text-container').offset().top;
+  var elementHeight = $('#text-container').height();
+  var windowHeight = $(window).height();
+  
+  if (scrollTop + windowHeight > elementTop && !$('#text-container').hasClass('animated')) {
+    $('#text-container').addClass('animated');
+    // Trigger the fadeup3 animation
+    anime({
+      targets: '#text-container .fadeup3 .letter',
+      translateY: [100, 0],
+      opacity: [0, 1],
+      easing: "easeOutExpo",
+      duration: 600,
+      delay: (el, i) => 20 * i
+    });
+  }
+});
+</script>
+</body>
+</html> 

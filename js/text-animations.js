@@ -1,5 +1,5 @@
 var startdelay = 200;
-var animationClasses = ['fadeup', 'slideup', 'slidein', 'rotatein', 'popin'];
+var animationClasses = ['fadeup', 'slideup', 'slidein', 'rotatein', 'popin', 'typewriter', 'wavein', 'zoomin', 'flipin', 'bouncein'];
 var extraClasses = { 
   'intro-heading': 'slideup',
   'heading-2-big': 'popin'
@@ -74,6 +74,26 @@ document.querySelectorAll('.popin .letter').forEach(function(el) {
   el.style.opacity = '0';
 });
 
+document.querySelectorAll('.typewriter .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.wavein .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.zoomin .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.flipin .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.bouncein .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
 document.querySelectorAll('.image-card').forEach(function(el) {
   el.style.opacity = '0';
 });
@@ -142,6 +162,70 @@ function createPopInAnimation(element) {
   });
 }
 
+function createTypewriterAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    opacity: [0,1],
+    easing: "linear",
+    duration: 100,
+    delay: (el, i) => startdelay + 100 * i,
+    autoplay: false
+  });
+}
+
+function createWaveInAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateY: function(el, i) {
+      return [Math.sin(i * 0.5) * 50, 0];
+    },
+    opacity: [0,1],
+    easing: "easeOutElastic",
+    duration: 1200,
+    delay: (el, i) => startdelay + 40 * i,
+    autoplay: false
+  });
+}
+
+function createZoomInAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    scale: [3, 1],
+    opacity: [0,1],
+    translateZ: 0,
+    easing: "easeOutExpo",
+    duration: 1000,
+    delay: (el, i) => startdelay + 30 * i,
+    autoplay: false
+  });
+}
+
+function createFlipInAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    rotateY: [-90, 0],
+    opacity: [0,1],
+    translateZ: 0,
+    duration: 800,
+    easing: "easeOutExpo",
+    delay: (el, i) => startdelay + 60 * i,
+    autoplay: false
+  });
+}
+
+function createBounceInAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateY: [-100, 0],
+    opacity: [0,1],
+    translateZ: 0,
+    duration: 1000,
+    easing: "easeOutElastic",
+    delay: (el, i) => startdelay + 50 * i,
+    autoplay: false
+  });
+}
+
 function createImageCardAnimation() {
   return anime({
     targets: '.image-card',
@@ -182,6 +266,16 @@ var observer = new IntersectionObserver(function(entries, observer) {
         animation = createRotateInAnimation(element);
       } else if (element.classList.contains('popin')) {
         animation = createPopInAnimation(element);
+      } else if (element.classList.contains('typewriter')) {
+        animation = createTypewriterAnimation(element);
+      } else if (element.classList.contains('wavein')) {
+        animation = createWaveInAnimation(element);
+      } else if (element.classList.contains('zoomin')) {
+        animation = createZoomInAnimation(element);
+      } else if (element.classList.contains('flipin')) {
+        animation = createFlipInAnimation(element);
+      } else if (element.classList.contains('bouncein')) {
+        animation = createBounceInAnimation(element);
       }
       
       if (animation) {
@@ -256,6 +350,21 @@ window.triggerAnimation = function(selector, animationType) {
       break;
     case 'popin':
       animation = createPopInAnimation(element);
+      break;
+    case 'typewriter':
+      animation = createTypewriterAnimation(element);
+      break;
+    case 'wavein':
+      animation = createWaveInAnimation(element);
+      break;
+    case 'zoomin':
+      animation = createZoomInAnimation(element);
+      break;
+    case 'flipin':
+      animation = createFlipInAnimation(element);
+      break;
+    case 'bouncein':
+      animation = createBounceInAnimation(element);
       break;
   }
   

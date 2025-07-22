@@ -122,6 +122,51 @@ Apply these classes to any text element (heading, paragraph, text block, etc.) i
 <h3 class="popin">Pop in animation</h3>
 ```
 
+#### 6. **typewriter**
+- **Effect**: Letters appear one by one like typing on a keyboard
+- **Duration**: 100ms per letter
+- **Trigger**: When element enters viewport
+- **Usage**: Perfect for terminal-style text, quotes, or important messages
+```html
+<h2 class="typewriter">Typing effect text</h2>
+```
+
+#### 7. **wavein**
+- **Effect**: Letters flow in with a wave-like sine motion and elastic bounce
+- **Duration**: 1.2 seconds
+- **Trigger**: When element enters viewport
+- **Usage**: Dynamic effect for creative headlines or playful content
+```html
+<p class="wavein">Wave motion text</p>
+```
+
+#### 8. **zoomin**
+- **Effect**: Letters zoom in from 3x scale with blur effect transitioning to sharp
+- **Duration**: 1 second
+- **Trigger**: When element enters viewport
+- **Usage**: Dramatic entrance for hero text or important announcements
+```html
+<h1 class="zoomin">Zooming text effect</h1>
+```
+
+#### 9. **flipin**
+- **Effect**: Letters flip in on Y-axis with 3D rotation effect
+- **Duration**: 800ms
+- **Trigger**: When element enters viewport
+- **Usage**: Modern effect for tech-focused content or interactive elements
+```html
+<span class="flipin">Flipping text!</span>
+```
+
+#### 10. **bouncein**
+- **Effect**: Letters drop from above with realistic bounce easing
+- **Duration**: 1 second
+- **Trigger**: When element enters viewport
+- **Usage**: Fun, energetic effect for CTAs or promotional content
+```html
+<h2 class="bouncein">Bouncing text</h2>
+```
+
 ### Custom Class Mappings (extraClasses)
 
 The animation system now supports custom class mappings through the `extraClasses` object. This allows you to define your own semantic class names that automatically apply specific animations.

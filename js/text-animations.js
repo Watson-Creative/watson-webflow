@@ -1,8 +1,8 @@
 var startdelay = 200;
 var animationClasses = ['fadeup', 'slideup', 'slidein', 'rotatein', 'popin', 'typewriter', 'wavein', 'zoomin', 'flipin', 'bouncein'];
 var extraClasses = { 
-  'intro-heading': 'slideup',
-  'heading-2-big': 'popin'
+  'intro-heading': 'slidein',
+  'heading-2-big': 'slidein'
 };
 var elementsToAnimate = [];
 

@@ -2,7 +2,8 @@
 // Smoothly transitions body background color based on scroll position
 
 (function() {
-    'use strict';
+
+    var cssTransition = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'a', 'li', 'div', 'section','.menu-bars-line'];
     
     // Color values from CSS variables
     const colors = {
@@ -35,7 +36,7 @@
         
         // Calculate total scrollable height
         const totalHeight = viewportHeight;
-        const halfPageHeight = totalHeight / 2;
+        const halfPageHeight = totalHeight / 4;
     
         // Calculate progress based on half the total scroll distance
         const scrollProgress = Math.min(scrollY / halfPageHeight, 1);

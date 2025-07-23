@@ -1,64 +1,75 @@
 /* Scroll Color Transition Styles */
 
-/* Smooth transition for background color changes */
-body {
+/* Smooth transition for background color changes - only when class is present */
+body.scrollcolortransition {
     transition: background-color 0.3s ease-out;
     --text-transition-progress: 0;
 }
 
-/* Text color transitions */
-h1, h2, h3, h4, h5, h6, p, span, a, li, div, section {
+/* Text color transitions - only when class is present */
+body.scrollcolortransition h1, 
+body.scrollcolortransition h2, 
+body.scrollcolortransition h3, 
+body.scrollcolortransition h4, 
+body.scrollcolortransition h5, 
+body.scrollcolortransition h6, 
+body.scrollcolortransition p, 
+body.scrollcolortransition span, 
+body.scrollcolortransition a, 
+body.scrollcolortransition li, 
+body.scrollcolortransition div, 
+body.scrollcolortransition section {
     transition: color 0.5s ease-out;
 }
 
-/* Menu bars background transition */
-.menu-bars-line {
+/* Menu bars background transition - only when class is present */
+body.scrollcolortransition .menu-bars-line {
     transition: background-color 0.5s ease-out, border-color 0.5s ease-out;
 }
 
-/* Default: all text is white */
-body:not(.text-transitioned) h1,
-body:not(.text-transitioned) h2,
-body:not(.text-transitioned) h3,
-body:not(.text-transitioned) h4,
-body:not(.text-transitioned) h5,
-body:not(.text-transitioned) h6 {
+/* Default: all text is white - only when scrollcolortransition class is present */
+body.scrollcolortransition:not(.text-transitioned) h1,
+body.scrollcolortransition:not(.text-transitioned) h2,
+body.scrollcolortransition:not(.text-transitioned) h3,
+body.scrollcolortransition:not(.text-transitioned) h4,
+body.scrollcolortransition:not(.text-transitioned) h5,
+body.scrollcolortransition:not(.text-transitioned) h6 {
     color: var(--white) !important;
 }
 
-body:not(.text-transitioned) p,
-body:not(.text-transitioned) span,
-body:not(.text-transitioned) a,
-body:not(.text-transitioned) li,
-body:not(.text-transitioned) div {
+body.scrollcolortransition:not(.text-transitioned) p,
+body.scrollcolortransition:not(.text-transitioned) span,
+body.scrollcolortransition:not(.text-transitioned) a,
+body.scrollcolortransition:not(.text-transitioned) li,
+body.scrollcolortransition:not(.text-transitioned) div {
     color: var(--white) !important;
 }
 
-/* Menu bars: white background when not transitioned */
-body:not(.text-transitioned) .menu-bars-line {
+/* Menu bars: white background when not transitioned - only when scrollcolortransition class is present */
+body.scrollcolortransition:not(.text-transitioned) .menu-bars-line {
     background-color: var(--white) !important;
     border-color: var(--white) !important;
 }
 
-/* When transitioned: use default colors */
-body.text-transitioned h1,
-body.text-transitioned h2,
-body.text-transitioned h3,
-body.text-transitioned h4,
-body.text-transitioned h5,
-body.text-transitioned h6 {
+/* When transitioned: use default colors - only when scrollcolortransition class is present */
+body.scrollcolortransition.text-transitioned h1,
+body.scrollcolortransition.text-transitioned h2,
+body.scrollcolortransition.text-transitioned h3,
+body.scrollcolortransition.text-transitioned h4,
+body.scrollcolortransition.text-transitioned h5,
+body.scrollcolortransition.text-transitioned h6 {
     color: var(--text) !important;
 }
 
-body.text-transitioned p,
-body.text-transitioned span,
-body.text-transitioned a,
-body.text-transitioned li {
+body.scrollcolortransition.text-transitioned p,
+body.scrollcolortransition.text-transitioned span,
+body.scrollcolortransition.text-transitioned a,
+body.scrollcolortransition.text-transitioned li {
     color: var(--text-light) !important;
 }
 
-/* Menu bars: default color when transitioned */
-body.text-transitioned .menu-bars-line {
+/* Menu bars: default color when transitioned - only when scrollcolortransition class is present */
+body.scrollcolortransition.text-transitioned .menu-bars-line {
     background-color: #040504 !important;
     border-color: #040504 !important;
 }

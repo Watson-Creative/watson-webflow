@@ -29,6 +29,11 @@
     
     // Function to update background color based on scroll
     function updateBackgroundColor() {
+        // Only run if body has the scrollcolortransition class
+        if (!document.body.classList.contains('scrollcolortransition')) {
+            return;
+        }
+        
         const scrollY = window.scrollY;
         const viewportHeight = window.innerHeight;
         const scrollableHeight = document.documentElement.scrollHeight;
@@ -92,16 +97,68 @@
         }
     }
     
-    // Initialize on DOM ready
-    function init() {
+    // Variables to store event listeners
+    let scrollHandler = null;
+    let resizeHandler = null;
+    let isActive = false;
+    
+    // Function to activate scroll color transitions
+    function activate() {
+        if (isActive) return;
+        isActive = true;
+        
         // Set initial color
         updateBackgroundColor();
         
-        // Add scroll event listener with throttling
-        window.addEventListener('scroll', throttle(updateBackgroundColor, 16)); // ~60fps
+        // Create throttled handlers
+        scrollHandler = throttle(updateBackgroundColor, 16); // ~60fps
+        resizeHandler = throttle(updateBackgroundColor, 100);
         
-        // Update on resize as viewport height might change
-        window.addEventListener('resize', throttle(updateBackgroundColor, 100));
+        // Add event listeners
+        window.addEventListener('scroll', scrollHandler);
+        window.addEventListener('resize', resizeHandler);
+    }
+    
+    // Function to deactivate scroll color transitions
+    function deactivate() {
+        if (!isActive) return;
+        isActive = false;
+        
+        // Remove event listeners
+        if (scrollHandler) window.removeEventListener('scroll', scrollHandler);
+        if (resizeHandler) window.removeEventListener('resize', resizeHandler);
+        
+        // Reset body styles
+        document.body.style.backgroundColor = '';
+        document.body.style.removeProperty('--text-transition-progress');
+        document.body.classList.remove('text-transitioned');
+    }
+    
+    // Initialize and watch for class changes
+    function init() {
+        // Check initial state
+        if (document.body.classList.contains('scrollcolortransition')) {
+            activate();
+        }
+        
+        // Watch for class changes on body
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (document.body.classList.contains('scrollcolortransition')) {
+                        activate();
+                    } else {
+                        deactivate();
+                    }
+                }
+            });
+        });
+        
+        // Start observing body for class changes
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
     }
     
     // Start when DOM is ready

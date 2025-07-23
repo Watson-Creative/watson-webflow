@@ -58,6 +58,24 @@
         
         // Apply the color to body
         document.body.style.backgroundColor = rgbToString(backgroundColor);
+        
+        // Handle text color transition
+        // Start transitioning text color in the last third of the scroll (when approaching off-white)
+        if (scrollProgress > 0.666) {
+            // Calculate how far through the final third we are (0 to 1)
+            const textTransitionProgress = (scrollProgress - 0.666) / 0.334;
+            document.body.style.setProperty('--text-transition-progress', textTransitionProgress);
+            
+            // Add class when fully transitioned
+            if (textTransitionProgress >= 0.95) {
+                document.body.classList.add('text-transitioned');
+            } else {
+                document.body.classList.remove('text-transitioned');
+            }
+        } else {
+            document.body.style.setProperty('--text-transition-progress', 0);
+            document.body.classList.remove('text-transitioned');
+        }
     }
     
     // Throttle function to improve performance

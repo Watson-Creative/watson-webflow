@@ -1,0 +1,61 @@
+/* Scroll Color Transition Styles */
+
+/* Smooth transition for background color changes */
+body {
+    transition: background-color 0.3s ease-out;
+    --text-transition-progress: 0;
+}
+
+/* Text color transitions */
+h1, h2, h3, h4, h5, h6, p, span, a, li, div, section {
+    transition: color 0.5s ease-out;
+}
+
+/* Default: all text is white */
+body:not(.text-transitioned) h1,
+body:not(.text-transitioned) h2,
+body:not(.text-transitioned) h3,
+body:not(.text-transitioned) h4,
+body:not(.text-transitioned) h5,
+body:not(.text-transitioned) h6 {
+    color: var(--white) !important;
+}
+
+body:not(.text-transitioned) p,
+body:not(.text-transitioned) span,
+body:not(.text-transitioned) a,
+body:not(.text-transitioned) li,
+body:not(.text-transitioned) div {
+    color: var(--white) !important;
+}
+
+/* When transitioned: use default colors */
+body.text-transitioned h1,
+body.text-transitioned h2,
+body.text-transitioned h3,
+body.text-transitioned h4,
+body.text-transitioned h5,
+body.text-transitioned h6 {
+    color: var(--text) !important;
+}
+
+body.text-transitioned p,
+body.text-transitioned span,
+body.text-transitioned a,
+body.text-transitioned li {
+    color: var(--text-light) !important;
+}
+
+/* Add text shadow for better readability on colored backgrounds */
+body:not(.text-transitioned) h1,
+body:not(.text-transitioned) h2,
+body:not(.text-transitioned) h3,
+body:not(.text-transitioned) h4,
+body:not(.text-transitioned) h5,
+body:not(.text-transitioned) h6,
+body:not(.text-transitioned) p,
+body:not(.text-transitioned) span,
+body:not(.text-transitioned) a,
+body:not(.text-transitioned) li {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

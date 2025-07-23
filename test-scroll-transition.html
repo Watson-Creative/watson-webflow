@@ -10,7 +10,7 @@
 <style>
     body {
         /* background-color removed - will be set by JavaScript */
-        color: var(--text-light);
+        /* color removed - will be set by transition styles */
         font-family: 'Roboto', sans-serif;
         font-size: 16px;
         line-height: 1.5;
@@ -41,6 +41,46 @@
     body {
         transition: background-color 0.3s ease-out;
         /* background-color: var(--forest); */
+        --text-transition-progress: 0;
+    }
+    
+    /* Text color transitions */
+    h1, h2, h3, h4, h5, h6, p, span, a, li {
+        transition: color 0.5s ease-out;
+    }
+    
+    /* Default: all text is white */
+    body:not(.text-transitioned) h1,
+    body:not(.text-transitioned) h2,
+    body:not(.text-transitioned) h3,
+    body:not(.text-transitioned) h4,
+    body:not(.text-transitioned) h5,
+    body:not(.text-transitioned) h6 {
+        color: var(--white) !important;
+    }
+    
+    body:not(.text-transitioned) p,
+    body:not(.text-transitioned) span,
+    body:not(.text-transitioned) a,
+    body:not(.text-transitioned) li {
+        color: var(--white) !important;
+    }
+    
+    /* When transitioned: use default colors */
+    body.text-transitioned h1,
+    body.text-transitioned h2,
+    body.text-transitioned h3,
+    body.text-transitioned h4,
+    body.text-transitioned h5,
+    body.text-transitioned h6 {
+        color: var(--text) !important;
+    }
+    
+    body.text-transitioned p,
+    body.text-transitioned span,
+    body.text-transitioned a,
+    body.text-transitioned li {
+        color: var(--text-light) !important;
     }
 
     /* Ensure scroll container items have proper dimensions */
@@ -63,26 +103,26 @@
     .scroll-transition-item h2 {
         font-size: 3rem;
         margin-bottom: 1rem;
-        color: var(--text);
+        /* color removed - handled by transition styles */
         opacity: 0.9;
     }
 
     .scroll-transition-item p {
         font-size: 1.25rem;
         max-width: 600px;
-        color: var(--text-light);
+        /* color removed - handled by transition styles */
         opacity: 0.8;
     }
 
-    /* Add subtle text shadows for better readability on changing backgrounds */
-    .scroll-transition-item h2,
-    .scroll-transition-item p {
-        text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
+    /* Remove text shadow when text is transitioning to dark */
+    body:not(.text-transitioned) .scroll-transition-item h2,
+    body:not(.text-transitioned) .scroll-transition-item p {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     /* Optional: Add borders or backgrounds to sections for visual separation */
     .scroll-transition-item:nth-child(odd) {
-        background-color: rgba(255, 255, 255, 0.1);
+        /* background-color: rgba(255, 255, 255, 0.1); */
     }
 
     .scroll-transition-item:nth-child(even) {
@@ -107,7 +147,7 @@
         </div>
         <div class="scroll-transition-item">
             <h2>Section 4: Reaching Off-White</h2>
-            <p>By the end of the first viewport height, we reach off-white.</p>
+            <p>The background transitions to off-white and text changes to its default color.</p>
         </div>
         <div class="scroll-transition-item">
             <h2>Section 5: Staying Off-White</h2>

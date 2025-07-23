@@ -5,7 +5,7 @@ This build script combines and minifies all CSS and JavaScript files for your We
 ## Build Script Features
 
 - **Combines** all CSS files from `/css` directory into a single minified file
-- **Combines** all JS files from `/js` directory into a single minified file
+- **Combines** all JS files from `/js` directory (including magnetic-dots.js) into a single minified file
 - **Minifies** the output for optimal performance
 - **Watch mode** for automatic rebuilding during development
 - **Size reporting** shows original vs minified file sizes
@@ -53,6 +53,7 @@ This will:
 │   ├── anime.min.js      # Animation library (bundled)
 │   ├── animated-svg-logo.js
 │   ├── aurorahover.js    # Aurora hover effect
+│   ├── magnetic-dots.js  # Interactive dot grid animation
 │   ├── slider.js
 │   ├── smooth-scroll.js
 │   └── text-animations.js
@@ -480,7 +481,6 @@ The `aurorahover.js` file provides a sophisticated hover effect that creates an 
 <h1 class="hoverglow">Glowing Heading</h1>
 
 <!-- Additional supported classes -->
-<button class="cta-right-arrow">Next</button>
 <a href="#" class="cta-load-more">Load More</a>
 ```
 
@@ -493,8 +493,8 @@ The `aurorahover.js` file provides a sophisticated hover effect that creates an 
 
 The aurora effect can be triggered by any of these classes:
 - `hoverglow` - Primary class for general hover effects
-- `cta-right-arrow` - For right arrow CTA buttons
 - `cta-load-more` - For load more buttons
+- Additional custom classes can be added to the `otherClasses` array in the script
 
 ### How It Works
 
@@ -760,6 +760,158 @@ this.mouseDisruptionForce = 0.2;
 this.blendMode = 'screen';
 this.clusterLagFactor = 0.05;
 ```
+
+## Magnetic Dots Animation
+
+The `magnetic-dots.js` file provides an interactive canvas-based animation that creates a grid of dots that respond to mouse movement with a magnetic attraction effect. This creates an engaging visual effect perfect for backgrounds or interactive sections.
+
+### Features
+
+- **Dynamic Grid Generation**: Automatically creates a grid of dots based on container size
+- **Magnetic Mouse Interaction**: Dots are attracted to and repelled by the mouse cursor
+- **Smooth Animation**: Uses requestAnimationFrame for smooth 60fps performance
+- **Responsive**: Automatically resizes and regenerates dots when the window resizes
+- **Customizable Width**: Control canvas width as a percentage of container
+- **Hover Toggle**: Option to disable mouse interaction for static displays
+- **Elastic Return**: Dots smoothly return to their original positions when mouse leaves
+
+### Basic Usage
+
+1. **Add a container element** with the class `animation-magnetic-dots`:
+```html
+<div class="animation-magnetic-dots"></div>
+```
+
+2. **Include the script**:
+```html
+<script src="js/magnetic-dots.js"></script>
+```
+
+The script will automatically:
+- Find all elements with the `animation-magnetic-dots` class
+- Create a canvas element inside each container
+- Generate a grid of dots that respond to mouse movement
+
+### Configuration Options
+
+#### Container Attributes
+
+**Disable Hover Interaction**
+```html
+<div class="animation-magnetic-dots" disable-hover></div>
+```
+- Dots will remain static without mouse interaction
+- Useful for decorative backgrounds that shouldn't be interactive
+
+**Custom Canvas Width**
+```html
+<div class="animation-magnetic-dots" data-dots-width="80"></div>
+```
+- Sets the canvas width as a percentage of the container (default: 100%)
+- Useful for creating margins or specific layouts
+
+### Customization
+
+The animation parameters can be adjusted in the `setupCanvas` function:
+
+```javascript
+const magnet = 500;        // Magnetic force strength (higher = stronger attraction)
+const dotSize = 1;         // Radius of each dot in pixels
+const dotSpacing = 14;     // Distance between dots in pixels
+```
+
+#### Visual Customization
+
+**Dot Color**
+```javascript
+ctx.fillStyle = '#c6c6c6';  // Change to any color
+```
+
+**Smoothing Factor**
+```javascript
+// In the update function - adjust for different effects
+this.x += (this.originalX - this.x) * 0.05;  // 0.05 = smooth, 0.5 = snappy
+```
+
+### Styling the Container
+
+The container element should have defined dimensions:
+
+```css
+.animation-magnetic-dots {
+    width: 100%;
+    height: 400px;  /* Or any specific height */
+    position: relative;
+    overflow: hidden;
+    background: #f5f5f5;  /* Optional background */
+}
+
+/* The canvas is automatically styled by the script */
+.animation-magnetic-dots__canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+```
+
+### Advanced Examples
+
+#### Full-Screen Background
+```html
+<div class="animation-magnetic-dots" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;"></div>
+```
+
+#### Section Background with Centered Content
+```html
+<section style="position: relative;">
+    <div class="animation-magnetic-dots" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+    <div style="position: relative; z-index: 1;">
+        <!-- Your content here -->
+    </div>
+</section>
+```
+
+#### Multiple Instances with Different Settings
+```html
+<!-- Interactive dots -->
+<div class="animation-magnetic-dots" id="interactive-dots"></div>
+
+<!-- Static decorative dots -->
+<div class="animation-magnetic-dots" disable-hover id="static-dots"></div>
+
+<!-- Partial width dots -->
+<div class="animation-magnetic-dots" data-dots-width="70"></div>
+```
+
+### Performance Considerations
+
+- Each dot is individually animated, so limit container size on mobile devices
+- The animation runs continuously using requestAnimationFrame
+- Consider using `disable-hover` on mobile to save processing power
+- Multiple instances on the same page will each run their own animation loop
+
+### Webflow Integration
+
+1. **Upload the Script**: Add `magnetic-dots.js` to your Webflow project
+2. **Create a Div Block**: In the Designer, add a div and give it the class `animation-magnetic-dots`
+3. **Set Dimensions**: Give your div specific width and height values
+4. **Add Attributes**: Use Webflow's custom attributes to add `disable-hover` or `data-dots-width` if needed
+5. **Position as Needed**: Use absolute/fixed positioning for background effects
+
+#### Tips for Webflow
+
+- Create a Symbol for reusable magnetic dot backgrounds
+- Use Webflow's interactions to show/hide dot containers
+- Combine with other animations for layered effects
+- Test performance on mobile devices in Webflow's preview
+
+### Customization Ideas
+
+1. **Gradient Dots**: Modify the drawing function to create gradient-filled dots
+2. **Connected Dots**: Add lines between nearby dots for a constellation effect
+3. **Variable Sizes**: Make dots different sizes based on position or randomness
+4. **Color Transitions**: Change dot colors based on mouse proximity
+5. **Wave Effects**: Add sine wave movements independent of mouse interaction
 
 ## Webflow Integration
 

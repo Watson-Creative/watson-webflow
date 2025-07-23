@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scroll Transition Test</title>
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/scroll-color-transition.css">
+</head>
+<style>
+    body {
+        /* background-color removed - will be set by JavaScript */
+        color: var(--text-light);
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        padding: 20px;
+        text-align: center;
+    }
+    p { 
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        padding: 0 20px;
+        text-align: center;
+    }
+    .scroll-transition-item {
+        height: 100vh;
+        width: 100vw;
+    }
+    /* Scroll Color Transition Styles */
+
+    /* Smooth transition for background color changes */
+    body {
+        transition: background-color 0.3s ease-out;
+        /* background-color: var(--forest); */
+    }
+
+    /* Ensure scroll container items have proper dimensions */
+    .scroll-transition {
+        position: relative;
+        width: 100%;
+    }
+
+    .scroll-transition-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+
+    /* Style the content within each section */
+    .scroll-transition-item h2 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--text);
+        opacity: 0.9;
+    }
+
+    .scroll-transition-item p {
+        font-size: 1.25rem;
+        max-width: 600px;
+        color: var(--text-light);
+        opacity: 0.8;
+    }
+
+    /* Add subtle text shadows for better readability on changing backgrounds */
+    .scroll-transition-item h2,
+    .scroll-transition-item p {
+        text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Optional: Add borders or backgrounds to sections for visual separation */
+    .scroll-transition-item:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .scroll-transition-item:nth-child(even) {
+        background-color: rgba(0, 0, 0, 0.05);
+    } 
+</style>
+<body>
+    <h1 style="color: var(--white);">Scroll Color Transition Test Page</h1>
+    <p style="color: var(--white);">Scroll down to see the background color transition from forest → glacial → light-green → off-white</p>
+    <div class="scroll-transition">
+        <div class="scroll-transition-item">
+            <h2>Section 1: Forest</h2>
+            <p>The background starts with the forest color at the top of the page.</p>
+        </div>
+        <div class="scroll-transition-item">
+            <h2>Section 2: Transitioning to Glacial</h2>
+            <p>As you scroll, the background smoothly transitions to glacial.</p>
+        </div>
+        <div class="scroll-transition-item">
+            <h2>Section 3: Moving to Light Green</h2>
+            <p>Continue scrolling to see the transition to light green.</p>
+        </div>
+        <div class="scroll-transition-item">
+            <h2>Section 4: Reaching Off-White</h2>
+            <p>By the end of the first viewport height, we reach off-white.</p>
+        </div>
+        <div class="scroll-transition-item">
+            <h2>Section 5: Staying Off-White</h2>
+            <p>The background remains off-white for all content beyond the first viewport.</p>
+        </div>
+        <div class="scroll-transition-item">
+            <h2>Section 6: Scroll Back Up</h2>
+            <p>Scroll back to the top to see the colors transition in reverse!</p>
+        </div>
+    </div>
+    
+    <!-- Include the scroll color transition script -->
+    <script src="js/scroll-color-transition.js"></script>
+</body>
+</html>

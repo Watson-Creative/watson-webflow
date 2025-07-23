@@ -808,6 +808,144 @@ this.blendMode = 'screen';
 this.clusterLagFactor = 0.05;
 ```
 
+## Scroll Color Transition
+
+The `scroll-color-transition.js` file provides a smooth background color transition effect that changes the body background color as the user scrolls through the first viewport height. This creates an engaging visual progression through your brand colors.
+
+### Features
+
+- **Smooth Color Interpolation**: Seamlessly transitions between four brand colors
+- **Viewport-Based**: Transitions occur over exactly one viewport height (100vh)
+- **Bidirectional**: Colors transition forward when scrolling down and reverse when scrolling up
+- **Performance Optimized**: Uses throttling to maintain smooth 60fps performance
+- **Responsive**: Automatically adjusts to viewport height changes
+
+### Color Progression
+
+The background transitions through these Watson Creative brand colors:
+
+1. **Forest** (`#0c4b41`) - Dark green starting color
+2. **Glacial** (`#00b795`) - Bright teal at 33.33% scroll
+3. **Light Green** (`#92d0c3`) - Soft green at 66.66% scroll
+4. **Off-White** (`#f0edec`) - Light background at 100% scroll and beyond
+
+### How It Works
+
+The transition is divided into three equal segments over the first viewport height:
+
+- **0-33.33%**: Forest → Glacial
+- **33.33-66.66%**: Glacial → Light Green
+- **66.66-100%**: Light Green → Off-White
+- **Beyond 100vh**: Remains Off-White
+
+### Basic Usage
+
+1. **Include the CSS files**:
+```html
+<!-- Brand colors -->
+<link rel="stylesheet" href="css/colors.css">
+<!-- Scroll transition styles -->
+<link rel="stylesheet" href="css/scroll-color-transition.css">
+```
+
+2. **Include the JavaScript**:
+```html
+<script src="js/scroll-color-transition.js"></script>
+```
+
+That's it! The effect will automatically initialize and start working on page load.
+
+### Customization
+
+#### Adjusting Transition Speed
+
+In `scroll-color-transition.css`, modify the transition duration:
+```css
+body {
+    transition: background-color 0.5s ease-out; /* Default is 0.3s */
+}
+```
+
+#### Changing Colors
+
+To use different colors, edit the color values in `scroll-color-transition.js`:
+```javascript
+const colors = {
+    forest: { r: 12, g: 75, b: 65 },      // Your starting color
+    glacial: { r: 0, g: 183, b: 149 },    // First transition
+    lightGreen: { r: 146, g: 208, b: 195 }, // Second transition
+    offWhite: { r: 240, g: 237, b: 236 }   // Final color
+};
+```
+
+#### Adjusting Transition Distance
+
+To make the transition happen over a different distance (default is 100vh):
+```javascript
+// In updateBackgroundColor function
+const scrollProgress = Math.min(scrollY / (viewportHeight * 2), 1); // 200vh
+```
+
+#### Adding More Color Stops
+
+To add more colors to the transition, modify the color interpolation logic:
+```javascript
+if (scrollProgress <= 0.25) {
+    // First quarter
+} else if (scrollProgress <= 0.5) {
+    // Second quarter
+} else if (scrollProgress <= 0.75) {
+    // Third quarter
+} else {
+    // Final quarter
+}
+```
+
+### Webflow Integration
+
+1. **Upload Files**: Add `scroll-color-transition.js` and `scroll-color-transition.css` to your Webflow project
+2. **Include Dependencies**: Make sure `colors.css` is included for the CSS variables
+3. **Add Scripts**: Include both CSS and JS files in your page or project settings
+4. **Content Structure**: Ensure your first section has enough height for the full transition
+
+#### Best Practices for Webflow
+
+- **Hero Sections**: Perfect for landing pages with tall hero sections
+- **Storytelling**: Use the color progression to enhance narrative flow
+- **Section Backgrounds**: Consider semi-transparent section backgrounds to blend with the changing body color
+- **Text Contrast**: Ensure text remains readable across all background colors
+- **Performance**: The effect is lightweight and won't impact Webflow's built-in animations
+
+### Performance Considerations
+
+- Uses `requestAnimationFrame` throttling for smooth 60fps updates
+- Minimal DOM manipulation (only updates body background)
+- Automatically pauses calculations when scroll position hasn't changed
+- Lightweight with no dependencies beyond vanilla JavaScript
+
+### Tips for Design
+
+1. **Content Planning**: Design your first viewport content to align with the color progression
+2. **Text Colors**: Use colors that work well against all four background colors
+3. **Section Transitions**: Add subtle overlays or gradients to sections for smoother visual flow
+4. **Mobile Consideration**: Test on various device heights as viewport height varies
+5. **Accessibility**: Ensure sufficient contrast ratios throughout the transition
+
+### Combining with Other Effects
+
+The scroll color transition works seamlessly with other animations in the build:
+
+- **Text Animations**: Will trigger normally as elements enter viewport
+- **Aurora Hover**: Hover effects will adapt to the changing background
+- **Magnetic Dots**: Can be overlaid for additional visual interest
+
+### Troubleshooting
+
+- **Colors Not Changing**: Ensure the JavaScript file is loaded and colors.css is included
+- **Jumpy Transitions**: Increase the CSS transition duration for smoother changes
+- **Performance Issues**: Check if other heavy scripts are running simultaneously
+- **Wrong Colors**: Verify the RGB values match your brand colors exactly
+
 ## Magnetic Dots Animation
 
 The `magnetic-dots.js` file provides an interactive canvas-based animation that creates a grid of dots that respond to mouse movement with a magnetic attraction effect. This creates an engaging visual effect perfect for backgrounds or interactive sections.

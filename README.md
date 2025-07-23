@@ -2,6 +2,53 @@
 
 This build script combines and minifies all CSS and JavaScript files for your Webflow project.
 
+## Brand Colors
+
+Watson Creative uses a carefully curated color palette that balances professional teal tones with warm accent colors. These colors are used throughout the animations and effects in this build system.
+
+### Primary Brand Colors
+
+#### Teal Palette
+- **Bright Teal**: `#00b795` / `rgba(0, 183, 149, 1)` - Primary brand color, used for main CTAs and key elements
+- **Medium Teal**: `rgba(0, 140, 115, 1)` - Secondary teal for supporting elements
+- **Dark Teal**: `rgba(12, 75, 65, 1)` - Deep teal for text and subtle accents
+
+#### Warm Accent Colors
+- **Red**: `rgba(233, 56, 38, 1)` - High-energy accent for alerts and important calls-to-action
+- **Orange**: `rgba(245, 128, 32, 1)` - Warm accent for highlights and secondary CTAs
+- **Yellow-Orange**: `rgba(220, 140, 0, 1)` - Golden accent for premium features
+
+### Neutral Colors
+- **Light Background**: `#f0edec` - Subtle background color for the logo preloader
+- **Light Gray**: `#c6c6c6` - Neutral gray for dots and subtle elements
+- **Off-White**: `#f5f5f5` - Clean background color for sections
+
+### Color Usage Guidelines
+
+- **Primary Actions**: Use Bright Teal (`#00b795`) for main buttons and primary CTAs
+- **Secondary Actions**: Use Medium Teal or Orange for secondary buttons
+- **Accents**: Use warm colors sparingly for highlights and important information
+- **Backgrounds**: Use neutral colors for clean, professional layouts
+- **Text**: Use Dark Teal for primary text, with appropriate contrast ratios
+
+### CSS Custom Properties
+
+You can use these colors in your custom CSS with the following variables (if defined in your project):
+
+```css
+:root {
+  --watson-bright-teal: #00b795;
+  --watson-medium-teal: rgb(0, 140, 115);
+  --watson-dark-teal: rgb(12, 75, 65);
+  --watson-red: rgb(233, 56, 38);
+  --watson-orange: rgb(245, 128, 32);
+  --watson-yellow-orange: rgb(220, 140, 0);
+  --watson-light-bg: #f0edec;
+  --watson-light-gray: #c6c6c6;
+  --watson-off-white: #f5f5f5;
+}
+```
+
 ## Build Script Features
 
 - **Combines** all CSS files from `/css` directory into a single minified file

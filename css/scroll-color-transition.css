@@ -27,7 +27,7 @@ body.scrollcolortransition .menu-bars-line {
     transition: background-color 0.5s ease-out, border-color 0.5s ease-out;
 }
 
-/* Default: all text is white - only when scrollcolortransition class is present */
+/* Override: force all text to white on dark backgrounds - only when scrollcolortransition class is present */
 body.scrollcolortransition:not(.text-transitioned) h1,
 body.scrollcolortransition:not(.text-transitioned) h2,
 body.scrollcolortransition:not(.text-transitioned) h3,
@@ -51,25 +51,7 @@ body.scrollcolortransition:not(.text-transitioned) .menu-bars-line {
     border-color: var(--white) !important;
 }
 
-/* When transitioned: use default colors - only when scrollcolortransition class is present */
-body.scrollcolortransition.text-transitioned h1,
-body.scrollcolortransition.text-transitioned h2,
-body.scrollcolortransition.text-transitioned h3,
-body.scrollcolortransition.text-transitioned h4,
-body.scrollcolortransition.text-transitioned h5,
-body.scrollcolortransition.text-transitioned h6 {
-    color: var(--text) !important;
-}
+/* When transitioned: no color overrides - elements return to their default colors */
+/* The absence of color rules here means elements will use their original CSS colors */
 
-body.scrollcolortransition.text-transitioned p,
-body.scrollcolortransition.text-transitioned span,
-body.scrollcolortransition.text-transitioned a,
-body.scrollcolortransition.text-transitioned li {
-    color: var(--text-light) !important;
-}
-
-/* Menu bars: default color when transitioned - only when scrollcolortransition class is present */
-body.scrollcolortransition.text-transitioned .menu-bars-line {
-    background-color: #040504 !important;
-    border-color: #040504 !important;
-}
+/* Menu bars also return to their default colors when transitioned */

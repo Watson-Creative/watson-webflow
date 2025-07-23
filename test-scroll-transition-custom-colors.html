@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scroll Transition with Custom Colors Test</title>
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/scroll-color-transition.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        /* Custom colored elements - these colors should return when background is light */
+        .brand-teal {
+            color: var(--glacial);
+        }
+        
+        .brand-red {
+            color: var(--redwood);
+        }
+        
+        .brand-orange {
+            color: var(--sunset);
+        }
+        
+        .custom-purple {
+            color: #8B5CF6;
+        }
+        
+        .custom-blue {
+            color: #3B82F6;
+        }
+        
+        /* Custom menu bars with different default color */
+        .custom-menu-bars {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+        
+        .custom-menu-bar {
+            background-color: var(--glacial);
+            border: 0;
+            border-radius: 2px;
+            width: 40px;
+            height: 3px;
+            margin-bottom: 6px;
+            transition: background-color 0.5s ease-out;
+        }
+        
+        /* This will make custom menu bars white on dark backgrounds */
+        body.scrollcolortransition:not(.text-transitioned) .custom-menu-bar {
+            background-color: var(--white) !important;
+        }
+        
+        /* Content sections */
+        .content-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .content-section h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-section p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="scrollcolortransition">
+    <!-- Custom colored menu bars -->
+    <div class="custom-menu-bars">
+        <div class="custom-menu-bar"></div>
+        <div class="custom-menu-bar"></div>
+        <div class="custom-menu-bar"></div>
+    </div>
+    
+    <!-- Content Sections -->
+    <div class="content-section">
+        <h2 class="brand-teal">Custom Color Test</h2>
+        <p>All these elements have custom colors defined in CSS.</p>
+        <p class="brand-red">This text is brand red.</p>
+        <p class="brand-orange">This text is brand orange.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2 class="custom-purple">Purple Heading</h2>
+        <p>On dark backgrounds, all text becomes white for visibility.</p>
+        <p class="custom-blue">This blue text is currently white.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2 class="brand-teal">Approaching Light Background</h2>
+        <p>Watch as the custom colors start to return...</p>
+    </div>
+    
+    <div class="content-section">
+        <h2 class="custom-purple">Colors Restored!</h2>
+        <p>On the light background, all elements show their original CSS colors.</p>
+        <p class="brand-red">Red text is red again.</p>
+        <p class="brand-orange">Orange text is orange again.</p>
+        <p class="custom-blue">Blue text is blue again.</p>
+        <p>And the custom menu bars return to their teal color!</p>
+    </div>
+    
+    <div class="content-section">
+        <h2 class="brand-teal">Scroll Back Up</h2>
+        <p>All custom colors will transition back to white as the background darkens.</p>
+    </div>
+    
+    <!-- Include the scroll color transition script -->
+    <script src="js/scroll-color-transition.js"></script>
+</body>
+</html> 

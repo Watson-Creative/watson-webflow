@@ -838,6 +838,10 @@ The transition is divided into three equal segments over the first viewport heig
 - **66.66-100%**: Light Green → Off-White
 - **Beyond 100vh**: Remains Off-White
 
+Text elements:
+- **During dark backgrounds**: All text is forced to white for visibility
+- **On light background**: Text returns to its original CSS-defined colors
+
 ### Basic Usage
 
 1. **Include the CSS files**:

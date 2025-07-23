@@ -31,9 +31,10 @@
     function updateBackgroundColor() {
         const scrollY = window.scrollY;
         const viewportHeight = window.innerHeight;
+        const scrollableHeight = document.documentElement.scrollHeight;
         
         // Calculate total scrollable height
-        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const totalHeight = viewportHeight;
         const halfPageHeight = totalHeight / 2;
         
         // Calculate progress based on half the total scroll distance

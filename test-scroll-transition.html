@@ -35,54 +35,7 @@
         height: 100vh;
         width: 100vw;
     }
-    /* Scroll Color Transition Styles */
-
-    /* Smooth transition for background color changes */
-    body {
-        transition: background-color 0.3s ease-out;
-        /* background-color: var(--forest); */
-        --text-transition-progress: 0;
-    }
     
-    /* Text color transitions */
-    h1, h2, h3, h4, h5, h6, p, span, a, li {
-        transition: color 0.5s ease-out;
-    }
-    
-    /* Default: all text is white */
-    body:not(.text-transitioned) h1,
-    body:not(.text-transitioned) h2,
-    body:not(.text-transitioned) h3,
-    body:not(.text-transitioned) h4,
-    body:not(.text-transitioned) h5,
-    body:not(.text-transitioned) h6 {
-        color: var(--white) !important;
-    }
-    
-    body:not(.text-transitioned) p,
-    body:not(.text-transitioned) span,
-    body:not(.text-transitioned) a,
-    body:not(.text-transitioned) li {
-        color: var(--white) !important;
-    }
-    
-    /* When transitioned: use default colors */
-    body.text-transitioned h1,
-    body.text-transitioned h2,
-    body.text-transitioned h3,
-    body.text-transitioned h4,
-    body.text-transitioned h5,
-    body.text-transitioned h6 {
-        color: var(--text) !important;
-    }
-    
-    body.text-transitioned p,
-    body.text-transitioned span,
-    body.text-transitioned a,
-    body.text-transitioned li {
-        color: var(--text-light) !important;
-    }
-
     /* Ensure scroll container items have proper dimensions */
     .scroll-transition {
         position: relative;

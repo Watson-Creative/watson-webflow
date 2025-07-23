@@ -7,7 +7,7 @@ body {
 }
 
 /* Text color transitions */
-h1, h2, h3, h4, h5, h6, p, span, a, li, div, section {
+h1, h2, h3, h4, h5, h6, p, span, a, li, div, section, .menu-bars-line {
     transition: color 0.5s ease-out;
 }
 
@@ -25,7 +25,8 @@ body:not(.text-transitioned) p,
 body:not(.text-transitioned) span,
 body:not(.text-transitioned) a,
 body:not(.text-transitioned) li,
-body:not(.text-transitioned) div {
+body:not(.text-transitioned) div,
+body:not(.text-transitioned) .menu-bars-line {
     color: var(--white) !important;
 }
 
@@ -44,18 +45,4 @@ body.text-transitioned span,
 body.text-transitioned a,
 body.text-transitioned li {
     color: var(--text-light) !important;
-}
-
-/* Add text shadow for better readability on colored backgrounds */
-body:not(.text-transitioned) h1,
-body:not(.text-transitioned) h2,
-body:not(.text-transitioned) h3,
-body:not(.text-transitioned) h4,
-body:not(.text-transitioned) h5,
-body:not(.text-transitioned) h6,
-body:not(.text-transitioned) p,
-body:not(.text-transitioned) span,
-body:not(.text-transitioned) a,
-body:not(.text-transitioned) li {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }

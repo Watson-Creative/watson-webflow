@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scroll Transition Toggle Test</title>
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/scroll-color-transition.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: var(--off-white); /* Default background when feature is off */
+        }
+        
+        /* Toggle button */
+        .toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-button {
+            background: var(--glacial);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .toggle-button:hover {
+            background: var(--forest);
+        }
+        
+        .status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text);
+        }
+        
+        /* Content sections */
+        .content-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .content-section h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .content-section p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Toggle Control -->
+    <div class="toggle-container">
+        <button class="toggle-button" onclick="toggleScrollTransition()">Toggle Scroll Transition</button>
+        <div class="status">Status: <span id="status">OFF</span></div>
+    </div>
+    
+    <!-- Content Sections -->
+    <div class="content-section">
+        <h2>Scroll Color Transition Toggle</h2>
+        <p>Click the button in the top-right to toggle the scroll color transition feature on and off.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2>Dynamic Activation</h2>
+        <p>When enabled, the background will transition through forest → glacial → light-green → off-white.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2>Watch the Changes</h2>
+        <p>Text will automatically switch between white and dark colors based on the background.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2>Flexible Integration</h2>
+        <p>This demonstrates how the feature can be conditionally enabled on specific pages.</p>
+    </div>
+    
+    <!-- Include the scroll color transition script -->
+    <script src="js/scroll-color-transition.js"></script>
+    <script>
+        // Toggle function
+        function toggleScrollTransition() {
+            const body = document.body;
+            const statusEl = document.getElementById('status');
+            
+            if (body.classList.contains('scrollcolortransition')) {
+                body.classList.remove('scrollcolortransition');
+                statusEl.textContent = 'OFF';
+                statusEl.style.color = 'var(--text-light)';
+            } else {
+                body.classList.add('scrollcolortransition');
+                statusEl.textContent = 'ON';
+                statusEl.style.color = 'var(--glacial)';
+            }
+        }
+        
+        // Check initial state
+        if (document.body.classList.contains('scrollcolortransition')) {
+            document.getElementById('status').textContent = 'ON';
+            document.getElementById('status').style.color = 'var(--glacial)';
+        }
+    </script>
+</body>
+</html> 

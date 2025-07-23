@@ -853,7 +853,33 @@ The transition is divided into three equal segments over the first viewport heig
 <script src="js/scroll-color-transition.js"></script>
 ```
 
-That's it! The effect will automatically initialize and start working on page load.
+3. **Add the activation class to the body**:
+```html
+<body class="scrollcolortransition">
+```
+
+The effect will only activate on pages where the body has the `scrollcolortransition` class. This allows you to selectively enable the feature on specific pages.
+
+### Dynamic Activation
+
+The scroll color transition can be toggled on/off dynamically via JavaScript:
+
+```javascript
+// Enable the effect
+document.body.classList.add('scrollcolortransition');
+
+// Disable the effect
+document.body.classList.remove('scrollcolortransition');
+
+// Toggle the effect
+document.body.classList.toggle('scrollcolortransition');
+```
+
+The effect automatically:
+- Activates when the class is added
+- Deactivates when the class is removed
+- Cleans up all styles when deactivated
+- Re-initializes from the current scroll position when reactivated
 
 ### Customization
 
@@ -906,7 +932,8 @@ if (scrollProgress <= 0.25) {
 1. **Upload Files**: Add `scroll-color-transition.js` and `scroll-color-transition.css` to your Webflow project
 2. **Include Dependencies**: Make sure `colors.css` is included for the CSS variables
 3. **Add Scripts**: Include both CSS and JS files in your page or project settings
-4. **Content Structure**: Ensure your first section has enough height for the full transition
+4. **Add Body Class**: In Webflow Designer, add the class `scrollcolortransition` to the body element for pages where you want the effect
+5. **Content Structure**: Ensure your first section has enough height for the full transition
 
 #### Best Practices for Webflow
 

@@ -36,7 +36,7 @@
         
         // Calculate total scrollable height
         const totalHeight = viewportHeight;
-        const halfPageHeight = totalHeight / 4;
+        const halfPageHeight = totalHeight / 6;
     
         // Calculate progress based on half the total scroll distance
         const scrollProgress = Math.min(scrollY / halfPageHeight, 1);

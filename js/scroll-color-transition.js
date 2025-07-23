@@ -2,8 +2,7 @@
 // Smoothly transitions body background color based on scroll position
 
 (function() {
-
-    var cssTransition = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'a', 'li', 'div', 'section','.menu-bars-line'];
+    'use strict';
     
     // Color values from CSS variables
     const colors = {

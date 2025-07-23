@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hamburger Menu Scroll Transition Test</title>
+    <link rel="stylesheet" href="css/colors.css">
+    <link rel="stylesheet" href="css/scroll-color-transition.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            cursor: pointer;
+            width: 50px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .menu-bars-line {
+            background-color: #040504;
+            border: 0 #040504;
+            border-radius: 2px;
+            width: 50px;
+            height: 3px;
+            position: relative;
+            box-sizing: border-box;
+        }
+        
+        /* Content sections */
+        .content-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 2rem;
+        }
+        
+        .content-section h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-section p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Hamburger Menu -->
+    <div class="hamburger-menu">
+        <div class="menu-bars-line"></div>
+        <div class="menu-bars-line"></div>
+        <div class="menu-bars-line"></div>
+    </div>
+    
+    <!-- Content Sections -->
+    <div class="content-section">
+        <h2>Scroll to See Menu Transition</h2>
+        <p>The hamburger menu starts white and transitions to dark as the background lightens.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2>Forest to Glacial</h2>
+        <p>Menu bars remain white on darker backgrounds.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2>Approaching Light Colors</h2>
+        <p>Watch the menu bars transition as we approach the off-white background.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2>Off-White Background</h2>
+        <p>Menu bars are now dark for proper contrast.</p>
+    </div>
+    
+    <div class="content-section">
+        <h2>Scroll Back Up</h2>
+        <p>The menu transitions back to white as the background darkens.</p>
+    </div>
+    
+    <!-- Include the scroll color transition script -->
+    <script src="js/scroll-color-transition.js"></script>
+</body>
+</html> 

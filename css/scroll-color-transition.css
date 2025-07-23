@@ -7,8 +7,13 @@ body {
 }
 
 /* Text color transitions */
-h1, h2, h3, h4, h5, h6, p, span, a, li, div, section, .menu-bars-line {
+h1, h2, h3, h4, h5, h6, p, span, a, li, div, section {
     transition: color 0.5s ease-out;
+}
+
+/* Menu bars background transition */
+.menu-bars-line {
+    transition: background-color 0.5s ease-out, border-color 0.5s ease-out;
 }
 
 /* Default: all text is white */
@@ -25,9 +30,14 @@ body:not(.text-transitioned) p,
 body:not(.text-transitioned) span,
 body:not(.text-transitioned) a,
 body:not(.text-transitioned) li,
-body:not(.text-transitioned) div,
-body:not(.text-transitioned) .menu-bars-line {
+body:not(.text-transitioned) div {
     color: var(--white) !important;
+}
+
+/* Menu bars: white background when not transitioned */
+body:not(.text-transitioned) .menu-bars-line {
+    background-color: var(--white) !important;
+    border-color: var(--white) !important;
 }
 
 /* When transitioned: use default colors */
@@ -45,4 +55,10 @@ body.text-transitioned span,
 body.text-transitioned a,
 body.text-transitioned li {
     color: var(--text-light) !important;
+}
+
+/* Menu bars: default color when transitioned */
+body.text-transitioned .menu-bars-line {
+    background-color: #040504 !important;
+    border-color: #040504 !important;
 }

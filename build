@@ -1,4 +1,4 @@
 #!/bin/bash
 clear;
 npm run build;
-echo "Build complete!";
+echo "✨ ✨ ✨ ✨ ✨ ✨";

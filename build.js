@@ -8,12 +8,12 @@ const chokidar = require('chokidar');
 const config = {
   css: {
     inputDir: './css',
-    outputFile: './custom-styles.min.css',
+    outputFile: './styles.min.css',
     extension: '.css'
   },
   js: {
     inputDir: './js',
-    outputFile: './custom-scripts.min.js',
+    outputFile: './scripts.min.js',
     extension: '.js'
   }
 };

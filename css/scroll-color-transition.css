@@ -41,20 +41,20 @@ body.scrollcolortransition .menu-bars-line {
 }
 
 /* Override: force all text to white on dark backgrounds - only when scrollcolortransition class is present */
-body.scrollcolortransition:not(.text-transitioned) h1,
-body.scrollcolortransition:not(.text-transitioned) h2,
-body.scrollcolortransition:not(.text-transitioned) h3,
-body.scrollcolortransition:not(.text-transitioned) h4,
-body.scrollcolortransition:not(.text-transitioned) h5,
-body.scrollcolortransition:not(.text-transitioned) h6 {
+body.scrollcolortransition:not(.text-transitioned) h1:not(#anything-llm-embed-chat-container h1):not(#watson-chat-popup h1),
+body.scrollcolortransition:not(.text-transitioned) h2:not(#anything-llm-embed-chat-container h2):not(#watson-chat-popup h2),
+body.scrollcolortransition:not(.text-transitioned) h3:not(#anything-llm-embed-chat-container h3):not(#watson-chat-popup h3),
+body.scrollcolortransition:not(.text-transitioned) h4:not(#anything-llm-embed-chat-container h4):not(#watson-chat-popup h4),
+body.scrollcolortransition:not(.text-transitioned) h5:not(#anything-llm-embed-chat-container h5):not(#watson-chat-popup h5),
+body.scrollcolortransition:not(.text-transitioned) h6:not(#anything-llm-embed-chat-container h6):not(#watson-chat-popup h6) {
     color: var(--white) !important;
 }
 
-body.scrollcolortransition:not(.text-transitioned) p,
-body.scrollcolortransition:not(.text-transitioned) span,
-body.scrollcolortransition:not(.text-transitioned) a,
-body.scrollcolortransition:not(.text-transitioned) li,
-body.scrollcolortransition:not(.text-transitioned) div {
+body.scrollcolortransition:not(.text-transitioned) p:not(#anything-llm-embed-chat-container p):not(#watson-chat-popup p),
+body.scrollcolortransition:not(.text-transitioned) span:not(#anything-llm-embed-chat-container span):not(#watson-chat-popup span),
+body.scrollcolortransition:not(.text-transitioned) a:not(#anything-llm-embed-chat-container a):not(#watson-chat-popup a),
+body.scrollcolortransition:not(.text-transitioned) li:not(#anything-llm-embed-chat-container li):not(#watson-chat-popup li),
+body.scrollcolortransition:not(.text-transitioned) div:not(#anything-llm-embed-chat-container div):not(#watson-chat-popup div) {
     color: var(--white) !important;
 }
 
@@ -62,16 +62,6 @@ body.scrollcolortransition:not(.text-transitioned) div {
 body.scrollcolortransition:not(.text-transitioned) .menu-bars-line {
     background-color: var(--white) !important;
     border-color: var(--white) !important;
-}
-
-/* Exclude anything-llm-embed-chat-container from all scroll transition color changes */
-#anything-llm-embed-chat-container,
-#anything-llm-embed-chat-container *,
-#watson-chat-popup,
-#watson-chat-popup * {
-    color: inherit !important;
-    background-color: inherit !important;
-    border-color: inherit !important;
 }
 
 /* When transitioned: no color overrides - elements return to their default colors */

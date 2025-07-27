@@ -12,6 +12,11 @@
         offWhite: { r: 240, g: 237, b: 236 }   // #f0edec
     };
     
+    // Function to check if we're on mobile devices
+    function isMobileDevice() {
+        return window.innerWidth <= 991;
+    }
+    
     // Function to interpolate between two colors
     function interpolateColor(color1, color2, factor) {
         const result = {
@@ -80,7 +85,7 @@
         
         // Apply the color to site menu
         const siteMenu = document.querySelector('.site-menu');
-        if (siteMenu) {
+        if (siteMenu && isMobileDevice()) {
             if (scrollProgress <= 0.333) {
                 // For the first third, interpolate from transparent to glacial
                 const localProgress = scrollProgress / 0.333;
@@ -165,7 +170,7 @@
         
         // Reset site menu styles
         const siteMenu = document.querySelector('.site-menu');
-        if (siteMenu) {
+        if (siteMenu && isMobileDevice()) {
             siteMenu.style.backgroundColor = '';
         }
     }

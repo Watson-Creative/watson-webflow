@@ -64,6 +64,15 @@ body.scrollcolortransition:not(.text-transitioned) .menu-bars-line {
     border-color: var(--white) !important;
 }
 
+/* Exclude anything-llm-embed-chat-container from all scroll transition color changes */
+#anything-llm-embed-chat-container,
+#anything-llm-embed-chat-container * {
+    color: inherit !important;
+    background-color: inherit !important;
+    border-color: inherit !important;
+    /* transition: none !important; */
+}
+
 /* When transitioned: no color overrides - elements return to their default colors */
 /* The absence of color rules here means elements will use their original CSS colors */
 

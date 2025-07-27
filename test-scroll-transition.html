@@ -18,6 +18,24 @@
         padding: 0;
         min-height: 100vh;
     }
+    
+    /* Site menu styling for testing */
+    .site-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: var(--white);
+        /* background-color will be set by JavaScript */
+    }
+    
     h1 {
         font-size: 2rem;
         font-weight: 700;
@@ -72,24 +90,29 @@
     } 
 </style>
 <body class="scrollcolortransition">
+    <!-- Site menu for testing the background transition -->
+    <div class="site-menu">
+        Site Menu - Background transitions from transparent to colors
+    </div>
+    
     <!-- <h1 style="color: var(--white);">Scroll Color Transition Test Page</h1> -->
     <!-- <p style="color: var(--white);">Scroll down to see the background color transition from forest → glacial → light-green → off-white</p> -->
     <div class="scroll-transition">
         <div class="scroll-transition-item">
             <h2>Section 1: Forest</h2>
-            <p>The background starts with the forest color at the top of the page.</p>
+            <p>The background starts with the forest color at the top of the page. The site menu starts transparent.</p>
         </div>
         <div class="scroll-transition-item">
             <h2>Section 2: Transitioning to Glacial</h2>
-            <p>As you scroll, the background smoothly transitions to glacial.</p>
+            <p>As you scroll, the background smoothly transitions to glacial. The site menu becomes visible.</p>
         </div>
         <div class="scroll-transition-item">
             <h2>Section 3: Moving to Light Green</h2>
-            <p>Continue scrolling to see the transition to light green.</p>
+            <p>Continue scrolling to see the transition to light green. The site menu follows the same color progression.</p>
         </div>
         <div class="scroll-transition-item">
             <h2>Section 4: Reaching Off-White</h2>
-            <p>The background transitions to off-white and text changes to its default color.</p>
+            <p>The background transitions to off-white and text changes to its default color. Site menu also reaches off-white.</p>
         </div>
         <div class="scroll-transition-item">
             <h2>Section 5: Staying Off-White</h2>
@@ -97,7 +120,7 @@
         </div>
         <div class="scroll-transition-item">
             <h2>Section 6: Scroll Back Up</h2>
-            <p>Scroll back to the top to see the colors transition in reverse!</p>
+            <p>Scroll back to the top to see the colors transition in reverse! Site menu becomes transparent again.</p>
         </div>
     </div>
     

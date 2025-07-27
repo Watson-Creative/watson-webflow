@@ -19,11 +19,18 @@
             g: Math.round(color1.g + factor * (color2.g - color1.g)),
             b: Math.round(color1.b + factor * (color2.b - color1.b))
         };
+        // Handle alpha if present
+        if (color1.a !== undefined && color2.a !== undefined) {
+            result.a = color1.a + factor * (color2.a - color1.a);
+        }
         return result;
     }
     
     // Function to convert RGB object to CSS string
     function rgbToString(color) {
+        if (color.a !== undefined) {
+            return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        }
         return `rgb(${color.r}, ${color.g}, ${color.b})`;
     }
     
@@ -46,23 +53,46 @@
         const scrollProgress = Math.min(scrollY / halfPageHeight, 1);
         
         let backgroundColor;
+        let siteMenuColor;
         
         if (scrollProgress <= 0.333) {
             // Forest to Glacial (0% to 33.33%)
             const localProgress = scrollProgress / 0.333;
             backgroundColor = interpolateColor(colors.forest, colors.glacial, localProgress);
+            // Site menu: transparent to glacial
+            siteMenuColor = interpolateColor({ r: 0, g: 0, b: 0, a: 0 }, colors.glacial, localProgress);
         } else if (scrollProgress <= 0.666) {
             // Glacial to Light Green (33.33% to 66.66%)
             const localProgress = (scrollProgress - 0.333) / 0.333;
             backgroundColor = interpolateColor(colors.glacial, colors.lightGreen, localProgress);
+            // Site menu: glacial to light green
+            siteMenuColor = interpolateColor(colors.glacial, colors.lightGreen, localProgress);
         } else {
             // Light Green to Off White (66.66% to 100%)
             const localProgress = (scrollProgress - 0.666) / 0.334;
             backgroundColor = interpolateColor(colors.lightGreen, colors.offWhite, localProgress);
+            // Site menu: light green to off white
+            siteMenuColor = interpolateColor(colors.lightGreen, colors.offWhite, localProgress);
         }
         
         // Apply the color to body
         document.body.style.backgroundColor = rgbToString(backgroundColor);
+        
+        // Apply the color to site menu
+        const siteMenu = document.querySelector('.site-menu');
+        if (siteMenu) {
+            if (scrollProgress <= 0.333) {
+                // For the first third, interpolate from transparent to glacial
+                const localProgress = scrollProgress / 0.333;
+                const transparentColor = { r: 0, g: 0, b: 0, a: 0 };
+                const glacialColor = { ...colors.glacial, a: 1 };
+                const interpolatedColor = interpolateColor(transparentColor, glacialColor, localProgress);
+                siteMenu.style.backgroundColor = rgbToString(interpolatedColor);
+            } else {
+                // For the rest, use solid colors
+                siteMenu.style.backgroundColor = rgbToString(siteMenuColor);
+            }
+        }
         
         // Handle text color transition
         // Start transitioning text color in the last third of the scroll (when approaching off-white)
@@ -132,6 +162,12 @@
         document.body.style.backgroundColor = '';
         document.body.style.removeProperty('--text-transition-progress');
         document.body.classList.remove('text-transitioned');
+        
+        // Reset site menu styles
+        const siteMenu = document.querySelector('.site-menu');
+        if (siteMenu) {
+            siteMenu.style.backgroundColor = '';
+        }
     }
     
     // Initialize and watch for class changes

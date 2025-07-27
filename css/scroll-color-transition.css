@@ -6,6 +6,11 @@ body.scrollcolortransition {
     --text-transition-progress: 0;
 }
 
+/* Site menu background transition - only when class is present */
+body.scrollcolortransition .site-menu {
+    transition: background-color 0.3s ease-out;
+}
+
 /* Text color transitions - only when class is present */
 body.scrollcolortransition h1, 
 body.scrollcolortransition h2, 

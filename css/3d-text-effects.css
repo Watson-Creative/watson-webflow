@@ -1,0 +1,73 @@
+/* 3D Text Effects */
+.word-3d {
+  perspective: 1000px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50% 1rem;
+  display: inline-block;
+}
+
+.face {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  display: inline-block;
+}
+
+.face-front {
+  opacity: 1;
+  position: relative;
+}
+
+.face-bottom {
+  top: 100%;
+  transform-origin: 50% 0%;
+  transform: rotateX(90deg);
+}
+
+.face-top {
+  bottom: 100%;
+  transform-origin: 50% 100%;
+  transform: rotateX(-90deg);
+}
+
+.face-back {
+  top: 0;
+  transform-origin: 50% 50%;
+  transform: translateZ(2.5rem) rotateX(-180deg);
+}
+
+/* Enhanced text rendering for better 3D effects */
+.word-3d {
+  font-kerning: none;
+  font-variant-ligatures: none;
+  text-rendering: optimizeSpeed;
+}
+
+/* Ensure proper stacking context for 3D transforms */
+.word-3d .face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Smooth transitions for 3D animations */
+.word-3d .face {
+  transition: opacity 0.3s ease-out;
+}
+
+/* Container for 3D text animations */
+.words-3d-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Responsive adjustments for 3D effects */
+@media (max-width: 768px) {
+  .word-3d {
+    transform-origin: 50% 50% 0.5rem;
+  }
+  
+  .face-back {
+    transform: translateZ(1.25rem) rotateX(-180deg);
+  }
+} 

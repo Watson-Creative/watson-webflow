@@ -1,5 +1,5 @@
 var startdelay = 200;
-var animationClasses = ['fadeup', 'slideup', 'slidein', 'rotatein', 'popin', 'typewriter', 'wavein', 'zoomin', 'flipin', 'bouncein'];
+var animationClasses = ['fadeup', 'slideup', 'slidein', 'rotatein', 'popin', 'typewriter', 'wavein', 'zoomin', 'flipin', 'bouncein', 'horizontal-split', 'wavy-text', 'raining-letters', 'subtle-highlight', 'exploding-chars'];
 var extraClasses = { 
   'intro-heading': 'slidein',
   'heading-2-big': 'slidein'
@@ -91,6 +91,26 @@ document.querySelectorAll('.flipin .letter').forEach(function(el) {
 });
 
 document.querySelectorAll('.bouncein .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.horizontal-split .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.wavy-text .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.raining-letters .letter').forEach(function(el) {
+  el.style.opacity = '0';
+});
+
+document.querySelectorAll('.subtle-highlight .letter').forEach(function(el) {
+  el.style.opacity = '0.25';
+});
+
+document.querySelectorAll('.exploding-chars .letter').forEach(function(el) {
   el.style.opacity = '0';
 });
 
@@ -226,6 +246,79 @@ function createBounceInAnimation(element) {
   });
 }
 
+function createHorizontalSplitAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateX: ['100%', 0],
+    opacity: [0,1],
+    translateZ: 0,
+    duration: 500,
+    easing: "easeInOutQuad",
+    delay: (el, i) => startdelay + 5 * i,
+    autoplay: false
+  });
+}
+
+function createWavyTextAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateY: function(el, i) {
+      return [Math.sin(i * 0.3) * 30, 0];
+    },
+    opacity: [0,1],
+    duration: 500,
+    easing: "easeInOut(3)",
+    delay: (el, i) => startdelay + 50 * i,
+    autoplay: false
+  });
+}
+
+function createRainingLettersAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateY: ['100%', 0],
+    opacity: [0,1],
+    translateZ: 0,
+    duration: 800,
+    easing: "easeOutQuad",
+    delay: (el, i) => startdelay + 10 * i,
+    autoplay: false
+  });
+}
+
+function createSubtleHighlightAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    opacity: [0.25, 1],
+    textShadow: ['0 0 0px rgba(255,255,255,0)', '0 0 30px rgba(255,255,255,0.9)'],
+    duration: 350,
+    easing: "easeOut(3)",
+    delay: (el, i) => startdelay + 12 * i,
+    autoplay: false
+  });
+}
+
+function createExplodingCharsAnimation(element) {
+  return anime({
+    targets: element.querySelectorAll('.letter'),
+    translateX: function(el, i) {
+      return [0, (Math.random() - 0.5) * 60];
+    },
+    translateY: function(el, i) {
+      return [0, (Math.random() - 0.5) * 100];
+    },
+    rotate: function(el, i) {
+      return [0, Math.random() * 360 - 180];
+    },
+    opacity: [0,1],
+    scale: [0, 1],
+    duration: 600,
+    easing: "easeOutCirc",
+    delay: (el, i) => startdelay + 5 * i,
+    autoplay: false
+  });
+}
+
 function createImageCardAnimation() {
   return anime({
     targets: '.image-card',
@@ -276,6 +369,16 @@ var observer = new IntersectionObserver(function(entries, observer) {
         animation = createFlipInAnimation(element);
       } else if (element.classList.contains('bouncein')) {
         animation = createBounceInAnimation(element);
+      } else if (element.classList.contains('horizontal-split')) {
+        animation = createHorizontalSplitAnimation(element);
+      } else if (element.classList.contains('wavy-text')) {
+        animation = createWavyTextAnimation(element);
+      } else if (element.classList.contains('raining-letters')) {
+        animation = createRainingLettersAnimation(element);
+      } else if (element.classList.contains('subtle-highlight')) {
+        animation = createSubtleHighlightAnimation(element);
+      } else if (element.classList.contains('exploding-chars')) {
+        animation = createExplodingCharsAnimation(element);
       }
       
       if (animation) {
@@ -364,6 +467,36 @@ elementsToAnimate.forEach(function(element) {
       });
       var animation = createBounceInAnimation(element);
       animation.play();
+    } else if (element.classList.contains('horizontal-split')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createHorizontalSplitAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('wavy-text')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createWavyTextAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('raining-letters')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createRainingLettersAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('subtle-highlight')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0.25';
+      });
+      var animation = createSubtleHighlightAnimation(element);
+      animation.play();
+    } else if (element.classList.contains('exploding-chars')) {
+      element.querySelectorAll('.letter').forEach(function(letter) {
+        letter.style.opacity = '0';
+      });
+      var animation = createExplodingCharsAnimation(element);
+      animation.play();
     }
     
     // Re-mark as animated after a short delay to prevent immediate re-triggering
@@ -445,6 +578,21 @@ window.triggerAnimation = function(selector, animationType) {
       break;
     case 'bouncein':
       animation = createBounceInAnimation(element);
+      break;
+    case 'horizontal-split':
+      animation = createHorizontalSplitAnimation(element);
+      break;
+    case 'wavy-text':
+      animation = createWavyTextAnimation(element);
+      break;
+    case 'raining-letters':
+      animation = createRainingLettersAnimation(element);
+      break;
+    case 'subtle-highlight':
+      animation = createSubtleHighlightAnimation(element);
+      break;
+    case 'exploding-chars':
+      animation = createExplodingCharsAnimation(element);
       break;
   }
   

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Text Animations Test</title>
+    <link rel="stylesheet" href="css/3d-text-effects.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        .demo-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .demo-card h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.5em;
+            font-weight: 300;
+        }
+        
+        .demo-card p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+        
+        .animation-label {
+            font-size: 0.8em;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+        
+        .hero-section h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .hero-section p {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <h1 class="horizontal-split">New Text Animations</h1>
+        <p class="wavy-text">Discover the latest animation effects for your Webflow projects</p>
+    </div>
+    
+    <div class="container">
+        <div class="demo-card">
+            <div class="animation-label">Horizontal Split</div>
+            <h2 class="horizontal-split">Clean sliding entrance</h2>
+            <p>Letters slide in from right to left with smooth motion</p>
+        </div>
+        
+        <div class="demo-card">
+            <div class="animation-label">Wavy Text</div>
+            <h2 class="wavy-text">Organic flowing motion</h2>
+            <p>Letters animate with wave-like sine motion</p>
+        </div>
+        
+        <div class="demo-card">
+            <div class="animation-label">Raining Letters</div>
+            <h2 class="raining-letters">Dramatic falling effect</h2>
+            <p>Letters drop from above like rain</p>
+        </div>
+        
+        <div class="demo-card">
+            <div class="animation-label">Subtle Highlight</div>
+            <h2 class="subtle-highlight">Elegant glow effect</h2>
+            <p>Letters brighten with subtle glow</p>
+        </div>
+        
+        <div class="demo-card">
+            <div class="animation-label">Exploding Characters</div>
+            <h2 class="exploding-chars">High energy explosion</h2>
+            <p>Letters explode in random directions</p>
+        </div>
+        
+        <div class="demo-card">
+            <div class="animation-label">Classic Fade Up</div>
+            <h2 class="fadeup">Smooth upward fade</h2>
+            <p>Letters fade in from below</p>
+        </div>
+        
+        <div class="demo-card">
+            <div class="animation-label">Pop In Effect</div>
+            <h2 class="popin">Bouncy scale animation</h2>
+            <p>Letters scale with elastic bounce</p>
+        </div>
+        
+        <div class="demo-card">
+            <div class="animation-label">Typewriter</div>
+            <h2 class="typewriter">Typing effect</h2>
+            <p>Letters appear one by one</p>
+        </div>
+    </div>
+    
+    <script src="js/anime.min.js"></script>
+    <script src="js/text-animations.js"></script>
+</body>
+</html> 

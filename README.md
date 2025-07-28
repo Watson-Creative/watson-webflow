@@ -95,7 +95,8 @@ This will:
 │   ├── no-highlight.css
 │   ├── splide.css
 │   ├── text-animations.css
-│   └── virtual-scroll.css
+│   ├── virtual-scroll.css
+│   └── 3d-text-effects.css
 ├── js/                   # Source JS files
 │   ├── anime.min.js      # Animation library (bundled)
 │   ├── animated-svg-logo.js
@@ -218,6 +219,51 @@ Apply these classes to any text element (heading, paragraph, text block, etc.) i
 <h2 class="bouncein">Bouncing text</h2>
 ```
 
+#### 11. **horizontal-split**
+- **Effect**: Letters slide in horizontally from right to left with a smooth split motion
+- **Duration**: 500ms
+- **Trigger**: When element enters viewport
+- **Usage**: Modern, clean entrance for headings and titles
+```html
+<h1 class="horizontal-split">Sliding text from right</h1>
+```
+
+#### 12. **wavy-text**
+- **Effect**: Letters animate in with a wave-like sine motion creating a flowing effect
+- **Duration**: 500ms
+- **Trigger**: When element enters viewport
+- **Usage**: Dynamic, organic feel for creative headlines or playful content
+```html
+<p class="wavy-text">Wavy flowing text animation</p>
+```
+
+#### 13. **raining-letters**
+- **Effect**: Letters fall from above like rain with staggered timing
+- **Duration**: 800ms
+- **Trigger**: When element enters viewport
+- **Usage**: Dramatic entrance for important announcements or hero text
+```html
+<h2 class="raining-letters">Letters falling like rain</h2>
+```
+
+#### 14. **subtle-highlight**
+- **Effect**: Letters start dimmed and brighten with a subtle glow effect
+- **Duration**: 350ms
+- **Trigger**: When element enters viewport
+- **Usage**: Elegant, understated effect for professional content
+```html
+<h3 class="subtle-highlight">Subtle glowing text</h3>
+```
+
+#### 15. **exploding-chars**
+- **Effect**: Letters explode outward in random directions with rotation
+- **Duration**: 600ms
+- **Trigger**: When element enters viewport
+- **Usage**: High-energy effect for CTAs, announcements, or creative content
+```html
+<span class="exploding-chars">Explosive text effect!</span>
+```
+
 ### Custom Class Mappings (extraClasses)
 
 The animation system now supports custom class mappings through the `extraClasses` object. This allows you to define your own semantic class names that automatically apply specific animations.
@@ -229,7 +275,9 @@ In `text-animations.js`, you can define custom mappings:
 var extraClasses = { 
   'intro-heading': 'slideup',
   'hero-title': 'fadeup',
-  'section-header': 'rotatein'
+  'section-header': 'rotatein',
+  'banner-text': 'subtle-highlight',
+  'main-title': 'horizontal-split'
   // Add more mappings as needed
 };
 ```
@@ -241,6 +289,9 @@ Any element with a custom class will automatically receive the mapped animation:
 
 <!-- This will animate with fadeup animation -->
 <h2 class="hero-title">Main Hero Text</h2>
+
+<!-- This will animate with subtle highlight effect -->
+<h3 class="banner-text">Banner Text</h3>
 ```
 
 #### Benefits
@@ -304,6 +355,12 @@ The script also animates elements with the `image-card` class:
    // Works with any animation type
    window.triggerAnimation(selector, animationType);
    ```
+
+   Available animation types:
+   - `fadeup`, `slideup`, `slidein`, `rotatein`, `popin`
+   - `typewriter`, `wavein`, `zoomin`, `flipin`, `bouncein`
+   - `horizontal-split`, `wavy-text`, `raining-letters`
+   - `subtle-highlight`, `exploding-chars`
 
 5. **Click to Retrigger Animations**:
    - All animated text is automatically clickable

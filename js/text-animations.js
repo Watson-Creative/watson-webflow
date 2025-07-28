@@ -267,7 +267,7 @@ function createWavyTextAnimation(element) {
     },
     opacity: [0,1],
     duration: 500,
-    easing: "easeInOut(3)",
+    easing: "easeInOutCubic",
     delay: (el, i) => startdelay + 50 * i,
     autoplay: false
   });
@@ -292,31 +292,48 @@ function createSubtleHighlightAnimation(element) {
     opacity: [0.25, 1],
     textShadow: ['0 0 0px rgba(255,255,255,0)', '0 0 30px rgba(255,255,255,0.9)'],
     duration: 350,
-    easing: "easeOut(3)",
+    easing: "easeOutCubic",
     delay: (el, i) => startdelay + 12 * i,
     autoplay: false
   });
 }
 
 function createExplodingCharsAnimation(element) {
-  return anime({
+  // First, create the explosion animation
+  const explosionAnimation = anime({
     targets: element.querySelectorAll('.letter'),
     translateX: function(el, i) {
-      return [0, (Math.random() - 0.5) * 60];
+      return (Math.random() - 0.5) * 60;
     },
     translateY: function(el, i) {
-      return [0, (Math.random() - 0.5) * 100];
+      return (Math.random() - 0.5) * 100;
     },
     rotate: function(el, i) {
-      return [0, Math.random() * 360 - 180];
+      return Math.random() * 360 - 180;
     },
-    opacity: [0,1],
+    opacity: [0, 1],
     scale: [0, 1],
     duration: 600,
     easing: "easeOutCirc",
     delay: (el, i) => startdelay + 5 * i,
-    autoplay: false
+    autoplay: false,
+    complete: function() {
+      // After explosion completes, animate back to original positions
+      const returnAnimation = anime({
+        targets: element.querySelectorAll('.letter'),
+        translateX: 0,
+        translateY: 0,
+        rotate: 0,
+        duration: 600,
+        easing: "easeInOutQuad",
+        delay: (el, i) => 100 + 10 * i,
+        autoplay: false
+      });
+      returnAnimation.play();
+    }
   });
+  
+  return explosionAnimation;
 }
 
 function createImageCardAnimation() {

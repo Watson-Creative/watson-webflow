@@ -37,7 +37,7 @@ body.scrollcolortransition section {
 
 /* Menu bars background transition - only when class is present */
 body.scrollcolortransition .menu-bars-line {
-    transition: background-color 0.5s ease-out, border-color 0.5s ease-out;
+    transition: background-color 0.5s ease-out, border-color 0.5s ease-out, transform 0.3s ease-in-out, width 0.3s ease-in-out, translate 0.3s ease-in-out;
 }
 
 /* Override: force all text to white on dark backgrounds - only when scrollcolortransition class is present */

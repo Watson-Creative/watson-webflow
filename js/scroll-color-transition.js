@@ -3,9 +3,9 @@
 
 (function() {
     'use strict';
-    
     // Color values from CSS variables
     const colors = {
+        midnight: { r: 2, g: 40, b: 34 },      // #022822
         forest: { r: 12, g: 75, b: 65 },      // #0c4b41
         glacial: { r: 0, g: 183, b: 149 },    // #00b795
         lightGreen: { r: 146, g: 208, b: 195 }, // #92d0c3
@@ -60,21 +60,27 @@
         let backgroundColor;
         let siteMenuColor;
         
-        if (scrollProgress <= 0.333) {
-            // Forest to Glacial (0% to 33.33%)
-            const localProgress = scrollProgress / 0.333;
+        if (scrollProgress <= 0.25) {
+            // Midnight to Forest (0% to 25%)
+            const localProgress = scrollProgress / 0.25;
+            backgroundColor = interpolateColor(colors.midnight, colors.forest, localProgress);
+            // Site menu: transparent to forest
+            siteMenuColor = interpolateColor({ r: 0, g: 0, b: 0, a: 0 }, colors.forest, localProgress);
+        } else if (scrollProgress <= 0.5) {
+            // Forest to Glacial (25% to 50%)
+            const localProgress = (scrollProgress - 0.25) / 0.25;
             backgroundColor = interpolateColor(colors.forest, colors.glacial, localProgress);
-            // Site menu: transparent to glacial
-            siteMenuColor = interpolateColor({ r: 0, g: 0, b: 0, a: 0 }, colors.glacial, localProgress);
-        } else if (scrollProgress <= 0.666) {
-            // Glacial to Light Green (33.33% to 66.66%)
-            const localProgress = (scrollProgress - 0.333) / 0.333;
+            // Site menu: forest to glacial
+            siteMenuColor = interpolateColor(colors.forest, colors.glacial, localProgress);
+        } else if (scrollProgress <= 0.75) {
+            // Glacial to Light Green (50% to 75%)
+            const localProgress = (scrollProgress - 0.5) / 0.25;
             backgroundColor = interpolateColor(colors.glacial, colors.lightGreen, localProgress);
             // Site menu: glacial to light green
             siteMenuColor = interpolateColor(colors.glacial, colors.lightGreen, localProgress);
         } else {
-            // Light Green to Off White (66.66% to 100%)
-            const localProgress = (scrollProgress - 0.666) / 0.334;
+            // Light Green to Off White (75% to 100%)
+            const localProgress = (scrollProgress - 0.75) / 0.25;
             backgroundColor = interpolateColor(colors.lightGreen, colors.offWhite, localProgress);
             // Site menu: light green to off white
             siteMenuColor = interpolateColor(colors.lightGreen, colors.offWhite, localProgress);
@@ -86,12 +92,12 @@
         // Apply the color to site menu
         const siteMenu = document.querySelector('.site-menu');
         if (siteMenu && isMobileDevice()) {
-            if (scrollProgress <= 0.333) {
-                // For the first third, interpolate from transparent to glacial
-                const localProgress = scrollProgress / 0.333;
+            if (scrollProgress <= 0.25) {
+                // For the first quarter, interpolate from transparent to forest
+                const localProgress = scrollProgress / 0.25;
                 const transparentColor = { r: 0, g: 0, b: 0, a: 0 };
-                const glacialColor = { ...colors.glacial, a: 1 };
-                const interpolatedColor = interpolateColor(transparentColor, glacialColor, localProgress);
+                const forestColor = { ...colors.forest, a: 1 };
+                const interpolatedColor = interpolateColor(transparentColor, forestColor, localProgress);
                 siteMenu.style.backgroundColor = rgbToString(interpolatedColor);
             } else {
                 // For the rest, use solid colors
@@ -100,10 +106,10 @@
         }
         
         // Handle text color transition
-        // Start transitioning text color in the last third of the scroll (when approaching off-white)
-        if (scrollProgress > 0.666) {
-            // Calculate how far through the final third we are (0 to 1)
-            const textTransitionProgress = (scrollProgress - 0.666) / 0.334;
+        // Start transitioning text color in the last quarter of the scroll (when approaching off-white)
+        if (scrollProgress > 0.75) {
+            // Calculate how far through the final quarter we are (0 to 1)
+            const textTransitionProgress = (scrollProgress - 0.75) / 0.25;
             document.body.style.setProperty('--text-transition-progress', textTransitionProgress);
             
             // Add class when fully transitioned

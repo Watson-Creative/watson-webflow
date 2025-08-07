@@ -89,20 +89,22 @@
         // Apply the color to body
         document.body.style.backgroundColor = rgbToString(backgroundColor);
         
-        // Apply the color to site menu
-        const siteMenu = document.querySelector('.site-menu');
-        if (siteMenu && isMobileDevice()) {
-            if (scrollProgress <= 0.25) {
-                // For the first quarter, interpolate from transparent to forest
-                const localProgress = scrollProgress / 0.25;
-                const transparentColor = { r: 0, g: 0, b: 0, a: 0 };
-                const forestColor = { ...colors.forest, a: 1 };
-                const interpolatedColor = interpolateColor(transparentColor, forestColor, localProgress);
-                siteMenu.style.backgroundColor = rgbToString(interpolatedColor);
-            } else {
-                // For the rest, use solid colors
-                siteMenu.style.backgroundColor = rgbToString(siteMenuColor);
-            }
+        // Apply the color to site menu(s) (supports both legacy and new class names)
+        const siteMenus = document.querySelectorAll('.site-menu, .site-main-menu');
+        if (siteMenus.length > 0 && isMobileDevice()) {
+            siteMenus.forEach((menuElement) => {
+                if (scrollProgress <= 0.25) {
+                    // For the first quarter, interpolate from transparent to forest
+                    const localProgress = scrollProgress / 0.25;
+                    const transparentColor = { r: 0, g: 0, b: 0, a: 0 };
+                    const forestColor = { ...colors.forest, a: 1 };
+                    const interpolatedColor = interpolateColor(transparentColor, forestColor, localProgress);
+                    menuElement.style.backgroundColor = rgbToString(interpolatedColor);
+                } else {
+                    // For the rest, use solid colors
+                    menuElement.style.backgroundColor = rgbToString(siteMenuColor);
+                }
+            });
         }
         
         // Handle text color transition
@@ -174,10 +176,12 @@
         document.body.style.removeProperty('--text-transition-progress');
         document.body.classList.remove('text-transitioned');
         
-        // Reset site menu styles
-        const siteMenu = document.querySelector('.site-menu');
-        if (siteMenu && isMobileDevice()) {
-            siteMenu.style.backgroundColor = '';
+        // Reset site menu styles (supports both legacy and new class names)
+        const siteMenus = document.querySelectorAll('.site-menu, .site-main-menu');
+        if (siteMenus.length > 0 && isMobileDevice()) {
+            siteMenus.forEach((menuElement) => {
+                menuElement.style.backgroundColor = '';
+            });
         }
     }
     

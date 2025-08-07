@@ -8,13 +8,15 @@ body.scrollcolortransition {
 
 /* Site menu background transition - only when class is present and on mobile devices */
 @media screen and (max-width: 991px) {
-    body.scrollcolortransition .site-menu {
+    body.scrollcolortransition .site-menu,
+    body.scrollcolortransition .site-main-menu {
         transition: background-color 0.3s ease-out;
     }
 }
 
 @media screen and (max-width: 479px) {
-    body.scrollcolortransition .site-menu {
+    body.scrollcolortransition .site-menu,
+    body.scrollcolortransition .site-main-menu {
         transition: background-color 0.3s ease-out;
     }
 }
